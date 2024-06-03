@@ -1,0 +1,12 @@
+{
+  "home": {
+    "label": "首页"
+  },
+  "languages": {
+    "label": "语言"
+  },
+  "settings": {
+    "label": "设置",
+    "description": "在这里管理应用的设置和首选项。"
+  }
+}

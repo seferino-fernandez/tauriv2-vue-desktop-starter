@@ -1,0 +1,47 @@
+{
+  "name": "tauriv2-vue-desktop-starter",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "clean": "rm -rf node_modules dist bun.lockb",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.0.0-beta.13",
+    "@tauri-apps/plugin-shell": "^2.0.0-beta.6",
+    "@tauri-apps/plugin-store": "^2.0.0-beta.5",
+    "@vueuse/core": "^10.10.0",
+    "class-variance-authority": "^0.7.0",
+    "lucide-vue-next": "^0.383.0",
+    "pinia": "^2.1.7",
+    "radix-vue": "^1.8.2",
+    "vue": "^3.4.27",
+    "vue-i18n": "^9.13.1",
+    "vue-router": "^4.3.2"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.20.0",
+    "@iconify/vue": "^4.1.2",
+    "@tauri-apps/cli": "^2.0.0-beta.20",
+    "@types/node": "^20.13.0",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "autoprefixer": "^10.4.19",
+    "clsx": "^2.1.1",
+    "eslint": "^9.4.0",
+    "eslint-plugin-format": "^0.1.1",
+    "internal-ip": "^8.0.0",
+    "tailwind-merge": "^2.3.0",
+    "tailwindcss": "^3.4.3",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.12",
+    "vue-tsc": "^2.0.19"
+  }
+}

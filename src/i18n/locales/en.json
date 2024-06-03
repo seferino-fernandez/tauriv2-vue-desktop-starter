@@ -1,0 +1,18 @@
+{
+  "home": {
+    "label": "Home"
+  },
+  "languages": {
+    "label": "Languages"
+  },
+  "settings": {
+    "label": "Settings",
+    "description": "Manage the app settings and preferences here.",
+    "theme": {
+      "label": "Theme",
+      "description": "Choose the theme for the app.",
+      "light": "Light",
+      "dark": "Dark"
+    }
+  }
+}

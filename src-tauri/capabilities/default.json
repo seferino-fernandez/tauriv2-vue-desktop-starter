@@ -1,0 +1,29 @@
+{
+  "identifier": "main-capability",
+  "description": "Capability for the main window",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "path:default",
+    "event:default",
+    "window:default",
+    "window:allow-close",
+    "window:allow-minimize",
+    "window:allow-maximize",
+    "window:allow-start-dragging",
+    "window:allow-toggle-maximize",
+    "window:allow-start-dragging",
+    "webview:default",
+    "app:default",
+    "resources:default",
+    "menu:default",
+    "tray:default",
+    "shell:default",
+    "shell:allow-open",
+    "store:allow-get",
+    "store:allow-set",
+    "store:allow-save",
+    "store:allow-load"
+  ]
+}

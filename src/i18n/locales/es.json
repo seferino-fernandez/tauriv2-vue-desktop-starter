@@ -1,0 +1,12 @@
+{
+  "home": {
+    "label": "Inicio"
+  },
+  "languages": {
+    "label": "Idiomas"
+  },
+  "settings": {
+    "label": "Ajustes",
+    "description": "Administra los ajustes y preferencias de la aplicación aquí."
+  }
+}

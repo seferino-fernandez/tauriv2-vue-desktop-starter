@@ -23,6 +23,8 @@ Follow [Tauri's prerequisites guide](https://v2.tauri.app/start/prerequisites/) 
 
 Then rename all instances of `tauriv2-vue-desktop-starter` and `tauriv2_vue_desktop_starter` to your app name.
 
+If you want to replace the package manager update the build configuration in [tauri.conf.json](./src-tauri/tauri.conf.json)
+
 ## Installation
 
 Install dependencies with `bun install`

@@ -28,6 +28,9 @@
     }
   },
   "bundle": {
+    "macOS": {
+      "signingIdentity": "-"
+    },
     "active": true,
     "targets": "all",
     "icon": [

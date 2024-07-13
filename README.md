@@ -27,11 +27,11 @@ If you want to replace the package manager update the build configuration in [ta
 
 ## Installation
 
-Install dependencies with `bun install`
+Install dependencies with `pnpm install`
 
-## Development`
+## Development
 
-For **Desktop** development, run: `bun tauri dev`
+For **Desktop** development, run: `pnpm tauri dev`
 
 ### Internationalization (i18n)
 
@@ -56,5 +56,5 @@ Tauri Store Plugin stores `settings.json` at:
 To build a binary, run:
 
 ```bash
-bun tauri build
+pnpm tauri build
 ```

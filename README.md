@@ -23,7 +23,17 @@ Follow [Tauri's prerequisites guide](https://v2.tauri.app/start/prerequisites/) 
 
 Then rename all instances of `tauriv2-vue-desktop-starter` and `tauriv2_vue_desktop_starter` to your app name.
 
-If you want to replace the package manager update the build configuration in [tauri.conf.json](./src-tauri/tauri.conf.json)
+If you want to replace the package manager update:
+
+- The build configuration in [tauri.conf.json](./src-tauri/tauri.conf.json)
+- Update the following steps in [.github/workflows/publish-to-auto-release.yml](.github/workflows/publish-to-auto-release.yml):
+  - Install pnpm
+  - Install Node.js
+  - Install frontend dependencies
+- Update the following steps in [.github/workflows/test-build-only.yml](.github/workflows/test-build-only.yml):
+  - Install pnpm
+  - Install Node.js
+  - Install frontend dependencies
 
 ## Installation
 
@@ -49,7 +59,7 @@ Tauri Store Plugin stores `settings.json` at:
 
 **macOS**: `~/Library/Application Support/com.github.tauriv2-vue-desktop-starter`
 
-## Deployment
+## Deployment & Release
 
 [Tauri v1 Deployment Guide](https://tauri.app/v1/guides/distribution/publishing)
 
@@ -58,3 +68,5 @@ To build a binary, run:
 ```bash
 pnpm tauri build
 ```
+
+This repo is currently setup to create a release on Github when you merge to the `release` branch. See [https://github.com/tauri-apps/tauri-action/tree/dev](https://github.com/tauri-apps/tauri-action/tree/dev)

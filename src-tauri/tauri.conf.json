@@ -1,6 +1,6 @@
 {
   "productName": "tauriv2-vue-desktop-starter",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "identifier": "com.github.tauriv2-vue-desktop-starter",
   "build": {
     "beforeDevCommand": "pnpm vite:dev",

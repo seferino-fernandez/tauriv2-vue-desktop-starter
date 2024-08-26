@@ -7,6 +7,12 @@
   },
   "settings": {
     "label": "设置",
-    "description": "在这里管理应用的设置和首选项。"
+    "description": "在此管理应用程序的设置和偏好。",
+    "theme": {
+      "label": "主题",
+      "description": "选择应用程序的主题。",
+      "light": "浅色",
+      "dark": "深色"
+    }
   }
 }

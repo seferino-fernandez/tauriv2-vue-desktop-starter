@@ -6,7 +6,13 @@
     "label": "Idiomas"
   },
   "settings": {
-    "label": "Ajustes",
-    "description": "Administra los ajustes y preferencias de la aplicación aquí."
+    "label": "Configuraciones",
+    "description": "Administra las configuraciones y preferencias de la aplicación aquí.",
+    "theme": {
+      "label": "Tema",
+      "description": "Elige el tema para la aplicación.",
+      "light": "Claro",
+      "dark": "Oscuro"
+    }
   }
 }

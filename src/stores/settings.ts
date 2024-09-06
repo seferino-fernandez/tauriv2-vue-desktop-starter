@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
 import { Store } from '@tauri-apps/plugin-store'
+import { defineStore } from 'pinia'
 
 export const useSettingsStore = defineStore('settings', () => {
   const store = new Store('settings.json')

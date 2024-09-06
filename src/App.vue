@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import AppTopbar from '@/components/AppTopbar.vue'
 import AppSidebar from '@/components/AppSidebar.vue'
+import AppTopbar from '@/components/AppTopbar.vue'
 import { TooltipProvider } from '@/components/ui/tooltip'
 </script>
 

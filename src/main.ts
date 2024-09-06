@@ -1,11 +1,11 @@
-import { createApp } from 'vue'
-import '@/assets/css/base.css'
-import { createPinia } from 'pinia'
 import { useColorMode } from '@vueuse/core'
-import router from './router'
-import i18n from './i18n'
+import { createPinia } from 'pinia'
+import { createApp } from 'vue'
 import App from './App.vue'
+import i18n from './i18n'
+import router from './router'
 import { useSettingsStore } from '@/stores/settings'
+import '@/assets/css/base.css'
 
 const pinia = createPinia()
 const app = createApp(App)

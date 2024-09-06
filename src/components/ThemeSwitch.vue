@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useColorMode } from '@vueuse/core'
-import { computed } from 'vue'
-import { Icon } from '@iconify/vue'
-
 import { Button } from '@/components/ui/button'
 import { useSettingsStore } from '@/stores/settings'
+import { Icon } from '@iconify/vue'
+
+import { useColorMode } from '@vueuse/core'
+import { computed } from 'vue'
 
 const settingsStore = useSettingsStore()
 const mode = useColorMode()

@@ -59,6 +59,10 @@ Tauri Store Plugin stores `settings.json` at:
 
 **macOS**: `~/Library/Application Support/com.github.tauriv2-vue-desktop-starter`
 
+#### App Icon
+
+Tauri CLI provides an [icon command](https://tauri.app/v1/guides/features/icons/) `pnpm tauri icon` which takes an image path and generates icon files for your application.
+
 ## Deployment & Release
 
 [Tauri v1 Deployment Guide](https://tauri.app/v1/guides/distribution/publishing)

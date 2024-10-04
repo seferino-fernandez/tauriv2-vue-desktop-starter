@@ -1,6 +1,6 @@
 [package]
 name = "tauriv2-vue-desktop-starter"
-version = "0.2.0"
+version = "0.3.0"
 description = "A Tauri v2 Vue Desktop Starter"
 authors = [ "you" ]
 edition = "2021"
@@ -8,6 +8,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
 name = "tauriv2_vue_desktop_starter_lib"
 crate-type = [
   "staticlib",
@@ -16,16 +19,22 @@ crate-type = [
 ]
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-rc.9", features = [] }
+tauri-build = { version = "2.0.1", features = [] }
 
 [dependencies]
-tauri = { version = "2.0.0-rc.10", features = [ "macos-private-api" ] }
-tauri-plugin-shell = "2.0.0-rc.3"
-tauri-plugin-window-state = "2.0.0-rc.3"
+tauri = { version = "2.0.1", features = [ "macos-private-api" ] }
+tauri-plugin-shell = "2.0.1"
+tauri-plugin-window-state = "2.0.1"
 serde_json = "1.0.128"
-tauri-plugin-store = "2.0.0-rc.3"
+tauri-plugin-store = "2.0.1"
 
-[features]
-# this feature is used for production builds or when `devPath` points to the filesystem
-# DO NOT REMOVE!!
-custom-protocol = [ "tauri/custom-protocol" ]
+[profile.dev]
+incremental = true # Compile your binary in smaller steps.
+
+# https://tauri.app/concept/size/
+[profile.release]
+codegen-units = 1 # Allows LLVM to perform better optimization.
+lto = true # Enables link-time-optimizations.
+opt-level = "s" # Prioritizes small binary size. Use `3` if you prefer speed.
+panic = "abort" # Higher performance by disabling panic handlers.
+strip = true # Ensures debug symbols are removed.

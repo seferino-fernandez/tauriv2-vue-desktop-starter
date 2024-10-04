@@ -1,10 +1,10 @@
+import { useSettingsStore } from '@/stores/settings'
 import { useColorMode } from '@vueuse/core'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import App from './App.vue'
 import i18n from './i18n'
 import router from './router'
-import { useSettingsStore } from '@/stores/settings'
 import '@/assets/css/base.css'
 
 const pinia = createPinia()
@@ -20,6 +20,7 @@ app.mount('#app')
 
 async function initAppSettings() {
   const settingsStore = useSettingsStore()
+  await settingsStore.init()
   const mode = useColorMode()
   // Sets the theme based on the user's settings
   const theme = await settingsStore.getSetting<string>('theme')

@@ -1,8 +1,14 @@
-import { Store } from '@tauri-apps/plugin-store'
+import type { Store } from '@tauri-apps/plugin-store'
+import { createStore } from '@tauri-apps/plugin-store'
 import { defineStore } from 'pinia'
 
+let store: Store = null
 export const useSettingsStore = defineStore('settings', () => {
-  const store = new Store('settings.json')
+  async function init(): Promise<void> {
+    if (store === null) {
+      store = await createStore('settings.json')
+    }
+  }
 
   async function getSetting<T>(key: string): Promise<T | undefined> {
     const value = await store.get<T>(key)
@@ -18,5 +24,5 @@ export const useSettingsStore = defineStore('settings', () => {
     return await store.entries<any>()
   }
 
-  return { getSetting, setSetting, getSettings }
+  return { init, getSetting, setSetting, getSettings }
 })

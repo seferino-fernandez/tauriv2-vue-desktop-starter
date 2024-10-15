@@ -61,11 +61,11 @@ Tauri Store Plugin stores `settings.json` at:
 
 #### App Icon
 
-Tauri CLI provides an [icon command](https://tauri.app/v1/guides/features/icons/) `pnpm tauri icon` which takes an image path and generates icon files for your application.
+Tauri CLI provides an [icon command](https://v2.tauri.app/reference/cli/#icon) `pnpm tauri icon` which takes an image path and generates icon files for your application.
 
 ## Deployment & Release
 
-[Tauri v1 Deployment Guide](https://tauri.app/v1/guides/distribution/publishing)
+[Tauri v2 Deployment Guide](https://v2.tauri.app/distribute/)
 
 To build a binary, run:
 
@@ -77,4 +77,5 @@ This repo is currently setup to create a release on Github when you merge to the
 
 ### Caveats
 
-If you are using the [signing identity](./src-tauri/tauri.conf.json#L32) `-` for **macOS**, when you first download and run the application, you will have to go to `System Settings` > `Privacy & Security` and allow your app to run. See [tauri-apps/tauri-action/issues/824](https://github.com/tauri-apps/tauri-action/issues/824) & [support.apple.com/open-a-mac-app-from-an-unidentified-developer](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac).
+If you are using the [signing identity](./src-tauri/tauri.conf.json#L32) `-` for **macOS**, when you first download and run the application, you will have to go to `System Settings` > `Privacy & Security` and allow your app to run.
+See [tauri-apps/tauri-action/issues/824](https://github.com/tauri-apps/tauri-action/issues/824) & [support.apple.com/open-a-mac-app-from-an-unidentified-developer](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac).

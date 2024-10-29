@@ -20,7 +20,6 @@ app.mount('#app')
 
 async function initAppSettings() {
   const settingsStore = useSettingsStore()
-  await settingsStore.init()
   const mode = useColorMode()
   // Sets the theme based on the user's settings
   const theme = await settingsStore.getSetting<string>('theme')

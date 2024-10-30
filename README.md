@@ -13,6 +13,20 @@ A desktop application starter using the libraries and technologies:
   - [Vue I18n](https://vue-i18n.intlify.dev/) for internationalization.
   - [Pinia](https://vue-i18n.intlify.dev/) for state management.
 
+## Preview
+
+### *Light mode dashboard view*
+
+![Light Mode Dashboard](./docs/images/light-mode-dashboard.png)
+
+### *Dark mode settings view*
+
+![Dark Mode Settings](./docs/images/dark-mode-settings.png)
+
+### *Language support view*
+
+![Language Support](./docs/images/language-support.png)
+
 ## Recommended IDE Setup
 
 - [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
@@ -62,6 +76,16 @@ Tauri Store Plugin stores `settings.json` at:
 #### App Icon
 
 Tauri CLI provides an [icon command](https://v2.tauri.app/reference/cli/#icon) `pnpm tauri icon` which takes an image path and generates icon files for your application.
+
+## Contributing
+
+Contributions are welcome! Feel free to:
+
+- Open issues for bugs or feature requests
+- Submit pull requests for improvements
+- Provide feedback on existing features
+- Suggest documentation improvements
+- Help with translations
 
 ## Deployment & Release
 

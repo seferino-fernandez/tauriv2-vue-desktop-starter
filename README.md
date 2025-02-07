@@ -15,15 +15,15 @@ A desktop application starter using the libraries and technologies:
 
 ## Preview
 
-### *Light mode dashboard view*
+### _Light mode dashboard view_
 
 ![Light Mode Dashboard](./docs/images/light-mode-dashboard.png)
 
-### *Dark mode settings view*
+### _Dark mode settings view_
 
 ![Dark Mode Settings](./docs/images/dark-mode-settings.png)
 
-### *Language support view*
+### _Language support view_
 
 ![Language Support](./docs/images/language-support.png)
 

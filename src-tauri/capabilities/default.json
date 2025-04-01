@@ -21,6 +21,7 @@
     "core:tray:default",
     "shell:default",
     "shell:allow-open",
-    "store:default"
+    "store:default",
+    "log:default"
   ]
 }

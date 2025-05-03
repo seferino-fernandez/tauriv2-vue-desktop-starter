@@ -12,7 +12,8 @@
       "label": "Tema",
       "description": "Elige el tema para la aplicación.",
       "light": "Claro",
-      "dark": "Oscuro"
+      "dark": "Oscuro",
+      "system": "Sistema"
     }
   }
 }

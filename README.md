@@ -3,16 +3,17 @@
 A desktop application starter using the libraries and technologies:
 
 - Rust
+
   - [Tauri v2](https://beta.tauri.app/start/) as the desktop application framework.
   - [Tauri Store Plugin](https://v2.tauri.app/plugin/store/) for persistence.
   - [Tauri Log Plugin](https://v2.tauri.app/plugin/logging/) for logging.
   - [CrabNebula DevTools](https://v2.tauri.app/develop/debug/crabnebula-devtools/) for development.
 
 - Vue.js 3
-  - [Shadcn Vue + Tailwind CSS](https://www.shadcn-vue.com/) for components.
+  - [Shadcn Vue + Tailwind CSS v4](https://www.shadcn-vue.com/) for components.
   - [Vue Router](https://router.vuejs.org/) for application routing.
   - [Vue I18n](https://vue-i18n.intlify.dev/) for internationalization.
-  - [Pinia](https://vue-i18n.intlify.dev/) for state management.
+  - [Pinia](https://pinia.vuejs.org/introduction.html) for state management.
 
 ## Preview
 

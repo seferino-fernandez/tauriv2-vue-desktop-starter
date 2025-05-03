@@ -5,7 +5,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import i18n from './i18n'
 import router from './router'
-import '@/assets/css/base.css'
+import './assets/css/base.css'
 
 const pinia = createPinia()
 const app = createApp(App)
@@ -22,14 +22,12 @@ async function initAppSettings() {
   const settingsStore = useSettingsStore()
   const mode = useColorMode()
   // Sets the theme based on the user's settings
-  const theme = await settingsStore.getSetting<string>('theme')
-  if (theme) {
-    mode.value = theme as 'light' | 'dark'
+  const theme = await settingsStore.getSetting<string>('theme') as 'light' | 'dark' | 'auto'
+  if (!theme) {
+    settingsStore.setSetting('theme', mode.value)
   }
   else {
-    // If the user hasn't set a theme, default to light
-    settingsStore.setSetting('theme', 'light')
-    mode.value = 'light'
+    mode.value = theme
   }
 
   // Set the language based on the user's settings

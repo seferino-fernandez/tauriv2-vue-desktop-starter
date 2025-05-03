@@ -2,6 +2,12 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "tsconfig.json": "tsconfig.*.json, env.d.ts",
+    "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
+    "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .oxlint*, oxlint*, .prettier*, prettier*, .editorconfig"
+  },
   // Enable the ESlint flat config support
   "eslint.useFlatConfig": true,
 
@@ -42,7 +48,7 @@
     "jsonc",
     "yaml",
     "toml",
-    "astro",
+    "astro"
   ],
   "i18n-ally.localesPaths": [
     "src/i18n",

@@ -12,7 +12,8 @@
       "label": "主题",
       "description": "选择应用程序的主题。",
       "light": "浅色",
-      "dark": "深色"
+      "dark": "深色",
+      "system": "系统"
     }
   }
 }

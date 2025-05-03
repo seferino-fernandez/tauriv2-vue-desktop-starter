@@ -5,12 +5,12 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 </script>
 
 <template>
-  <div class="w-full h-full">
+  <div class="size-full">
     <AppTopbar />
     <TooltipProvider>
       <div class="flex">
         <AppSidebar />
-        <div class="grow h-full w-full mt-8 ml-16">
+        <div class="grow size-full mt-8 ml-16">
           <router-view />
         </div>
       </div>

@@ -12,7 +12,8 @@
       "label": "Theme",
       "description": "Choose the theme for the app.",
       "light": "Light",
-      "dark": "Dark"
+      "dark": "Dark",
+      "system": "System"
     }
   }
 }

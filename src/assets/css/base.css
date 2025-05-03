@@ -1,2 +1,2 @@
-@import url('tailwind.css');
-@import url('main.css');
+@import './tailwind.css';
+@import './main.css';

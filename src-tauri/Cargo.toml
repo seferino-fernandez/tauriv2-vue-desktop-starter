@@ -1,6 +1,6 @@
 [package]
 name = "tauriv2-vue-desktop-starter"
-version = "0.8.0"
+version = "0.9.0"
 description = "A Tauri v2 Vue Desktop Starter"
 authors = [ "you" ]
 edition = "2021"
@@ -22,10 +22,11 @@ crate-type = [
 tauri-build = { version = "2.2.0", features = [] }
 
 [dependencies]
-tauri = { version = "2.5.1", features = [ "macos-private-api" ] }
+tauri = { version = "2.5.1", features = [] }
 tauri-plugin-shell = "2.2.1"
 tauri-plugin-window-state = "2.2.2"
 tauri-plugin-store = "2.2.0"
+tauri-plugin-decorum = "1.1.1"
 tauri-plugin-devtools = "2.0.0"
 tauri-plugin-log = "2.4.0"
 

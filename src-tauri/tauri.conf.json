@@ -16,10 +16,10 @@
         "fullscreen": false,
         "resizable": true,
         "title": "tauriv2-vue-desktop-starter",
-        "center": true,
+        "label": "main",
         "width": 1000,
         "height": 800,
-        "decorations": true,
+        "decorations": false,
         "titleBarStyle": "Overlay",
         "hiddenTitle": true
       }

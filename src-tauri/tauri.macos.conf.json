@@ -8,7 +8,6 @@
         "fullscreen": false,
         "resizable": true,
         "title": "tauriv2-vue-desktop-starter",
-        "center": true,
         "width": 1000,
         "height": 800,
         "decorations": true,

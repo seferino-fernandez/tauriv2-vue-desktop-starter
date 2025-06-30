@@ -2,5 +2,5 @@
 </script>
 
 <template>
-  <div class="flex h-8" />
+  <div class="flex h-10 bg-sidebar" />
 </template>

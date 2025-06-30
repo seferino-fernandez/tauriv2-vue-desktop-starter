@@ -16,8 +16,8 @@ const sidebarRoutes = [
 </script>
 
 <template>
-  <aside class="flex-none inset-y fixed left-0 z-20 flex h-full flex-col border-r">
-    <nav class="grid gap-1 p-2 pb-10">
+  <aside class="flex flex-col h-dvh pb-12 pt-2 px-2 justify-between bg-sidebar">
+    <nav class="grid gap-1">
       <Tooltip v-for="sidebarRoute in sidebarRoutes" :key="sidebarRoute.name">
         <TooltipTrigger as-child>
           <RouterLink :to="sidebarRoute.path">
@@ -37,7 +37,7 @@ const sidebarRoutes = [
         </TooltipContent>
       </Tooltip>
     </nav>
-    <div class="mt-auto grid gap-1 p-2 pb-10">
+    <div class="">
       <Tooltip>
         <TooltipTrigger as-child>
           <RouterLink to="/settings">

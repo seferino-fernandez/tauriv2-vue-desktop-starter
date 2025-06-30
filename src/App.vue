@@ -2,18 +2,19 @@
 import AppSidebar from '@/components/AppSidebar.vue'
 import AppTopbar from '@/components/AppTopbar.vue'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { ConfigProvider } from 'reka-ui'
 </script>
 
 <template>
-  <div class="size-full">
+  <ConfigProvider>
     <AppTopbar />
     <TooltipProvider>
-      <div class="flex">
+      <main class="flex">
         <AppSidebar />
-        <div class="grow size-full mt-8 ml-16">
+        <section class="bg-background grow p-4">
           <router-view />
-        </div>
-      </div>
+        </section>
+      </main>
     </TooltipProvider>
-  </div>
+  </ConfigProvider>
 </template>

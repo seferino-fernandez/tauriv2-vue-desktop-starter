@@ -41,10 +41,6 @@ pub fn run() {
 
                 // Make window transparent without privateApi
                 main_window.make_transparent().unwrap();
-
-                // Set window level
-                // NSWindowLevel: https://developer.apple.com/documentation/appkit/nswindowlevel
-                main_window.set_window_level(25).unwrap();
             }
 
             Ok(())

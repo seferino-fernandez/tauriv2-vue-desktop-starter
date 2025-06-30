@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.10.0",
   "private": true,
+  "packageManager": "pnpm@10.12.4",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",

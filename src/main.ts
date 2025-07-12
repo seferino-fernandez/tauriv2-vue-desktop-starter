@@ -1,7 +1,7 @@
-import { useSettingsStore } from '@/stores/settings'
 import { useColorMode } from '@vueuse/core'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
+import { useSettingsStore } from '@/stores/settings'
 import App from './App.vue'
 import i18n from './i18n'
 import router from './router'

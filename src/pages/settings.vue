@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { Language } from '@/lib/config'
+import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import ThemeSwitch from '@/components/ThemeSwitch.vue'
+
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -10,13 +13,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-
 import { Separator } from '@/components/ui/separator'
+
 import { getLanguageLabel, supportedLanguages } from '@/lib/config'
 import { useSettingsStore } from '@/stores/settings'
-
-import { ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
 
 const { t, locale } = useI18n()
 const availableLanguages = ref<Language[]>(supportedLanguages())

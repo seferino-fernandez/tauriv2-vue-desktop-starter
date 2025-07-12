@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { useSettingsStore } from '@/stores/settings'
 import { Icon } from '@iconify/vue'
 import { useColorMode } from '@vueuse/core'
-
 import { useI18n } from 'vue-i18n'
+import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+
+import { useSettingsStore } from '@/stores/settings'
 
 const { t } = useI18n()
 const settingsStore = useSettingsStore()

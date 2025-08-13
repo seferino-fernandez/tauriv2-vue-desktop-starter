@@ -1,6 +1,6 @@
 [package]
 name = "tauriv2-vue-desktop-starter"
-version = "0.11.0"
+version = "0.12.0"
 description = "A Tauri v2 Vue Desktop Starter"
 authors = [ "you" ]
 edition = "2021"
@@ -19,21 +19,21 @@ crate-type = [
 ]
 
 [build-dependencies]
-tauri-build = { version = "2.3.0", features = [] }
+tauri-build = { version = "2.3.1", features = [] }
 
 [dependencies]
-tauri = { version = "2.6.2", features = [] }
+tauri = { version = "2.7.0", features = [] }
 tauri-plugin-shell = "2.3.0"
-tauri-plugin-window-state = "2.3.0"
+tauri-plugin-window-state = "2.4.0"
 tauri-plugin-store = "2.3.0"
 tauri-plugin-decorum = "1.1.1"
-tauri-plugin-devtools = "2.0.0"
+tauri-plugin-devtools = "2.0.1"
 tauri-plugin-log = "2.6.0"
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
-tauri-plugin-single-instance = "2"
+tauri-plugin-single-instance = "2.3.2"
 
 
-serde_json = "1.0.140"
+serde_json = "1.0.142"
 log = "0.4.27"
 
 [profile.dev]

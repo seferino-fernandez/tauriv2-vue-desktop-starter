@@ -75,7 +75,7 @@ jobs:
 
       # If tagName and releaseId are omitted tauri-action will only build the app and won't try to upload any assets.
       - name: Build Artifacts
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           args: ${{ matrix.args }}

@@ -10,7 +10,7 @@ export default {
   plugins: [vue(), tailwindcss()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(import.meta.dirname, './src'),
     },
   },
   envPrefix: ['VITE_', 'TAURI_ENV_*'],

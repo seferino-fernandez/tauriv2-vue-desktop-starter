@@ -68,3 +68,19 @@ the rubber-band "bounce." Native apps keep their frame fixed and scroll only the
 content regions inside it. `overflow: hidden` on `body` removes the window-level
 scroll (and its bounce). Make individual regions scrollable with their own
 `overflow: auto`/`scroll` and a constrained height as needed.
+
+## Cross-webview gotchas
+
+The UI runs in a different engine on each OS: WebView2 (Chromium) on Windows,
+WKWebView on macOS and WebKitGTK on Linux. A few CSS features behave differently
+enough to bite:
+
+- **`zoom` renders differently in WebKitGTK and WebView2.** To scale part of the
+  UI, use `transform: scale()` (with `transform-origin`) so layout and
+  rendering stay consistent across engines.
+- **`filter: blur()` on a `<video>` fails silently in WebKitGTK.** The video
+  just doesn't render. Bake the blur into the video file (e.g. with ffmpeg) or
+  blur a static poster image instead.
+
+Check the Linux build when you use filters, blend modes or video. See
+[Linux](./linux.md) for platform-level notes.

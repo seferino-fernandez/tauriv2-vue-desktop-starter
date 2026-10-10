@@ -10,9 +10,7 @@
         "center": true,
         "width": 1000,
         "height": 800,
-        "decorations": false,
-        "titleBarStyle": "Overlay",
-        "hiddenTitle": true
+        "decorations": true
       }
     ]
   }

@@ -6,6 +6,7 @@ A desktop application starter using the libraries and technologies:
   - [Tauri v2](https://beta.tauri.app/start/) as the desktop application framework.
   - [Tauri Store Plugin](https://v2.tauri.app/plugin/store/) for persistence.
   - [Tauri Log Plugin](https://v2.tauri.app/plugin/logging/) for logging.
+  - [Tauri OS Plugin](https://v2.tauri.app/plugin/os-info/) for platform detection.
   - [CrabNebula DevTools](https://v2.tauri.app/develop/debug/crabnebula-devtools/) for development.
 
 - Vue.js 3
@@ -77,6 +78,14 @@ Tauri Store Plugin stores `settings.json` at:
 
 **macOS**: `~/Library/Application Support/com.github.tauriv2-vue-desktop-starter`
 
+**Linux**: `~/.local/share/com.github.tauriv2-vue-desktop-starter`
+
+#### Guides
+
+- [Native-feel CSS](./docs/native-feel-css.md): the global CSS that makes the WebView feel native, plus cross-webview gotchas
+- [Linux](./docs/linux.md): native decorations, `.deb`/`.rpm` vs AppImage, and fixes for blank windows on some GPUs
+- [Rust commands](./docs/rust-commands.md): where commands run and how to avoid freezing or crashing the app
+
 #### App Icon
 
 Tauri CLI provides an [icon command](https://v2.tauri.app/reference/cli/#icon) `pnpm tauri icon` which takes an image path and generates icon files for your application.
@@ -107,3 +116,5 @@ This repo is currently setup to create a release on Github when you merge to the
 
 If you are using the [signing identity](./src-tauri/tauri.macos.conf.json#L20) `-` for **macOS**, when you first download and run the application, you will have to go to `System Settings` > `Privacy & Security` and allow your app to run.
 See [tauri-apps/tauri-action/issues/824](https://github.com/tauri-apps/tauri-action/issues/824) & [support.apple.com/open-a-mac-app-from-an-unidentified-developer](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac).
+
+On **Linux**, recommend the `.deb` or `.rpm` to users and offer the AppImage as a portable fallback. See [docs/linux.md](./docs/linux.md#packages-prefer-deb--rpm).

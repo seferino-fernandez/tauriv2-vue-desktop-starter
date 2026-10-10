@@ -7,14 +7,16 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 
 <template>
   <ConfigProvider>
-    <AppTopbar />
-    <TooltipProvider>
-      <main class="flex">
-        <AppSidebar />
-        <section class="bg-background grow p-4">
-          <router-view />
-        </section>
-      </main>
-    </TooltipProvider>
+    <div class="flex h-dvh flex-col">
+      <AppTopbar />
+      <TooltipProvider>
+        <main class="flex min-h-0 grow">
+          <AppSidebar />
+          <section class="bg-background grow p-4">
+            <router-view />
+          </section>
+        </main>
+      </TooltipProvider>
+    </div>
   </ConfigProvider>
 </template>

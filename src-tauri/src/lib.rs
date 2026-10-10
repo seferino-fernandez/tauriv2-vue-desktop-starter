@@ -1,7 +1,9 @@
 #[cfg(not(debug_assertions))]
 use plugins::logging;
 
+#[cfg(not(target_os = "linux"))]
 use tauri::Manager;
+#[cfg(not(target_os = "linux"))]
 use tauri_plugin_decorum::WebviewWindowExt;
 
 pub mod plugins;
@@ -36,23 +38,28 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .invoke_handler(tauri::generate_handler![])
-        .setup(|app| {
+        .setup(|_app| {
             // Create a custom titlebar for main window
             // On Windows this hides decoration and creates custom window controls
             // On macOS it needs hiddenTitle: true and titleBarStyle: overlay
-            let main_window = app.get_webview_window("main").unwrap();
-            main_window.create_overlay_titlebar().unwrap();
-
-            // Some macOS-specific helpers
-            #[cfg(target_os = "macos")]
+            // Linux keeps native decorations instead (see tauri.linux.conf.json and docs/linux.md)
+            #[cfg(not(target_os = "linux"))]
             {
-                // Set a custom inset to the traffic lights
-                main_window.set_traffic_lights_inset(12.0, 16.0).unwrap();
+                let main_window = _app.get_webview_window("main").unwrap();
+                main_window.create_overlay_titlebar().unwrap();
 
-                // Make window transparent without privateApi
-                main_window.make_transparent().unwrap();
+                // Some macOS-specific helpers
+                #[cfg(target_os = "macos")]
+                {
+                    // Set a custom inset to the traffic lights
+                    main_window.set_traffic_lights_inset(12.0, 16.0).unwrap();
+
+                    // Make window transparent without privateApi
+                    main_window.make_transparent().unwrap();
+                }
             }
 
             Ok(())

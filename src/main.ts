@@ -1,11 +1,15 @@
 import { useColorMode } from '@vueuse/core'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
+import { applyPlatformAttribute } from '@/lib/platform'
 import { useSettingsStore } from '@/stores/settings'
 import App from './App.vue'
 import i18n from './i18n'
 import router from './router'
 import './assets/css/base.css'
+
+// Expose the OS to CSS before the first paint (e.g. the topbar is hidden on Linux)
+applyPlatformAttribute()
 
 const pinia = createPinia()
 const app = createApp(App)

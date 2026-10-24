@@ -9,6 +9,10 @@ trustPolicyExclude:
 
 shellEmulator: true
 
+overrides:
+  katex@>=0.11.0 <0.18.2: ^0.18.2
+  tinypool@<2.1.2: ^2.1.2
+
 allowBuilds:
   vue-demi: true
 

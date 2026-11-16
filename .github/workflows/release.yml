@@ -32,7 +32,7 @@ jobs:
       - name: Install pnpm, Node.js and Frontend Dependencies
         uses: pnpm/setup@v3
         with:
-          runtime: node@26
+          runtime: node@26.13.1
           cache: true
           require-lockfile: true
 

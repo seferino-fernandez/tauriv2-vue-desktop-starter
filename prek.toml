@@ -52,7 +52,7 @@ priority = 0
 # Priority 10 — Secret scanning (runs in parallel with linting)
 [[repos]]
 repo = "https://github.com/betterleaks/betterleaks"
-rev = "v1.8.1"
+rev = "v1.10.1"
 hooks = [ { id = "betterleaks", priority = 10 } ]
 
 # Priority 10 — yamllint (deeper YAML validation)

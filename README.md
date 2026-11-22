@@ -84,6 +84,7 @@ Tauri Store Plugin stores `settings.json` at:
 
 - [Native-feel CSS](./docs/native-feel-css.md): the global CSS that makes the WebView feel native, plus cross-webview gotchas
 - [Linux](./docs/linux.md): native decorations, `.deb`/`.rpm` vs AppImage, and fixes for blank windows on some GPUs
+- [Offline by default](./docs/offline.md): bundled icons, the system font, and the Content Security Policy
 - [Rust commands](./docs/rust-commands.md): where commands run and how to avoid freezing or crashing the app
 
 #### App Icon

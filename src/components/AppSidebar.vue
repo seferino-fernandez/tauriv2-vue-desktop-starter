@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
 import { useI18n } from 'vue-i18n'
+import IconGear from '~icons/ph/gear-duotone'
+import IconHouse from '~icons/ph/house-duotone'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
@@ -9,7 +10,7 @@ const { t } = useI18n()
 const sidebarRoutes = [
   {
     name: 'home.label',
-    icon: 'ph:house-duotone',
+    icon: IconHouse,
     path: '/home',
   },
 ]
@@ -28,7 +29,7 @@ const sidebarRoutes = [
               class="rounded-lg"
               :aria-label="t(sidebarRoute.name)"
             >
-              <Icon :icon="sidebarRoute.icon" class="size-5" />
+              <component :is="sidebarRoute.icon" class="size-5" />
             </Button>
           </RouterLink>
         </TooltipTrigger>
@@ -48,7 +49,7 @@ const sidebarRoutes = [
               class="mt-auto rounded-lg"
               :aria-label="t('settings.label')"
             >
-              <Icon icon="ph:gear-duotone" class="size-5" />
+              <IconGear class="size-5" />
             </Button>
           </RouterLink>
         </TooltipTrigger>

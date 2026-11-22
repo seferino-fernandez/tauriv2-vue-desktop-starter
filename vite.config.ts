@@ -1,13 +1,15 @@
 import path from 'node:path'
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
+import Icons from 'unplugin-icons/vite'
 import type { UserConfig } from 'vite'
 
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vitejs.dev/config/
 export default {
-  plugins: [vue(), tailwindcss()],
+  // Icons are compiled into the bundle at build time, so the app never fetches them at runtime
+  plugins: [vue(), tailwindcss(), Icons({ compiler: 'vue3' })],
   resolve: {
     alias: {
       '@': path.resolve(import.meta.dirname, './src'),

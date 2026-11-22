@@ -1,6 +1,22 @@
 {
   "home": {
-    "label": "首页"
+    "label": "首页",
+    "panel": {
+      "groups": {
+        "projects": "项目",
+        "recent": "最近",
+        "archive": "归档"
+      },
+      "items": {
+        "alpha": "阿尔法",
+        "beta": "贝塔",
+        "gamma": "伽马",
+        "notes": "笔记",
+        "drafts": "草稿",
+        "oldNotes": "旧笔记",
+        "retired": "已停用"
+      }
+    }
   },
   "languages": {
     "label": "语言"
@@ -8,6 +24,9 @@
   "settings": {
     "label": "设置",
     "description": "在此管理应用程序的设置和偏好。",
+    "appearance": {
+      "label": "外观"
+    },
     "theme": {
       "label": "主题",
       "description": "选择应用程序的主题。",
@@ -15,5 +34,8 @@
       "dark": "深色",
       "system": "系统"
     }
+  },
+  "shell": {
+    "resizePanel": "调整面板大小"
   }
 }

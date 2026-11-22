@@ -19,6 +19,7 @@
         "label": "main",
         "width": 1000,
         "height": 800,
+        "minWidth": 800,
         "center": true,
         "focus": true,
         "decorations": false,

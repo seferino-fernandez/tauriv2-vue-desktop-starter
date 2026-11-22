@@ -15,16 +15,18 @@ Linux it keeps the system's native decorations instead:
 - [`lib.rs`](../src-tauri/src/lib.rs) only calls `create_overlay_titlebar()` on
   non-Linux platforms.
 - [`main.ts`](../src/main.ts) sets `data-platform` on `<html>` (via
-  [`src/lib/platform.ts`](../src/lib/platform.ts)), and
-  [`AppTopbar.vue`](../src/components/AppTopbar.vue) hides itself with
-  `in-data-[platform=linux]:hidden`, so the system titlebar isn't stacked on
-  top of an empty app bar.
+  [`src/lib/platform.ts`](../src/lib/platform.ts)), so per-OS chrome is CSS-only:
+  [`TitleBar.vue`](../src/components/shell/TitleBar.vue) leaves room for the
+  traffic lights only with `in-data-[platform=macos]:block`, so on Linux the
+  titlebar is just a toolbar under the system titlebar, with the panel toggle
+  and the page title. Its `data-tauri-decorum-tb` attribute does nothing on
+  Linux, since decorum's scripts only run from `create_overlay_titlebar()`.
 
 Why: Linux desktops disagree about window chrome. GNOME and KDE draw titlebars,
 shadows and resize edges, while tiling compositors such as Hyprland or Sway draw
 none at all. Native decorations let each compositor do what its users expect.
 That includes resizing from the window edges, which a custom undecorated window
-has to emulate. decorum's Linux controls also don't match this app's topbar or
+has to emulate. decorum's Linux controls also don't match this app's header or
 light theme.
 
 To use custom chrome on Linux anyway, set `"decorations": false` in

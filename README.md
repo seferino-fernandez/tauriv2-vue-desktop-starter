@@ -82,6 +82,7 @@ Tauri Store Plugin stores `settings.json` at:
 
 #### Guides
 
+- [Layout](./docs/layout.md): the titlebar, activity bar and nested panel, and how to add a page with or without a panel
 - [Native-feel CSS](./docs/native-feel-css.md): the global CSS that makes the WebView feel native, plus cross-webview gotchas
 - [Linux](./docs/linux.md): native decorations, `.deb`/`.rpm` vs AppImage, and fixes for blank windows on some GPUs
 - [Offline by default](./docs/offline.md): bundled icons, the system font, and the Content Security Policy

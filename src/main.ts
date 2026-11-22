@@ -8,7 +8,7 @@ import i18n from './i18n'
 import router from './router'
 import './assets/css/base.css'
 
-// Expose the OS to CSS before the first paint (e.g. the topbar is hidden on Linux)
+// Expose the OS to CSS before the first paint (e.g. the titlebar's traffic-light gap is macOS-only)
 applyPlatformAttribute()
 
 const pinia = createPinia()
@@ -20,7 +20,10 @@ app.use(i18n)
 
 initAppSettings()
 
+// Mount right away: decorum adopts our titlebar only if it exists when the DOM is ready.
+// The shell stays hidden until the saved panel layout arrives (see AppShell.vue).
 app.mount('#app')
+useSettingsStore().loadSidebar()
 
 async function initAppSettings() {
   const settingsStore = useSettingsStore()

@@ -54,7 +54,9 @@ pub fn run() {
                 // Some macOS-specific helpers
                 #[cfg(target_os = "macos")]
                 {
-                    // Set a custom inset to the traffic lights
+                    // Set a custom inset to the traffic lights. Only (12, 16) holds: decorum moves
+                    // them back to its built-in (12, 16) whenever the window resizes. The titlebar
+                    // height in TitleBar.vue is matched to it, so leave these values alone.
                     main_window.set_traffic_lights_inset(12.0, 16.0).unwrap();
 
                     // Make window transparent without privateApi

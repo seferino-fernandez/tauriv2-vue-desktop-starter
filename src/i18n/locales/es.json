@@ -1,6 +1,22 @@
 {
   "home": {
-    "label": "Inicio"
+    "label": "Inicio",
+    "panel": {
+      "groups": {
+        "projects": "Proyectos",
+        "recent": "Recientes",
+        "archive": "Archivo"
+      },
+      "items": {
+        "alpha": "Alfa",
+        "beta": "Beta",
+        "gamma": "Gamma",
+        "notes": "Notas",
+        "drafts": "Borradores",
+        "oldNotes": "Notas antiguas",
+        "retired": "Retirados"
+      }
+    }
   },
   "languages": {
     "label": "Idiomas"
@@ -8,6 +24,9 @@
   "settings": {
     "label": "Configuraciones",
     "description": "Administra las configuraciones y preferencias de la aplicación aquí.",
+    "appearance": {
+      "label": "Apariencia"
+    },
     "theme": {
       "label": "Tema",
       "description": "Elige el tema para la aplicación.",
@@ -15,5 +34,8 @@
       "dark": "Oscuro",
       "system": "Sistema"
     }
+  },
+  "shell": {
+    "resizePanel": "Cambiar el tamaño del panel"
   }
 }

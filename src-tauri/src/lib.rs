@@ -73,6 +73,17 @@ pub fn run() {
     {
         builder = builder.plugin(logging::tauri_plugin_logging());
     }
+
+    // Linux keeps native decorations instead (see tauri.linux.conf.json and docs/linux.md),
+    // so there is nothing to set up there
+    #[cfg(not(target_os = "linux"))]
+    {
+        builder = builder.setup(|app| {
+            decorate_main_window(app)?;
+            Ok(())
+        });
+    }
+
     builder
         .plugin(tauri_plugin_decorum::init())
         .plugin(tauri_plugin_store::Builder::new().build())
@@ -82,31 +93,31 @@ pub fn run() {
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .invoke_handler(tauri::generate_handler![])
-        .setup(|_app| {
-            // Create a custom titlebar for main window
-            // On Windows this hides decoration and creates custom window controls
-            // On macOS it needs hiddenTitle: true and titleBarStyle: overlay
-            // Linux keeps native decorations instead (see tauri.linux.conf.json and docs/linux.md)
-            #[cfg(not(target_os = "linux"))]
-            {
-                let main_window = _app.get_webview_window("main").unwrap();
-                main_window.create_overlay_titlebar().unwrap();
-
-                // Some macOS-specific helpers
-                #[cfg(target_os = "macos")]
-                {
-                    // Set a custom inset to the traffic lights. Only (12, 16) holds: decorum moves
-                    // them back to its built-in (12, 16) whenever the window resizes. The titlebar
-                    // height in TitleBar.vue is matched to it, so leave these values alone.
-                    main_window.set_traffic_lights_inset(12.0, 16.0).unwrap();
-
-                    // Make window transparent without privateApi
-                    main_window.make_transparent().unwrap();
-                }
-            }
-
-            Ok(())
-        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+/// Replaces the main window's titlebar with the app's own.
+///
+/// On Windows this hides the native decorations and decorum adds its own window controls. On
+/// macOS it needs `hiddenTitle: true` and `titleBarStyle: "Overlay"` in the window config.
+#[cfg(not(target_os = "linux"))]
+fn decorate_main_window(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
+    let main_window = app
+        .get_webview_window("main")
+        .ok_or("the main window is missing")?;
+    main_window.create_overlay_titlebar()?;
+
+    #[cfg(target_os = "macos")]
+    {
+        // Set a custom inset to the traffic lights. Only (12, 16) holds: decorum moves them back
+        // to its built-in (12, 16) whenever the window resizes. The titlebar height in
+        // TitleBar.vue is matched to it, so leave these values alone.
+        main_window.set_traffic_lights_inset(12.0, 16.0)?;
+
+        // Make window transparent without privateApi
+        main_window.make_transparent()?;
+    }
+
+    Ok(())
 }

@@ -1,4 +1,3 @@
-import { useColorMode } from '@vueuse/core'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import { applyPlatformAttribute } from '@/lib/platform'
@@ -19,6 +18,8 @@ app.use(router)
 app.use(i18n)
 
 initAppSettings()
+// Nothing else holds the theme, so ask for it before anything else
+useSettingsStore().loadTheme()
 
 // Mount right away: decorum adopts our titlebar only if it exists when the DOM is ready.
 // The shell stays hidden until the saved panel layout arrives (see AppShell.vue).
@@ -28,16 +29,6 @@ useSettingsStore().loadKeybindings()
 
 async function initAppSettings() {
   const settingsStore = useSettingsStore()
-  const mode = useColorMode()
-  // Sets the theme based on the user's settings
-  const theme = await settingsStore.getSetting<string>('theme') as 'light' | 'dark' | 'auto'
-  if (!theme) {
-    settingsStore.setSetting('theme', mode.value)
-  }
-  else {
-    mode.value = theme
-  }
-
   // Set the language based on the user's settings
   const language = await settingsStore.getSetting<string>('language')
   if (language)

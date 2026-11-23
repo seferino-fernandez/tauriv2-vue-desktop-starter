@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useColorMode } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 import IconMoonStars from '~icons/ph/moon-stars-duotone'
 import IconSun from '~icons/ph/sun-duotone'
@@ -10,12 +9,6 @@ import { useSettingsStore } from '@/stores/settings'
 
 const { t } = useI18n()
 const settingsStore = useSettingsStore()
-const mode = useColorMode()
-
-function handleThemeChange(theme: 'light' | 'dark' | 'auto') {
-  mode.value = theme
-  settingsStore.setSetting<string>('theme', theme)
-}
 </script>
 
 <template>
@@ -28,13 +21,13 @@ function handleThemeChange(theme: 'light' | 'dark' | 'auto') {
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
-      <DropdownMenuItem @click="handleThemeChange('light')">
+      <DropdownMenuItem @click="settingsStore.setTheme('light')">
         {{ t('settings.theme.light') }}
       </DropdownMenuItem>
-      <DropdownMenuItem @click="handleThemeChange('dark')">
+      <DropdownMenuItem @click="settingsStore.setTheme('dark')">
         {{ t('settings.theme.dark') }}
       </DropdownMenuItem>
-      <DropdownMenuItem @click="handleThemeChange('auto')">
+      <DropdownMenuItem @click="settingsStore.setTheme('auto')">
         {{ t('settings.theme.system') }}
       </DropdownMenuItem>
     </DropdownMenuContent>

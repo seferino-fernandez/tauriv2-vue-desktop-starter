@@ -1,11 +1,17 @@
 import type { CommandId, KeybindingOverrides, KeybindingProblem, Keybindings } from '@/lib/keybindings'
 import { LazyStore } from '@tauri-apps/plugin-store'
+import { useColorMode } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { commands, defaultKeybindings, keybindingProblem, normalizeKeybinding, sanitizeKeybindings } from '@/lib/keybindings'
 import { clampPanelWidth, PANEL_DEFAULT_WIDTH } from '@/lib/layout'
 
 const store: LazyStore = new LazyStore('settings.json')
+
+/** `auto` follows the system's light or dark setting */
+export type Theme = 'light' | 'dark' | 'auto'
+const themes: readonly unknown[] = ['light', 'dark', 'auto'] satisfies Theme[]
+
 export const useSettingsStore = defineStore('settings', () => {
   async function getSetting<T>(key: string): Promise<T | undefined> {
     const value = await store.get<T>(key)
@@ -50,6 +56,25 @@ export const useSettingsStore = defineStore('settings', () => {
   async function setSidebarWidth(width: number) {
     sidebarWidth.value = clampPanelWidth(width)
     await setSetting('sidebarWidth', sidebarWidth.value)
+  }
+
+  // Applies the theme to <html>. storageKey null: settings.json is its only store, not localStorage
+  const colorMode = useColorMode({ storageKey: null })
+
+  async function loadTheme() {
+    try {
+      const saved = await getSetting<unknown>('theme')
+      if (themes.includes(saved))
+        colorMode.value = saved as Theme
+    }
+    catch {
+      // No store outside the Tauri webview: the theme follows the system
+    }
+  }
+
+  async function setTheme(theme: Theme) {
+    colorMode.value = theme
+    await setSetting('theme', theme)
   }
 
   /** Shortcuts the user changed, saved as `keybindings`; the rest use their defaults */
@@ -101,6 +126,8 @@ export const useSettingsStore = defineStore('settings', () => {
     loadSidebar,
     setSidebarOpen,
     setSidebarWidth,
+    loadTheme,
+    setTheme,
     keybindingOverrides,
     keybindings,
     recordingKeybinding,

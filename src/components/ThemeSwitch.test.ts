@@ -17,14 +17,6 @@ vi.mock('@tauri-apps/plugin-store', () => {
   return { LazyStore: MockLazyStore }
 })
 
-vi.mock('@vueuse/core', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@vueuse/core')>()
-  return {
-    ...actual,
-    useColorMode: vi.fn(() => ({ value: 'auto' })),
-  }
-})
-
 const i18n = createI18n({
   locale: 'en',
   legacy: false,

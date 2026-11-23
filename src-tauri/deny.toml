@@ -1,0 +1,48 @@
+# cargo-deny policy: `cargo deny check`.
+# Docs: https://embarkstudios.github.io/cargo-deny/
+
+[graph]
+all-features = true
+# Only the platforms the app ships on. Without this, Android and iOS
+# dependencies are checked too.
+targets = [
+  "aarch64-apple-darwin",
+  "x86_64-apple-darwin",
+  "x86_64-pc-windows-msvc",
+  "aarch64-pc-windows-msvc",
+  "x86_64-unknown-linux-gnu",
+  "aarch64-unknown-linux-gnu",
+]
+
+# RustSec advisories. Vulnerable, unsound and yanked crates fail anywhere in
+# the tree. Unmaintained crates fail only as direct dependencies: a transitive
+# one is the upstream crate's to replace, and an ignore list would hide it
+# instead of scoping it.
+[advisories]
+unmaintained = "workspace"
+
+# Exactly the licenses the current dependency tree needs. A new dependency
+# under any other license fails until someone deliberately adds it here.
+[licenses]
+allow = [
+  "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
+  "BSD-3-Clause",
+  "MIT",
+  "MPL-2.0",
+  "Unicode-3.0",
+  "Zlib",
+]
+
+# Tauri and its plugins pin different versions of shared crates. Only they can
+# fix that, so duplicates aren't reported.
+[bans]
+multiple-versions = "allow"
+
+# Crates may only come from crates.io, except fix-path-env: it isn't published
+# there, and Tauri's docs install it from git (pinned to a rev in Cargo.toml).
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = ["https://github.com/tauri-apps/fix-path-env-rs"]

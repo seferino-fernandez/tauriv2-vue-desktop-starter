@@ -50,6 +50,10 @@ pub mod plugins;
 /// tauriv2_vue_desktop_starter_lib::run();
 /// ```
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
+#[expect(
+    clippy::expect_used,
+    reason = "the app has nothing to fall back to when Tauri cannot start"
+)]
 pub fn run() {
     #[cfg(any(target_os = "macos", target_os = "linux"))]
     {

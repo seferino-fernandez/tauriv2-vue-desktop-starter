@@ -86,8 +86,11 @@ test-vue:
 # Run Rust tests via cargo-nextest and doc tests
 test-rust:
     cd {{rust_dir}} && cargo nextest run --all-targets --all-features
-    cd {{rust_dir}} && cargo test --doc
+    cd {{rust_dir}} && cargo test --doc --all-features
 
+# Build the Rust API docs, failing on any rustdoc warning
+doc:
+    cd {{rust_dir}} && RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --all-features
 
 # Run TypeScript type checking
 typecheck:
@@ -102,7 +105,9 @@ verify:
     cd {{rust_dir}} && cargo check --locked --all-targets --all-features
     cd {{rust_dir}} && cargo clippy --all-targets --all-features -- -D warnings
     cd {{rust_dir}} && cargo nextest run --all-targets --all-features
-    cd {{rust_dir}} && cargo test --doc
+    cd {{rust_dir}} && cargo test --doc --all-features
+    cd {{rust_dir}} && RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --all-features
+    cd {{rust_dir}} && cargo deny check licenses bans sources
 
 # Scan dependencies for known vulnerabilities
 [parallel]
@@ -112,6 +117,6 @@ audit: audit-vue audit-rust
 audit-vue:
     pnpm audit
 
-# Scan Rust dependencies
+# Check Rust dependencies: advisories, licenses, bans and sources
 audit-rust:
-    cd {{rust_dir}} && cargo audit
+    cd {{rust_dir}} && cargo deny check

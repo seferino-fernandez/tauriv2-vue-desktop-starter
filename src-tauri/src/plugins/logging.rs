@@ -1,5 +1,21 @@
+//! Logging for release builds, written to files in the app's log directory.
+
 use tauri::plugin::TauriPlugin;
 
+/// Creates the logging plugin: `Info` and above, to rotating files in the app's log directory.
+///
+/// Debug builds of this function log to stdout instead. The rotated files are all kept.
+///
+/// # Examples
+///
+/// ```no_run
+/// use tauriv2_vue_desktop_starter_lib::plugins::logging::tauri_plugin_logging;
+///
+/// tauri::Builder::default()
+///     .plugin(tauri_plugin_logging())
+///     .run(tauri::generate_context!())?;
+/// # Ok::<(), tauri::Error>(())
+/// ```
 pub fn tauri_plugin_logging() -> TauriPlugin<tauri::Wry> {
     tauri_plugin_log::Builder::new()
         .clear_targets()
@@ -14,12 +30,18 @@ pub fn tauri_plugin_logging() -> TauriPlugin<tauri::Wry> {
         .build()
 }
 
-#[allow(dead_code)]
+#[cfg_attr(
+    all(not(debug_assertions), not(test)),
+    expect(dead_code, reason = "used only by debug builds and the tests")
+)]
 fn dev_logging_target() -> tauri_plugin_log::Target {
     tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::Stdout)
 }
 
-#[allow(dead_code)]
+#[cfg_attr(
+    all(debug_assertions, not(test)),
+    expect(dead_code, reason = "used only by release builds and the tests")
+)]
 fn prod_logging_target() -> tauri_plugin_log::Target {
     tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::LogDir {
         file_name: Some("logs".to_string()),

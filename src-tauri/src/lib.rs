@@ -1,3 +1,28 @@
+//! The Rust side of the Tauri v2 Vue desktop starter: it builds the app and opens its window.
+//!
+//! [`run`] is the only entry point, and the desktop binary's `main` calls it. It registers the
+//! plugins the Vue frontend relies on and then hands control to Tauri's event loop. The process
+//! exits when the app quits.
+//!
+//! # What `run` sets up
+//!
+//! - **One instance:** launching the app again while it is running does not open a second copy.
+//! - **Plugins:** store (settings), window state, shell, dialog, file system and OS info.
+//! - **Logging:** debug builds register `tauri-plugin-devtools` and `tauri-plugin-pilot`;
+//!   release builds write logs through [`plugins::logging`].
+//! - **Titlebar:** on Windows and macOS the main window draws its own titlebar
+//!   (`tauri-plugin-decorum`). Linux keeps the native window decorations.
+//! - **`PATH`:** on macOS and Linux, apps started from the Dock or a launcher get the login
+//!   shell's `PATH`, so spawned commands resolve as they do in a terminal.
+//!
+//! # Examples
+//!
+//! A binary's `main` starts the app with one call:
+//!
+//! ```no_run
+//! tauriv2_vue_desktop_starter_lib::run();
+//! ```
+
 #[cfg(not(debug_assertions))]
 use plugins::logging;
 
@@ -8,6 +33,22 @@ use tauri_plugin_decorum::WebviewWindowExt;
 
 pub mod plugins;
 
+/// Builds the app, opens the main window and runs Tauri's event loop.
+///
+/// Never returns: when the app quits, Tauri exits the process, so code after the call does not
+/// run. Call it once, from the binary's `main`.
+///
+/// # Panics
+///
+/// Panics if Tauri cannot build the app (a plugin fails to initialize or the main window cannot
+/// be created), or, on Windows and macOS, if the main window is missing or its custom titlebar
+/// cannot be applied.
+///
+/// # Examples
+///
+/// ```no_run
+/// tauriv2_vue_desktop_starter_lib::run();
+/// ```
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     #[cfg(any(target_os = "macos", target_os = "linux"))]

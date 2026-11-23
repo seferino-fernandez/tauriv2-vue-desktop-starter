@@ -121,17 +121,16 @@ describe('appShell', () => {
     expect(document.querySelector('[role="tooltip"]')?.textContent).toContain('Settings')
   })
 
-  it('highlights the current page and labels the titlebar and the panel with it', async () => {
+  it('highlights the current page and labels the panel with it', async () => {
     const { router } = await mountApp()
     expect(icon('Home').getAttribute('data-active')).toBe('true')
-    expect(document.querySelector('header h1')?.textContent?.trim()).toBe('Home')
+    expect(document.querySelector('header h1')).toBeNull()
     expect(panel()?.querySelector('[data-sidebar="header"]')?.textContent?.trim()).toBe('Home')
 
     await router.push('/settings')
     await flushPromises()
     expect(icon('Home').getAttribute('data-active')).toBe('false')
     expect(icon('Settings').getAttribute('data-active')).toBe('true')
-    expect(document.querySelector('header h1')?.textContent?.trim()).toBe('Settings')
     expect(panel()?.querySelector('[data-sidebar="header"]')?.textContent?.trim()).toBe('Settings')
   })
 

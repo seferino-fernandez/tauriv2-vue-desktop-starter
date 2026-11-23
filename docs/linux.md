@@ -18,8 +18,8 @@ Linux it keeps the system's native decorations instead:
   [`src/lib/platform.ts`](../src/lib/platform.ts)), so per-OS chrome is CSS-only:
   [`TitleBar.vue`](../src/components/shell/TitleBar.vue) leaves room for the
   traffic lights only with `in-data-[platform=macos]:block`, so on Linux the
-  titlebar is just a toolbar under the system titlebar, with the panel toggle
-  and the page title. Its `data-tauri-decorum-tb` attribute does nothing on
+  titlebar is just a toolbar under the system titlebar, with the panel toggle.
+  Its `data-tauri-decorum-tb` attribute does nothing on
   Linux, since decorum's scripts only run from `create_overlay_titlebar()`.
 
 Why: Linux desktops disagree about window chrome. GNOME and KDE draw titlebars,

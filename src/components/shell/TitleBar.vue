@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useKeybindingLabel } from '@/composables/useKeybindings'
@@ -12,12 +10,7 @@ defineProps<{
 }>()
 
 const { t } = useI18n()
-const route = useRoute()
 const toggleShortcut = useKeybindingLabel('togglePanel')
-
-const title = computed(() => route.meta.titleKey
-  ? t(route.meta.titleKey)
-  : '')
 </script>
 
 <template>
@@ -30,7 +23,7 @@ const title = computed(() => route.meta.titleKey
   <header
     data-tauri-decorum-tb
     data-tauri-drag-region
-    class="relative flex h-9.5 shrink-0 items-center gap-2 border-b bg-sidebar pl-2 text-sidebar-foreground"
+    class="flex h-9.5 shrink-0 items-center gap-2 border-b bg-sidebar pl-2 text-sidebar-foreground"
   >
     <!--
       macOS: room for the traffic lights. decorum pins them at (12, 16), which puts their centre
@@ -39,17 +32,13 @@ const title = computed(() => route.meta.titleKey
     <div data-tauri-drag-region class="hidden w-16 shrink-0 self-stretch in-data-[platform=macos]:block" />
     <Tooltip v-if="hasPanel">
       <TooltipTrigger as-child>
-        <SidebarTrigger class="relative z-10" />
+        <SidebarTrigger />
       </TooltipTrigger>
       <TooltipContent side="bottom" align="start">
         {{ t('commands.togglePanel') }}
         <kbd class="ml-1.5 font-sans opacity-70">{{ toggleShortcut }}</kbd>
       </TooltipContent>
     </Tooltip>
-    <!-- Centred on the window, not on the space left over; clicks pass through to the drag region -->
-    <h1 class="pointer-events-none absolute inset-x-0 truncate px-40 text-center text-sm text-muted-foreground">
-      {{ title }}
-    </h1>
     <div data-tauri-drag-region class="flex-1 self-stretch" />
   </header>
 </template>

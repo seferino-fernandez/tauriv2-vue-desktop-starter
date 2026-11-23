@@ -4,7 +4,7 @@ The window is laid out like VS Code or Obsidian:
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│ ● ● ●  [≡]               Page title                  │  titlebar
+│ ● ● ●  [≡]                                           │  titlebar
 ├────┬──────────────┬──────────────────────────────────┤
 │ ⌂  │ PAGE LABEL   │                                  │
 │    │              │                                  │
@@ -20,7 +20,7 @@ All of it lives in [`src/components/shell/`](../src/components/shell/):
 
 | Part | File | What it does |
 | --- | --- | --- |
-| Titlebar | `TitleBar.vue` | Full width. It holds the macOS traffic lights (or the Windows controls, on the right), the panel toggle, and the page title, centred. The rest of it drags the window. |
+| Titlebar | `TitleBar.vue` | Full width. It holds the macOS traffic lights (or the Windows controls, on the right), and the panel toggle. The rest of it drags the window. |
 | Activity bar | `ActivityBar.vue`, `ActivityBarItem.vue` | Icons only, with tooltips; it never expands. Lists the pages from route meta. |
 | Nested panel | `NestedPanel.vue` | The frame every page's panel shares: the location label, collapsing and resizing. The page supplies what goes inside. |
 | Shell | `AppShell.vue` | Puts the parts together and owns the open state. |
@@ -46,7 +46,7 @@ The ⌘/Ctrl+B listener in shadcn-vue's `SidebarProvider.vue` is deleted on purp
 
 Add a route in [`src/router/index.ts`](../src/router/index.ts). Its `meta` puts it in the activity bar:
 
-- `titleKey`: the i18n key of the page's name. It's the titlebar title, the tooltip and the panel's label.
+- `titleKey`: the i18n key of the page's name. It's the activity bar tooltip and the panel's label.
 - `icon`: an [unplugin-icons](./offline.md#icons) component.
 - `nav`: `'main'` (top of the activity bar) or `'footer'` (pinned to the bottom). Leave it out to keep the page out of the activity bar.
 

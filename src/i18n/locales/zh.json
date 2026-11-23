@@ -33,9 +33,22 @@
       "light": "浅色",
       "dark": "深色",
       "system": "系统"
+    },
+    "shortcuts": {
+      "label": "键盘快捷键",
+      "recording": "请按下快捷键…",
+      "reset": "恢复默认值",
+      "problems": {
+        "needsModifier": "快捷键须包含 {modifier}。",
+        "reserved": "{shortcut} 已被系统或应用菜单占用。",
+        "taken": "{shortcut} 已被“{command}”使用。"
+      }
     }
   },
   "shell": {
     "resizePanel": "调整面板大小"
+  },
+  "commands": {
+    "togglePanel": "显示或隐藏面板"
   }
 }

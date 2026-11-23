@@ -1,6 +1,8 @@
+import type { CommandId, KeybindingOverrides, KeybindingProblem, Keybindings } from '@/lib/keybindings'
 import { LazyStore } from '@tauri-apps/plugin-store'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { commands, defaultKeybindings, keybindingProblem, normalizeKeybinding, sanitizeKeybindings } from '@/lib/keybindings'
 import { clampPanelWidth, PANEL_DEFAULT_WIDTH } from '@/lib/layout'
 
 const store: LazyStore = new LazyStore('settings.json')
@@ -50,6 +52,46 @@ export const useSettingsStore = defineStore('settings', () => {
     await setSetting('sidebarWidth', sidebarWidth.value)
   }
 
+  /** Shortcuts the user changed, saved as `keybindings`; the rest use their defaults */
+  const keybindingOverrides = ref<KeybindingOverrides>({})
+  /** Every command's current shortcut */
+  const keybindings = computed<Keybindings>(() => ({
+    ...defaultKeybindings(),
+    ...keybindingOverrides.value,
+  }))
+  /** True while a settings field is recording a shortcut, so pressing one does not also run it */
+  const recordingKeybinding = ref(false)
+
+  async function loadKeybindings() {
+    try {
+      keybindingOverrides.value = sanitizeKeybindings(await getSetting<unknown>('keybindings'))
+    }
+    catch {
+      // No store outside the Tauri webview: every command keeps its default
+    }
+  }
+
+  /**
+   * Gives `command` a new shortcut and saves it, unless the shortcut is refused; then nothing
+   * changes and the reason is returned. Setting the default removes the override.
+   */
+  async function setKeybinding(command: CommandId, binding: string): Promise<KeybindingProblem | undefined> {
+    const problem = keybindingProblem(binding, command, keybindings.value)
+    if (problem)
+      return problem
+    const { [command]: _, ...others } = keybindingOverrides.value
+    const normalized = normalizeKeybinding(binding)!
+    keybindingOverrides.value = normalized === commands[command].defaultBinding
+      ? others
+      : { ...others, [command]: normalized }
+    await setSetting('keybindings', keybindingOverrides.value)
+    return undefined
+  }
+
+  async function resetKeybinding(command: CommandId) {
+    await setKeybinding(command, commands[command].defaultBinding)
+  }
+
   return {
     getSetting,
     setSetting,
@@ -59,5 +101,11 @@ export const useSettingsStore = defineStore('settings', () => {
     loadSidebar,
     setSidebarOpen,
     setSidebarWidth,
+    keybindingOverrides,
+    keybindings,
+    recordingKeybinding,
+    loadKeybindings,
+    setKeybinding,
+    resetKeybinding,
   }
 })

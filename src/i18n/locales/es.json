@@ -33,9 +33,22 @@
       "light": "Claro",
       "dark": "Oscuro",
       "system": "Sistema"
+    },
+    "shortcuts": {
+      "label": "Atajos de teclado",
+      "recording": "Pulsa un atajo…",
+      "reset": "Restablecer el valor predeterminado",
+      "problems": {
+        "needsModifier": "Incluye {modifier} en el atajo.",
+        "reserved": "{shortcut} está reservado por el sistema o el menú de la aplicación.",
+        "taken": "{shortcut} ya lo usa {command}."
+      }
     }
   },
   "shell": {
     "resizePanel": "Cambiar el tamaño del panel"
+  },
+  "commands": {
+    "togglePanel": "Mostrar u ocultar el panel"
   }
 }

@@ -27,10 +27,20 @@ All of it lives in [`src/components/shell/`](../src/components/shell/):
 
 ## Behaviour
 
-- **Collapsing:** the panel toggle, ⌘/Ctrl+B and clicking the current page's icon all show or hide the panel. It collapses completely; the activity bar stays.
+- **Collapsing:** the panel toggle, its keyboard shortcut (⌘/Ctrl+B by default) and clicking the current page's icon all show or hide the panel. It collapses completely; the activity bar stays.
 - **Another page's icon** goes to that page and opens the panel if that page has one.
 - **Resizing:** drag the panel's right edge (12–24rem), or focus it and use the arrow keys. Double-click the edge to reset it to 16rem.
 - **Saved layout:** the open state (`sidebarOpen`) and width (`sidebarWidth`) are saved in `settings.json` and apply to every page.
+
+## Keyboard shortcuts
+
+Shortcuts can be changed in Settings → Keyboard shortcuts. The commands, their defaults and the rules a shortcut must follow are in [`src/lib/keybindings.ts`](../src/lib/keybindings.ts):
+
+- **Stored form:** `Mod+Shift+KeyB`. `Mod` is ⌘ on macOS and Ctrl elsewhere, and the key is a physical position (`KeyboardEvent.code`), so ⌥ combos and non-Latin layouts work. Only changed shortcuts are saved, as `keybindings` in `settings.json`.
+- **Refused:** shortcuts without `Mod`, the ones in `RESERVED_KEYBINDINGS` (quit, close, copy, paste, undo, ...), and one another command already uses.
+- **Adding a command:** add it to `commands`, give its `titleKey` a translation, and handle it with [`useKeybindings`](../src/composables/useKeybindings.ts). It shows up in settings by itself.
+
+The ⌘/Ctrl+B listener in shadcn-vue's `SidebarProvider.vue` is deleted on purpose. If a CLI update brings it back, delete it again, or the panel toggles twice.
 
 ## Adding a page
 
@@ -65,7 +75,7 @@ Build panels from the `Sidebar*` components in `@/components/ui/sidebar` (`Sideb
 
 ### Without a panel
 
-Use `component` instead of `components`. The page then shows no panel and no toggle, and ⌘/Ctrl+B does nothing on it.
+Use `component` instead of `components`. The page then shows no panel and no toggle, and the panel shortcut does nothing on it.
 
 ## Gotchas
 
@@ -73,5 +83,5 @@ Use `component` instead of `components`. The page then shows no panel and no tog
 - **The titlebar is 38px to match the macOS traffic lights.** decorum puts them back at its built-in inset (12, 16) whenever the window resizes, so their position can't change. If you change the titlebar's height, re-check in a screenshot that the lights are still centred.
 - **The tooltips are not `SidebarMenuButton`'s `tooltip` prop.** That prop hides the tooltip unless the sidebar is collapsed, so `ActivityBarItem.vue` wraps the button in `Tooltip` itself.
 - **Scroll position:** `window` doesn't scroll. To scroll the page, use the `<main id="app-content">` element (`CONTENT_ID` in [`src/lib/layout.ts`](../src/lib/layout.ts)).
-- **Below 768px wide** shadcn-vue's provider switches to its mobile drawer, so the toggle, ⌘/Ctrl+B and the active icon stop working. `minWidth: 800` in `tauri.conf.json` keeps windows wider than that, except where a window manager ignores it (some tiling ones).
+- **Below 768px wide** shadcn-vue's provider switches to its mobile drawer, so the toggle and the active icon stop working (the keyboard shortcut still works). `minWidth: 800` in `tauri.conf.json` keeps windows wider than that, except where a window manager ignores it (some tiling ones).
 - **Linux** keeps the native titlebar. The app's titlebar still shows under it as a toolbar, without the gap for the traffic lights. See [Linux](./linux.md#native-window-decorations).

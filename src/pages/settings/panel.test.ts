@@ -89,12 +89,12 @@ describe('settings panel', () => {
     await flushPromises()
     const content = document.getElementById(CONTENT_ID)!
 
-    placeSections({ appearance: -200, language: 10 })
+    placeSections({ appearance: -200, language: 10, shortcuts: 400 })
     content.dispatchEvent(new Event('scroll'))
     await flushPromises()
     expect(entry('Languages').getAttribute('data-active')).toBe('true')
 
-    placeSections({ appearance: 0, language: 300 })
+    placeSections({ appearance: 0, language: 300, shortcuts: 600 })
     content.dispatchEvent(new Event('scroll'))
     await flushPromises()
     expect(entry('Appearance').getAttribute('data-active')).toBe('true')

@@ -3,6 +3,8 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { useKeybindingLabel } from '@/composables/useKeybindings'
 
 defineProps<{
   /** Whether the current page has a nested panel to toggle */
@@ -11,6 +13,7 @@ defineProps<{
 
 const { t } = useI18n()
 const route = useRoute()
+const toggleShortcut = useKeybindingLabel('togglePanel')
 
 const title = computed(() => route.meta.titleKey
   ? t(route.meta.titleKey)
@@ -34,7 +37,15 @@ const title = computed(() => route.meta.titleKey
       18.75px from the top; 38px (37 + the 1px border) is the height that centres them.
     -->
     <div data-tauri-drag-region class="hidden w-16 shrink-0 self-stretch in-data-[platform=macos]:block" />
-    <SidebarTrigger v-if="hasPanel" class="relative z-10" />
+    <Tooltip v-if="hasPanel">
+      <TooltipTrigger as-child>
+        <SidebarTrigger class="relative z-10" />
+      </TooltipTrigger>
+      <TooltipContent side="bottom" align="start">
+        {{ t('commands.togglePanel') }}
+        <kbd class="ml-1.5 font-sans opacity-70">{{ toggleShortcut }}</kbd>
+      </TooltipContent>
+    </Tooltip>
     <!-- Centred on the window, not on the space left over; clicks pass through to the drag region -->
     <h1 class="pointer-events-none absolute inset-x-0 truncate px-40 text-center text-sm text-muted-foreground">
       {{ title }}

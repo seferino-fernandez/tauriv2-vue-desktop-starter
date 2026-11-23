@@ -28,6 +28,10 @@ vi.mock('@tauri-apps/plugin-store', () => {
   return { LazyStore: MockLazyStore }
 })
 
+vi.mock('@/lib/platform', () => ({
+  isMacOS: () => true,
+}))
+
 // A page with no nested panel: just a default view
 const plainRoute: RouteRecordRaw = {
   path: '/plain',
@@ -38,7 +42,7 @@ const plainRoute: RouteRecordRaw = {
   meta: { titleKey: 'languages.label', nav: 'main' },
 }
 
-// Unmount between tests, or earlier apps keep handling ⌘/Ctrl+B on window
+// Unmount between tests, or earlier apps keep handling shortcuts on window
 enableAutoUnmount(afterEach)
 
 async function mountApp(path = '/home') {
@@ -52,6 +56,7 @@ async function mountApp(path = '/home') {
     messages: { en },
   })
   await useSettingsStore().loadSidebar()
+  await useSettingsStore().loadKeybindings()
   router.push(path)
   await router.isReady()
   const wrapper = mount(App, {
@@ -72,6 +77,18 @@ async function click(element: HTMLElement) {
   element.click()
   await flushPromises()
 }
+
+async function press(code: string, modifiers: KeyboardEventInit = {}, target: EventTarget = window) {
+  target.dispatchEvent(new KeyboardEvent('keydown', {
+    code,
+    bubbles: true,
+    cancelable: true,
+    ...modifiers,
+  }))
+  await flushPromises()
+}
+
+const toggle = () => document.querySelector<HTMLElement>('header [data-sidebar="trigger"]')
 
 describe('appShell', () => {
   beforeEach(() => {
@@ -150,15 +167,59 @@ describe('appShell', () => {
     expect(panelState()).toBe('expanded')
   })
 
-  it('toggles the panel from the titlebar and with ⌘/Ctrl+B', async () => {
+  it('toggles the panel from the titlebar and with ⌘B', async () => {
     await mountApp()
-    await click(document.querySelector<HTMLElement>('header [data-sidebar="trigger"]')!)
+    await click(toggle()!)
     expect(panelState()).toBe('collapsed')
 
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'b', metaKey: true }))
-    await flushPromises()
+    await press('KeyB', { metaKey: true })
     expect(panelState()).toBe('expanded')
     expect(store.set).toHaveBeenLastCalledWith('sidebarOpen', true)
+
+    await press('KeyB', { metaKey: true, shiftKey: true })
+    await press('KeyB', { metaKey: true, repeat: true })
+    expect(panelState()).toBe('expanded')
+  })
+
+  it('shows the panel shortcut in the titlebar toggle\'s tooltip', async () => {
+    await mountApp()
+    toggle()!.dispatchEvent(new FocusEvent('focus'))
+    await flushPromises()
+    expect(document.querySelector('[role="tooltip"]')?.textContent).toContain('Toggle panel ⌘B')
+  })
+
+  it('uses a changed shortcut instead of ⌘B, in the tooltip too', async () => {
+    store.saved = {
+      keybindings: { togglePanel: 'Mod+Alt+KeyJ' },
+    }
+    await mountApp()
+    await press('KeyB', { metaKey: true })
+    expect(panelState()).toBe('expanded')
+
+    await press('KeyJ', { metaKey: true, altKey: true, key: '∆' })
+    expect(panelState()).toBe('collapsed')
+
+    toggle()!.dispatchEvent(new FocusEvent('focus'))
+    await flushPromises()
+    expect(document.querySelector('[role="tooltip"]')?.textContent).toContain('⌥⌘J')
+  })
+
+  it('does not toggle the panel while a shortcut is being recorded', async () => {
+    const { router } = await mountApp()
+    await router.push('/settings')
+    await flushPromises()
+    const field = document.querySelector<HTMLElement>('[data-slot="keybinding-field"]')!
+    await click(field)
+
+    await press('KeyB', { metaKey: true }, field)
+    expect(panelState()).toBe('expanded')
+    await click(field)
+    await press('KeyJ', { metaKey: true }, field)
+    expect(panelState()).toBe('expanded')
+    expect(store.set).toHaveBeenLastCalledWith('keybindings', { togglePanel: 'Mod+KeyJ' })
+
+    await press('KeyJ', { metaKey: true })
+    expect(panelState()).toBe('collapsed')
   })
 
   it('opens the panel when coming from a page without one', async () => {
@@ -170,13 +231,13 @@ describe('appShell', () => {
     expect(store.set).toHaveBeenCalledWith('sidebarOpen', true)
   })
 
-  it('shows no panel or toggle on a page without one, and ⌘/Ctrl+B does nothing there', async () => {
+  it('shows no panel or toggle on a page without one, and ⌘B does nothing there', async () => {
     await mountApp('/plain')
     expect(document.querySelector('main')?.textContent).toContain('Plain page')
     expect(panel()).toBeNull()
-    expect(document.querySelector('header [data-sidebar="trigger"]')).toBeNull()
+    expect(toggle()).toBeNull()
 
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'b', metaKey: true }))
+    await press('KeyB', { metaKey: true })
     await click(icon('Languages'))
     expect(store.set).not.toHaveBeenCalled()
   })

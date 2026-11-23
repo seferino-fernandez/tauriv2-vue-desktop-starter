@@ -18,6 +18,17 @@ export function currentPlatform(): Platform | undefined {
 }
 
 /**
+ * Whether the app runs on macOS. Outside the Tauri webview it asks the browser instead, so the
+ * Vite dev server in a browser on a Mac shows ⌘ too.
+ */
+export function isMacOS(): boolean {
+  const current = currentPlatform()
+  return current
+    ? current === 'macos'
+    : /Mac/i.test(globalThis.navigator?.platform ?? '')
+}
+
+/**
  * Sets `data-platform` on the root element so CSS can adapt per OS,
  * e.g. Tailwind's `in-data-[platform=linux]:hidden`.
  */

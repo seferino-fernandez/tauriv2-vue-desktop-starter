@@ -16,7 +16,9 @@ import {
 import { Separator } from '@/components/ui/separator'
 
 import { getLanguageLabel, supportedLanguages } from '@/lib/config'
+import { commandIds } from '@/lib/keybindings'
 import { useSettingsStore } from '@/stores/settings'
+import KeybindingSetting from './KeybindingSetting.vue'
 import { sectionElementId } from './sections'
 
 const { t, locale } = useI18n()
@@ -80,6 +82,12 @@ function handleLanguageSelect(newLocale: string) {
             </SelectContent>
           </Select>
         </div>
+      </section>
+      <section :id="sectionElementId('shortcuts')" class="scroll-mt-4 space-y-4">
+        <h3 class="text-lg font-semibold">
+          {{ t('settings.shortcuts.label') }}
+        </h3>
+        <KeybindingSetting v-for="command in commandIds" :key="command" :command="command" />
       </section>
     </div>
   </div>

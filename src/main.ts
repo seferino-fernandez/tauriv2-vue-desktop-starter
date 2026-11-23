@@ -24,6 +24,7 @@ initAppSettings()
 // The shell stays hidden until the saved panel layout arrives (see AppShell.vue).
 app.mount('#app')
 useSettingsStore().loadSidebar()
+useSettingsStore().loadKeybindings()
 
 async function initAppSettings() {
   const settingsStore = useSettingsStore()

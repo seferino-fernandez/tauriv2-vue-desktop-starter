@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { HTMLAttributes, Ref } from "vue"
-import { defaultDocument, useEventListener, useMediaQuery, useVModel } from "@vueuse/core"
+import { defaultDocument, useMediaQuery, useVModel } from "@vueuse/core"
 import { cn } from "cn"
 import { TooltipProvider } from "reka-ui"
 import { computed, ref } from "vue"
-import { provideSidebarContext, SIDEBAR_COOKIE_MAX_AGE, SIDEBAR_COOKIE_NAME, SIDEBAR_KEYBOARD_SHORTCUT, SIDEBAR_MOBILE_BREAKPOINT, SIDEBAR_WIDTH, SIDEBAR_WIDTH_ICON } from "./utils"
+import { provideSidebarContext, SIDEBAR_COOKIE_MAX_AGE, SIDEBAR_COOKIE_NAME, SIDEBAR_MOBILE_BREAKPOINT, SIDEBAR_WIDTH, SIDEBAR_WIDTH_ICON } from "./utils"
 
 const props = withDefaults(defineProps<{
   defaultOpen?: boolean
@@ -43,12 +43,9 @@ function toggleSidebar() {
   return isMobile.value ? setOpenMobile(!openMobile.value) : setOpen(!open.value)
 }
 
-useEventListener("keydown", (event: KeyboardEvent) => {
-  if (event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
-    event.preventDefault()
-    toggleSidebar()
-  }
-})
+// Local change: the shadcn-vue ⌘/Ctrl+B listener is removed. The app's own keybindings toggle
+// the panel instead, so the shortcut can be changed in settings (src/lib/keybindings.ts).
+// Keep it removed when the CLI updates this file.
 
 // We add a state so that we can do data-state="expanded" or "collapsed".
 // This makes it easier to style the sidebar with Tailwind classes.

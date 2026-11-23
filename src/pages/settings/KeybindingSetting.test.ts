@@ -1,0 +1,158 @@
+import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils'
+import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { createI18n } from 'vue-i18n'
+import en from '@/i18n/locales/en.json'
+import { useSettingsStore } from '@/stores/settings'
+import KeybindingSetting from './KeybindingSetting.vue'
+
+const store = vi.hoisted(() => ({
+  saved: {} as Record<string, unknown>,
+  get: vi.fn(),
+  set: vi.fn(),
+  save: vi.fn(),
+}))
+
+vi.mock('@tauri-apps/plugin-store', () => ({
+  LazyStore: class {
+    get = store.get
+    set = store.set
+    save = store.save
+  },
+}))
+
+vi.mock('@/lib/platform', () => ({
+  isMacOS: () => true,
+}))
+
+enableAutoUnmount(afterEach)
+
+async function mountSetting() {
+  await useSettingsStore().loadKeybindings()
+  const i18n = createI18n({
+    locale: 'en',
+    legacy: false,
+    messages: { en },
+  })
+  const wrapper = mount(KeybindingSetting, {
+    props: { command: 'togglePanel' },
+    global: {
+      plugins: [i18n],
+    },
+    attachTo: document.body,
+  })
+  await flushPromises()
+  return wrapper
+}
+
+const field = () => document.querySelector<HTMLButtonElement>('[data-slot="keybinding-field"]')!
+const reset = () => document.querySelector<HTMLButtonElement>('[data-slot="keybinding-reset"]')!
+const message = () => document.querySelector('[role="alert"]')?.textContent?.trim()
+
+async function press(code: string, modifiers: KeyboardEventInit = {}) {
+  field().dispatchEvent(new KeyboardEvent('keydown', {
+    code,
+    bubbles: true,
+    cancelable: true,
+    ...modifiers,
+  }))
+  await flushPromises()
+}
+
+async function startRecording() {
+  field().click()
+  await flushPromises()
+}
+
+describe('keybinding setting', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    vi.clearAllMocks()
+    store.saved = {}
+    store.get.mockImplementation(async (key: string) => store.saved[key])
+    document.body.innerHTML = ''
+  })
+
+  it('shows the command and its current shortcut', async () => {
+    await mountSetting()
+    expect(document.querySelector('label')?.textContent?.trim()).toBe('Toggle panel')
+    expect(field().textContent?.trim()).toBe('⌘B')
+    expect(reset().disabled).toBe(true)
+  })
+
+  it('records a new shortcut and saves only the change', async () => {
+    await mountSetting()
+    await startRecording()
+    expect(field().textContent?.trim()).toBe('Press a shortcut…')
+    expect(useSettingsStore().recordingKeybinding).toBe(true)
+
+    await press('MetaLeft', { metaKey: true })
+    expect(store.set).not.toHaveBeenCalled()
+    await press('KeyK', { metaKey: true, shiftKey: true })
+    expect(store.set).toHaveBeenCalledWith('keybindings', { togglePanel: 'Mod+Shift+KeyK' })
+    expect(field().textContent?.trim()).toBe('⇧⌘K')
+    expect(useSettingsStore().recordingKeybinding).toBe(false)
+    expect(reset().disabled).toBe(false)
+  })
+
+  it('refuses a shortcut without ⌘, keeps listening, and takes the next one', async () => {
+    await mountSetting()
+    await startRecording()
+    await press('KeyK')
+    expect(message()).toBe('Include ⌘ in the shortcut.')
+    expect(store.set).not.toHaveBeenCalled()
+    expect(useSettingsStore().recordingKeybinding).toBe(true)
+
+    await press('KeyK', { metaKey: true })
+    expect(message()).toBeUndefined()
+    expect(store.set).toHaveBeenCalledWith('keybindings', { togglePanel: 'Mod+KeyK' })
+  })
+
+  it('refuses a shortcut the system uses', async () => {
+    await mountSetting()
+    await startRecording()
+    await press('KeyQ', { metaKey: true })
+    expect(message()).toBe('⌘Q is reserved by the system or the app menu.')
+    expect(field().getAttribute('aria-describedby')).toBe(document.querySelector('[role="alert"]')?.id)
+    expect(store.set).not.toHaveBeenCalled()
+  })
+
+  it('cancels with Escape or by clicking away', async () => {
+    await mountSetting()
+    await startRecording()
+    await press('Escape')
+    expect(field().textContent?.trim()).toBe('⌘B')
+    expect(useSettingsStore().recordingKeybinding).toBe(false)
+
+    await startRecording()
+    field().dispatchEvent(new FocusEvent('blur'))
+    await flushPromises()
+    expect(field().textContent?.trim()).toBe('⌘B')
+    expect(useSettingsStore().recordingKeybinding).toBe(false)
+    expect(store.set).not.toHaveBeenCalled()
+  })
+
+  it('resets to the default, removing the override', async () => {
+    store.saved = {
+      keybindings: { togglePanel: 'Mod+KeyJ' },
+    }
+    await mountSetting()
+    expect(field().textContent?.trim()).toBe('⌘J')
+
+    reset().click()
+    await flushPromises()
+    expect(store.set).toHaveBeenCalledWith('keybindings', {})
+    expect(field().textContent?.trim()).toBe('⌘B')
+    expect(reset().disabled).toBe(true)
+  })
+
+  it('removes the override when the default is recorded again', async () => {
+    store.saved = {
+      keybindings: { togglePanel: 'Mod+KeyJ' },
+    }
+    await mountSetting()
+    await startRecording()
+    await press('KeyB', { metaKey: true })
+    expect(store.set).toHaveBeenCalledWith('keybindings', {})
+  })
+})

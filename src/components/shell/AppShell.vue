@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { SidebarProvider } from '@/components/ui/sidebar'
+import { useKeybindings } from '@/composables/useKeybindings'
 import { CONTENT_ID } from '@/lib/layout'
 import { hasPanel } from '@/router'
 import { useSettingsStore } from '@/stores/settings'
@@ -16,17 +17,22 @@ const pageHasPanel = computed(() => hasPanel(route))
 // The panel mounts once its saved state is known, so it never animates open or closed on launch
 const ready = computed(() => settingsStore.sidebarOpen !== undefined)
 
-// SidebarProvider's ⌘/Ctrl+B fires on every page; a page without a panel has nothing to toggle
+// A page without a panel has nothing to open or close
 function updateOpen(open: boolean) {
   if (pageHasPanel.value)
     settingsStore.setSidebarOpen(open)
 }
+
+useKeybindings({
+  togglePanel: () => updateOpen(!(settingsStore.sidebarOpen ?? true)),
+})
 </script>
 
 <template>
   <!--
     Titlebar across the top; below it the activity bar, the page's nested panel and the page.
-    Only the page scrolls. SidebarProvider supplies the open state, ⌘/Ctrl+B and tooltips.
+    Only the page scrolls. SidebarProvider supplies the open state and tooltips; the panel
+    shortcut (⌘/Ctrl+B by default) comes from the app's keybindings.
   -->
   <SidebarProvider
     class="h-svh flex-col"

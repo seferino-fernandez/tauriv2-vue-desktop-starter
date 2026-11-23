@@ -1,6 +1,6 @@
 import { platform } from '@tauri-apps/plugin-os'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { applyPlatformAttribute, currentPlatform } from './platform'
+import { applyPlatformAttribute, currentPlatform, isMacOS } from './platform'
 
 vi.mock('@tauri-apps/plugin-os', () => ({
   platform: vi.fn(),
@@ -23,6 +23,30 @@ describe('currentPlatform', () => {
       throw new TypeError('window.__TAURI_OS_PLUGIN_INTERNALS__ is undefined')
     })
     expect(currentPlatform()).toBeUndefined()
+  })
+})
+
+describe('isMacOS', () => {
+  beforeEach(() => {
+    mockedPlatform.mockReset()
+  })
+
+  it('follows the os plugin', () => {
+    mockedPlatform.mockReturnValue('macos')
+    expect(isMacOS()).toBe(true)
+    mockedPlatform.mockReturnValue('windows')
+    expect(isMacOS()).toBe(false)
+  })
+
+  it('asks the browser outside the Tauri webview', () => {
+    mockedPlatform.mockImplementation(() => {
+      throw new TypeError('window.__TAURI_OS_PLUGIN_INTERNALS__ is undefined')
+    })
+    const spy = vi.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel')
+    expect(isMacOS()).toBe(true)
+    spy.mockReturnValue('Win32')
+    expect(isMacOS()).toBe(false)
+    spy.mockRestore()
   })
 })
 

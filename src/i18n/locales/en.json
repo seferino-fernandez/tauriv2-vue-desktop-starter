@@ -33,9 +33,22 @@
       "light": "Light",
       "dark": "Dark",
       "system": "System"
+    },
+    "shortcuts": {
+      "label": "Keyboard shortcuts",
+      "recording": "Press a shortcut…",
+      "reset": "Reset to default",
+      "problems": {
+        "needsModifier": "Include {modifier} in the shortcut.",
+        "reserved": "{shortcut} is reserved by the system or the app menu.",
+        "taken": "{shortcut} is already used by {command}."
+      }
     }
   },
   "shell": {
     "resizePanel": "Resize panel"
+  },
+  "commands": {
+    "togglePanel": "Toggle panel"
   }
 }

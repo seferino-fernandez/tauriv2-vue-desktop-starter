@@ -117,6 +117,20 @@ describe('keybinding setting', () => {
     expect(store.set).not.toHaveBeenCalled()
   })
 
+  it('takes focus when clicked, so it gets the keys even where a click does not focus buttons', async () => {
+    await mountSetting()
+    expect(document.activeElement).not.toBe(field())
+    await startRecording()
+    expect(document.activeElement).toBe(field())
+  })
+
+  it('stops recording when it goes away mid-recording', async () => {
+    const wrapper = await mountSetting()
+    await startRecording()
+    wrapper.unmount()
+    expect(useSettingsStore().recordingKeybinding).toBe(false)
+  })
+
   it('cancels with Escape or by clicking away', async () => {
     await mountSetting()
     await startRecording()

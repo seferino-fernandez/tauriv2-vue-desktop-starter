@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CommandId, KeybindingProblem } from '@/lib/keybindings'
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import IconReset from '~icons/ph/arrow-counter-clockwise'
 import { Button } from '@/components/ui/button'
@@ -52,7 +52,9 @@ function setRecording(value: boolean) {
   settingsStore.recordingKeybinding = value
 }
 
-function start() {
+// WebKit does not focus a button on click; without focus the field gets no keys and no blur
+function start(event: MouseEvent) {
+  ;(event.currentTarget as HTMLElement).focus()
   refusal.value = undefined
   setRecording(true)
 }
@@ -83,6 +85,12 @@ async function record(event: KeyboardEvent) {
   if (!problem)
     stop()
 }
+
+// Leaving the page mid-recording must not leave every shortcut switched off
+onBeforeUnmount(() => {
+  if (recording.value)
+    stop()
+})
 
 async function reset() {
   refusal.value = undefined

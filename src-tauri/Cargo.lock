@@ -5002,7 +5002,7 @@ dependencies = [
 
 [[package]]
 name = "tauriv2-vue-desktop-starter"
-version = "0.18.0"
+version = "0.19.0"
 dependencies = [
  "fix-path-env",
  "log",

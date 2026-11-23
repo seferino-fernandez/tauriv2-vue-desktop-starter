@@ -1,6 +1,6 @@
 [package]
 name = "tauriv2-vue-desktop-starter"
-version = "0.18.0"
+version = "0.19.0"
 description = "A Tauri v2 Vue Desktop Starter"
 license = "MIT"
 edition = "2024"

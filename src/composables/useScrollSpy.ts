@@ -1,5 +1,5 @@
 import type { MaybeRefOrGetter } from 'vue'
-import { useEventListener } from '@vueuse/core'
+import { useScroll } from '@vueuse/core'
 import { onMounted, ref, shallowRef, toValue } from 'vue'
 
 /**
@@ -20,12 +20,16 @@ export function useScrollSpy(
     root.value = toValue(container)
   })
 
+  const { arrivedState } = useScroll(root, { onScroll: update })
+
   function update() {
     const element = root.value
     if (!element)
       return
+    // useScroll updates arrivedState before it calls onScroll. A container that can't scroll
+    // also counts as at the bottom, so it must be able to scroll first.
     const scrollable = element.scrollHeight > element.clientHeight
-    if (scrollable && element.scrollTop + element.clientHeight >= element.scrollHeight - 1) {
+    if (scrollable && arrivedState.bottom) {
       active.value = ids[ids.length - 1]
       return
     }
@@ -43,8 +47,6 @@ export function useScrollSpy(
     active.value = id
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
-
-  useEventListener(root, 'scroll', update, { passive: true })
 
   return { active, scrollTo }
 }

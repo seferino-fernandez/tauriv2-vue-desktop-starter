@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Language } from '@/lib/config'
-import { ref, watch } from 'vue'
+import { watchImmediate } from '@vueuse/core'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ThemeSwitch from '@/components/ThemeSwitch.vue'
 
@@ -25,10 +26,7 @@ const { t, locale } = useI18n()
 const availableLanguages = ref<Language[]>(supportedLanguages())
 const settingsStore = useSettingsStore()
 
-watch(locale, (newLocale, oldLocale) => {
-  if (newLocale && newLocale !== oldLocale)
-    handleLanguageSelect(newLocale)
-}, { immediate: true })
+watchImmediate(locale, newLocale => handleLanguageSelect(newLocale))
 
 function handleLanguageSelect(newLocale: string) {
   if (!newLocale || !availableLanguages.value.some(sl => sl.value === newLocale))

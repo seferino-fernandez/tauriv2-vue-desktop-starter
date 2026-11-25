@@ -4873,7 +4873,6 @@ version = "0.19.0"
 dependencies = [
  "fix-path-env",
  "log",
- "serde_json",
  "tauri",
  "tauri-build",
  "tauri-plugin-decorum",

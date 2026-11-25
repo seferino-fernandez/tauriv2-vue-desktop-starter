@@ -24,10 +24,6 @@ export const useSettingsStore = defineStore('settings', () => {
     return await store.save()
   }
 
-  async function getSettings() {
-    return await store.entries<any>()
-  }
-
   /** Whether the nested panel is open (on every page); `undefined` until the saved layout has loaded */
   const sidebarOpen = ref<boolean>()
   /** Nested panel width in px */
@@ -154,7 +150,6 @@ export const useSettingsStore = defineStore('settings', () => {
   return {
     getSetting,
     setSetting,
-    getSettings,
     sidebarOpen,
     sidebarWidth,
     loadSidebar,

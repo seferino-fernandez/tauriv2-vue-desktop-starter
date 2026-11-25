@@ -23,7 +23,6 @@ vi.mock('@tauri-apps/plugin-store', () => {
     get = store.get
     set = store.set
     save = store.save
-    entries = vi.fn().mockResolvedValue([])
   }
   return { LazyStore: MockLazyStore }
 })

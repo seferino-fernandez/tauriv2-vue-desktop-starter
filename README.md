@@ -3,7 +3,7 @@
 A desktop application starter using the libraries and technologies:
 
 - Rust
-  - [Tauri v2](https://beta.tauri.app/start/) as the desktop application framework.
+  - [Tauri v2](https://v2.tauri.app/start/) as the desktop application framework.
   - [Tauri Store Plugin](https://v2.tauri.app/plugin/store/) for persistence.
   - [Tauri Log Plugin](https://v2.tauri.app/plugin/logging/) for logging.
   - [Tauri OS Plugin](https://v2.tauri.app/plugin/os-info/) for platform detection.
@@ -45,14 +45,7 @@ Then rename all instances of `tauriv2-vue-desktop-starter` and `tauriv2_vue_desk
 If you want to replace the package manager update:
 
 - The build configuration in [tauri.conf.json](./src-tauri/tauri.conf.json)
-- Update the following steps in [.github/workflows/publish-to-auto-release.yml](.github/workflows/publish-to-auto-release.yml):
-  - Install pnpm
-  - Install Node.js
-  - Install frontend dependencies
-- Update the following steps in [.github/workflows/test-build-only.yml](.github/workflows/test-build-only.yml):
-  - Install pnpm
-  - Install Node.js
-  - Install frontend dependencies
+- The `Install pnpm, Node.js and Frontend Dependencies` step in [.github/workflows/release.yml](.github/workflows/release.yml) and [.github/workflows/pull-request-validation.yml](.github/workflows/pull-request-validation.yml)
 
 ## Installation
 
@@ -116,7 +109,7 @@ This repo is currently setup to create a release on Github when you merge to the
 
 ### Caveats
 
-If you are using the [signing identity](./src-tauri/tauri.macos.conf.json#L20) `-` for **macOS**, when you first download and run the application, you will have to go to `System Settings` > `Privacy & Security` and allow your app to run.
+If you are using the [signing identity](./src-tauri/tauri.macos.conf.json) `-` for **macOS**, when you first download and run the application, you will have to go to `System Settings` > `Privacy & Security` and allow your app to run.
 See [tauri-apps/tauri-action/issues/824](https://github.com/tauri-apps/tauri-action/issues/824) & [support.apple.com/open-a-mac-app-from-an-unidentified-developer](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac).
 
 On **Linux**, recommend the `.deb` or `.rpm` to users and offer the AppImage as a portable fallback. See [docs/linux.md](./docs/linux.md#packages-prefer-deb--rpm).

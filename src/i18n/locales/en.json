@@ -29,13 +29,32 @@
     },
     "theme": {
       "label": "Theme",
-      "description": "Choose the theme for the app.",
+      "description": "System follows your computer’s light or dark setting.",
       "light": "Light",
       "dark": "Dark",
       "system": "System"
     },
+    "font": {
+      "label": "App font",
+      "description": "The typeface for the app’s interface.",
+      "default": "System default",
+      "search": "Search fonts…",
+      "sample": "Aa",
+      "loading": "Loading installed fonts…",
+      "empty": "No installed fonts found.",
+      "noResults": "No matching fonts.",
+      "loadError": "Couldn’t load installed fonts.",
+      "retry": "Retry",
+      "saveError": "Couldn’t save the font choice. Try again.",
+      "missing": "{family} is unavailable. Using the system font."
+    },
+    "language": {
+      "label": "App language",
+      "description": "The language the app’s interface is shown in."
+    },
     "shortcuts": {
       "label": "Keyboard shortcuts",
+      "description": "Click a shortcut, then press the keys you want. Esc cancels.",
       "recording": "Press a shortcut…",
       "reset": "Reset to default",
       "problems": {

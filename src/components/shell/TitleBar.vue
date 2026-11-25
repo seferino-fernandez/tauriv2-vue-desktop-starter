@@ -36,7 +36,7 @@ const toggleShortcut = useKeybindingLabel('togglePanel')
       </TooltipTrigger>
       <TooltipContent side="bottom" align="start">
         {{ t('commands.togglePanel') }}
-        <kbd class="ml-1.5 font-sans opacity-70">{{ toggleShortcut }}</kbd>
+        <kbd class="ml-1.5 font-ui opacity-70">{{ toggleShortcut }}</kbd>
       </TooltipContent>
     </Tooltip>
     <div data-tauri-drag-region class="flex-1 self-stretch" />

@@ -2,7 +2,8 @@ import type { CommandId, KeybindingOverrides, KeybindingProblem, Keybindings } f
 import { LazyStore } from '@tauri-apps/plugin-store'
 import { useColorMode } from '@vueuse/core'
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { fontStack } from '@/lib/fonts'
 import { commands, defaultKeybindings, keybindingProblem, normalizeKeybinding, sanitizeKeybindings } from '@/lib/keybindings'
 import { clampPanelWidth, PANEL_DEFAULT_WIDTH } from '@/lib/layout'
 
@@ -72,9 +73,42 @@ export const useSettingsStore = defineStore('settings', () => {
     }
   }
 
+  /** The chosen theme, `auto` included (the color mode ref itself only reports light or dark) */
+  const theme = computed(() => colorMode.store.value as Theme)
+
   async function setTheme(theme: Theme) {
     colorMode.value = theme
     await setSetting('theme', theme)
+  }
+
+  const fontFamily = ref<string | null>(null)
+  const fontReady = ref(false)
+
+  watch(fontFamily, (family) => {
+    const style = document.documentElement.style
+    if (family)
+      style.setProperty('--app-font-family', fontStack(family))
+    else
+      style.removeProperty('--app-font-family')
+  })
+
+  async function loadFont() {
+    try {
+      const saved = await getSetting<unknown>('fontFamily')
+      if (typeof saved === 'string' && saved.trim())
+        fontFamily.value = saved
+    }
+    catch {
+      // Keep the system font if the settings store isn't available.
+    }
+    finally {
+      fontReady.value = true
+    }
+  }
+
+  async function setFontFamily(family: string | null) {
+    await setSetting('fontFamily', family)
+    fontFamily.value = family
   }
 
   /** Shortcuts the user changed, saved as `keybindings`; the rest use their defaults */
@@ -126,8 +160,13 @@ export const useSettingsStore = defineStore('settings', () => {
     loadSidebar,
     setSidebarOpen,
     setSidebarWidth,
+    theme,
     loadTheme,
     setTheme,
+    fontFamily,
+    fontReady,
+    loadFont,
+    setFontFamily,
     keybindingOverrides,
     keybindings,
     recordingKeybinding,

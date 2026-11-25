@@ -6,7 +6,8 @@ import { onMounted, ref, shallowRef, toValue } from 'vue'
  * Tracks which of the elements with the given ids the reader is at in a scroll container:
  * the last one whose top has scrolled past the container's top (plus `offset`), or the last
  * one once the container is scrolled to the bottom. `scrollTo` jumps to an element and marks
- * it current straight away, which also covers pages too short to scroll.
+ * it current straight away, which also covers pages too short to scroll; it stays current while
+ * the smooth scroll passes the sections in between.
  */
 export function useScrollSpy(
   ids: readonly string[],
@@ -20,11 +21,21 @@ export function useScrollSpy(
     root.value = toValue(container)
   })
 
-  const { arrivedState } = useScroll(root, { onScroll: update })
+  /** True while a jump's smooth scroll runs; its stop re-reads the position */
+  let jumping = false
+  const { arrivedState } = useScroll(root, {
+    onScroll: update,
+    onStop: () => {
+      if (!jumping)
+        return
+      jumping = false
+      update()
+    },
+  })
 
   function update() {
     const element = root.value
-    if (!element)
+    if (!element || jumping)
       return
     // useScroll updates arrivedState before it calls onScroll. A container that can't scroll
     // also counts as at the bottom, so it must be able to scroll first.
@@ -45,7 +56,18 @@ export function useScrollSpy(
 
   function scrollTo(id: string) {
     active.value = id
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const section = document.getElementById(id)
+    if (!section)
+      return
+    // Hold the highlight only if the container will actually scroll: with no scroll there is no stop
+    const element = root.value
+    if (element) {
+      const margin = Number.parseFloat(getComputedStyle(section).scrollMarginTop) || 0
+      const offsetTop = section.getBoundingClientRect().top - element.getBoundingClientRect().top - margin
+      const target = Math.min(Math.max(element.scrollTop + offsetTop, 0), element.scrollHeight - element.clientHeight)
+      jumping = Math.abs(target - element.scrollTop) >= 1
+    }
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   return { active, scrollTo }

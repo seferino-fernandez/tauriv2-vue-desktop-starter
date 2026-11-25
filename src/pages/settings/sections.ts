@@ -10,7 +10,7 @@ export interface SettingsSection {
 }
 
 // The settings page and its panel both follow this list: add a section here, then render it
-// on the page with `:id="sectionElementId(id)"`
+// on the page as `<SettingsSection id="...">`, which takes its heading and icon from here
 export const settingsSections: readonly SettingsSection[] = [
   { id: 'appearance', titleKey: 'settings.appearance.label', icon: IconPalette },
   { id: 'language', titleKey: 'languages.label', icon: IconTranslate },

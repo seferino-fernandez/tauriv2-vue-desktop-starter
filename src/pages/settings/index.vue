@@ -3,9 +3,7 @@ import type { Language } from '@/lib/config'
 import { watchImmediate } from '@vueuse/core'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ThemeSwitch from '@/components/ThemeSwitch.vue'
-
-import { Label } from '@/components/ui/label'
+import { Field, FieldContent, FieldDescription, FieldLabel } from '@/components/ui/field'
 import {
   Select,
   SelectContent,
@@ -14,13 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-
 import { getLanguageLabel, supportedLanguages } from '@/lib/config'
 import { commandIds } from '@/lib/keybindings'
 import { useSettingsStore } from '@/stores/settings'
+import FontSetting from './FontSetting.vue'
 import KeybindingSetting from './KeybindingSetting.vue'
-import { sectionElementId } from './sections'
+import SettingsSection from './SettingsSection.vue'
+import ThemeSetting from './ThemeSetting.vue'
 
 const { t, locale } = useI18n()
 const availableLanguages = ref<Language[]>(supportedLanguages())
@@ -36,57 +34,61 @@ function handleLanguageSelect(newLocale: string) {
 </script>
 
 <template>
-  <div class="container mx-auto">
-    <div class="space-y-0.5 p-10">
-      <h2 class="text-2xl font-bold tracking-tight">
+  <div class="mx-auto flex w-full max-w-2xl flex-col gap-10 pt-2">
+    <header class="flex flex-col gap-1 px-1">
+      <h1 class="text-xl font-semibold tracking-tight">
         {{ t('settings.label') }}
-      </h2>
-      <p class="text-muted-foreground">
+      </h1>
+      <p class="text-sm text-muted-foreground">
         {{ t('settings.description') }}
       </p>
-    </div>
-    <Separator class="my-6" />
-    <!-- One <section> per entry in sections.ts, in the same order -->
-    <div class="space-y-10">
-      <section :id="sectionElementId('appearance')" class="scroll-mt-4 space-y-4">
-        <h3 class="text-lg font-semibold">
-          {{ t('settings.appearance.label') }}
-        </h3>
-        <div class="flex items-center space-x-2">
-          <Label class="font-medium" for="theme-switch">{{ t('settings.theme.label') }}</Label>
-          <ThemeSwitch />
-        </div>
-      </section>
-      <section :id="sectionElementId('language')" class="scroll-mt-4 space-y-4">
-        <h3 class="text-lg font-semibold">
-          {{ t('languages.label') }}
-        </h3>
-        <div class="flex items-center space-x-2">
-          <Label class="font-medium" for="language-select">{{ t('languages.label') }}</Label>
-          <Select id="language-select" v-model="locale">
-            <SelectTrigger>
-              <SelectValue :placeholder="getLanguageLabel(locale)" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem
-                  v-for="availableLanguage in availableLanguages"
-                  :key="availableLanguage.value"
-                  :value="availableLanguage.value"
-                >
-                  {{ availableLanguage.label }}
-                </SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-      </section>
-      <section :id="sectionElementId('shortcuts')" class="scroll-mt-4 space-y-4">
-        <h3 class="text-lg font-semibold">
-          {{ t('settings.shortcuts.label') }}
-        </h3>
-        <KeybindingSetting v-for="command in commandIds" :key="command" :command="command" />
-      </section>
-    </div>
+    </header>
+
+    <!-- One SettingsSection per entry in sections.ts, in the same order -->
+    <SettingsSection id="appearance">
+      <ThemeSetting />
+      <FontSetting />
+    </SettingsSection>
+
+    <SettingsSection id="language">
+      <Field orientation="responsive" class="gap-x-6 px-4 py-4">
+        <FieldContent>
+          <FieldLabel for="language-select">
+            {{ t('settings.language.label') }}
+          </FieldLabel>
+          <FieldDescription>
+            {{ t('settings.language.description') }}
+          </FieldDescription>
+        </FieldContent>
+        <Select v-model="locale">
+          <SelectTrigger id="language-select" class="w-full! @md/field-group:w-48!">
+            <SelectValue :placeholder="getLanguageLabel(locale)" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem
+                v-for="availableLanguage in availableLanguages"
+                :key="availableLanguage.value"
+                :value="availableLanguage.value"
+              >
+                {{ availableLanguage.label }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </Field>
+    </SettingsSection>
+
+    <!--
+      The last section is at least a screen tall, less the titlebar (2.375rem), the content's bottom
+      padding and the section's scroll margin (1rem each), so every jump brings its heading to the top
+    -->
+    <SettingsSection
+      id="shortcuts"
+      description-key="settings.shortcuts.description"
+      class="min-h-[calc(100svh-4.375rem)]"
+    >
+      <KeybindingSetting v-for="command in commandIds" :key="command" :command="command" />
+    </SettingsSection>
   </div>
 </template>

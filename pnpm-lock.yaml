@@ -226,6 +226,9 @@ importers:
       tailwindcss:
         specifier: ^4.3.5
         version: 4.3.5
+      tauri-plugin-fontgres-api:
+        specifier: 0.1.0
+        version: 0.1.0
       vue:
         specifier: ^3.5.46
         version: 3.5.46(typescript@6.0.3)
@@ -3404,6 +3407,9 @@ packages:
   tapable@2.3.4:
     resolution: {integrity: sha512-NHFiWnAbMJxNNpBwiO7jJVGDuqMxT9/oV8v57RR+fgBQShkJil5inGD8/xWy0hjLyHQyX1tu27QANhlz3KBqCg==}
     engines: {node: '>=6'}
+
+  tauri-plugin-fontgres-api@0.1.0:
+    resolution: {integrity: sha512-MI/8IKJ9pzm9vljjkf/SxFvzg/kp6Uasw06JRDRDtkkRBZ6QoI5/zIXO2MeoUnHDykNCYQabAFexac6Ngi7L/g==}
 
   time-span@5.1.0:
     resolution: {integrity: sha512-75voc/9G4rDIJleOo4jPvN4/YC4GRZrY8yy1uU4lwrB3XEQbWve8zXoO5No4eFrGcTAMYyoY67p8jRQdtA1HbA==}
@@ -7192,6 +7198,10 @@ snapshots:
   tailwindcss@4.3.5: {}
 
   tapable@2.3.4: {}
+
+  tauri-plugin-fontgres-api@0.1.0:
+    dependencies:
+      '@tauri-apps/api': 2.12.5
 
   time-span@5.1.0:
     dependencies:

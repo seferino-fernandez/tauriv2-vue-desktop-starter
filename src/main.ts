@@ -20,6 +20,7 @@ app.use(i18n)
 initAppSettings()
 // Nothing else holds the theme, so ask for it before anything else
 useSettingsStore().loadTheme()
+useSettingsStore().loadFont()
 
 // Mount right away: decorum adopts our titlebar only if it exists when the DOM is ready.
 // The shell stays hidden until the saved panel layout arrives (see AppShell.vue).

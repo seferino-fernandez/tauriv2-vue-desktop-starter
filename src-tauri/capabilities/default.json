@@ -34,6 +34,7 @@
     "fs:allow-read-file",
     "dialog:default",
     "os:default",
+    "fontgres:allow-get-families",
     "pilot:default"
   ]
 }

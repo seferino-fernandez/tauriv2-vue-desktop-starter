@@ -1,4 +1,6 @@
 minimumReleaseAgeExcludePrune: true
+minimumReleaseAgeExclude:
+  - tauri-plugin-fontgres-api@0.1.0
 
 trustPolicy: no-downgrade
 trustPolicyExclude:

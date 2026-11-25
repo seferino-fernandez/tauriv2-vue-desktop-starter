@@ -4,7 +4,7 @@ import { computed, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import IconReset from '~icons/ph/arrow-counter-clockwise'
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
+import { Field, FieldLabel } from '@/components/ui/field'
 import { useKeybindingLabel } from '@/composables/useKeybindings'
 import { commands, formatKeybinding, isModifierCode, keybindingFromEvent } from '@/lib/keybindings'
 import { isMacOS } from '@/lib/platform'
@@ -99,15 +99,17 @@ async function reset() {
 </script>
 
 <template>
-  <div class="space-y-1">
-    <div class="flex items-center gap-2">
-      <Label class="min-w-32 font-medium" :for="fieldId">{{ t(commands[command].titleKey) }}</Label>
+  <!-- Wraps when narrow: the label above the field, and a refusal under both -->
+  <Field orientation="horizontal" class="flex-wrap gap-x-6 gap-y-2 px-4 py-3">
+    <FieldLabel :for="fieldId" class="min-w-32 flex-1">
+      {{ t(commands[command].titleKey) }}
+    </FieldLabel>
+    <div class="flex w-48 shrink-0 items-center gap-1">
       <!-- Click to record, press the new shortcut; Escape or clicking away cancels -->
       <Button
         :id="fieldId"
         variant="outline"
-        size="sm"
-        class="min-w-28"
+        class="flex-1 justify-start px-3 font-normal"
         :class="recording && 'ring-3 ring-ring/50'"
         :aria-describedby="refusal ? messageId : undefined"
         data-slot="keybinding-field"
@@ -116,11 +118,11 @@ async function reset() {
         @blur="stop"
       >
         <span v-if="recording" class="text-muted-foreground">{{ t('settings.shortcuts.recording') }}</span>
-        <kbd v-else class="font-sans">{{ current }}</kbd>
+        <kbd v-else class="font-ui tracking-wide tabular-nums">{{ current }}</kbd>
       </Button>
       <Button
         variant="ghost"
-        size="icon-sm"
+        size="icon"
         :disabled="!customized"
         :aria-label="t('settings.shortcuts.reset')"
         :title="t('settings.shortcuts.reset')"
@@ -130,8 +132,8 @@ async function reset() {
         <IconReset />
       </Button>
     </div>
-    <p v-if="refusal" :id="messageId" role="alert" class="text-sm text-destructive">
+    <p v-if="refusal" :id="messageId" role="alert" class="basis-full text-sm text-destructive">
       {{ message }}
     </p>
-  </div>
+  </Field>
 </template>

@@ -29,13 +29,32 @@
     },
     "theme": {
       "label": "主题",
-      "description": "选择应用程序的主题。",
+      "description": "“系统”会跟随电脑的浅色或深色设置。",
       "light": "浅色",
       "dark": "深色",
       "system": "系统"
     },
+    "font": {
+      "label": "应用字体",
+      "description": "应用界面使用的字体。",
+      "default": "系统默认",
+      "search": "搜索字体…",
+      "sample": "字",
+      "loading": "正在加载已安装的字体…",
+      "empty": "未找到已安装的字体。",
+      "noResults": "没有匹配的字体。",
+      "loadError": "无法加载已安装的字体。",
+      "retry": "重试",
+      "saveError": "无法保存字体设置。请重试。",
+      "missing": "无法使用 {family}，正在使用系统字体。"
+    },
+    "language": {
+      "label": "应用语言",
+      "description": "应用界面显示所用的语言。"
+    },
     "shortcuts": {
       "label": "键盘快捷键",
+      "description": "点击快捷键，然后按下想要的按键。按 Esc 取消。",
       "recording": "请按下快捷键…",
       "reset": "恢复默认值",
       "problems": {

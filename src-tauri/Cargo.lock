@@ -1434,6 +1434,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
 
 [[package]]
+name = "fontconfig-parser"
+version = "0.5.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbc773e24e02d4ddd8395fd30dc147524273a83e54e0f312d986ea30de5f5646"
+dependencies = [
+ "roxmltree",
+]
+
+[[package]]
+name = "fontgres-core"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a2e46af1e02da1c2e5117821f6eef51793ae3228c5b421875cee51652985360f"
+dependencies = [
+ "fontconfig-parser",
+ "log",
+ "memmap2 0.9.12",
+ "serde",
+]
+
+[[package]]
 name = "foreign-types"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3865,6 +3886,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "roxmltree"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6c20b6793b5c2fa6553b250154b78d6d0db37e72700ae35fad9387a46f487c97"
+
+[[package]]
 name = "rust-ini"
 version = "0.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4747,6 +4774,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "tauri-plugin-fontgres"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "88463c70e7c1ba8f55d5622029dac3b978bc980e4d8d77e8db90a2e1129ce491"
+dependencies = [
+ "fontgres-core",
+ "serde",
+ "tauri",
+ "tauri-plugin",
+ "thiserror 2.0.21",
+]
+
+[[package]]
 name = "tauri-plugin-fs"
 version = "2.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5012,6 +5052,7 @@ dependencies = [
  "tauri-plugin-decorum",
  "tauri-plugin-devtools",
  "tauri-plugin-dialog",
+ "tauri-plugin-fontgres",
  "tauri-plugin-fs",
  "tauri-plugin-log",
  "tauri-plugin-os",

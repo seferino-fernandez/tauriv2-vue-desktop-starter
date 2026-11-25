@@ -29,13 +29,32 @@
     },
     "theme": {
       "label": "Tema",
-      "description": "Elige el tema para la aplicación.",
+      "description": "Sistema sigue el modo claro u oscuro de tu equipo.",
       "light": "Claro",
       "dark": "Oscuro",
       "system": "Sistema"
     },
+    "font": {
+      "label": "Fuente de la app",
+      "description": "La tipografía de la interfaz de la aplicación.",
+      "default": "Predeterminada del sistema",
+      "search": "Buscar fuentes…",
+      "sample": "Añ",
+      "loading": "Cargando fuentes instaladas…",
+      "empty": "No se encontraron fuentes instaladas.",
+      "noResults": "No hay fuentes que coincidan.",
+      "loadError": "No se pudieron cargar las fuentes instaladas.",
+      "retry": "Reintentar",
+      "saveError": "No se pudo guardar la fuente. Inténtalo de nuevo.",
+      "missing": "{family} no está disponible. Se usa la fuente del sistema."
+    },
+    "language": {
+      "label": "Idioma de la aplicación",
+      "description": "El idioma en que se muestra la interfaz de la aplicación."
+    },
     "shortcuts": {
       "label": "Atajos de teclado",
+      "description": "Haz clic en un atajo y pulsa las teclas que quieras. Esc cancela.",
       "recording": "Pulsa un atajo…",
       "reset": "Restablecer el valor predeterminado",
       "problems": {

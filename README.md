@@ -20,17 +20,17 @@ A desktop application starter using the libraries and technologies:
 
 ## Preview
 
-### _Light mode dashboard view_
+### _Settings, light theme_
 
-![Light Mode Dashboard](./docs/images/light-mode-dashboard.png)
+![The settings page in the light theme](./docs/images/settings-light.png)
 
-### _Dark mode settings view_
+### _Settings, dark theme_
 
-![Dark Mode Settings](./docs/images/dark-mode-settings.png)
+![The settings page in the dark theme](./docs/images/settings-dark.png)
 
-### _Language support view_
+### _Settings, in Chinese_
 
-![Language Support](./docs/images/language-support.png)
+![The settings page with the app language set to Chinese](./docs/images/settings-chinese.png)
 
 ## Recommended IDE Setup
 

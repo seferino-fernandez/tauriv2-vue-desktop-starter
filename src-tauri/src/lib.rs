@@ -7,7 +7,7 @@
 //! # What `run` sets up
 //!
 //! - **One instance:** launching the app again while it is running does not open a second copy.
-//! - **Plugins:** store (settings), window state, shell, dialog, file system, OS info and installed fonts.
+//! - **Plugins:** store (settings), window state, OS info and installed fonts.
 //! - **Logging:** debug builds register `tauri-plugin-devtools` and `tauri-plugin-pilot`;
 //!   release builds write logs through [`plugins::logging`].
 //! - **Titlebar:** on Windows and macOS the main window draws its own titlebar
@@ -91,9 +91,6 @@ pub fn run() {
     builder
         .plugin(tauri_plugin_decorum::init())
         .plugin(tauri_plugin_store::Builder::new().build())
-        .plugin(tauri_plugin_shell::init())
-        .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_fontgres::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())

@@ -23,14 +23,11 @@ tauri-build = { version = "2.7.6", features = [] }
 
 [dependencies]
 tauri = { version = "2.12.7", features = [] }
-tauri-plugin-shell = "2.6.0"
 tauri-plugin-window-state = "2.5.0"
 tauri-plugin-store = "2.5.1"
 tauri-plugin-decorum = "1.1.1"
 tauri-plugin-devtools = "2.2.3"
 tauri-plugin-log = "2.10.2"
-tauri-plugin-fs = "2.7.1"
-tauri-plugin-dialog = "2.8.4"
 tauri-plugin-pilot = "0.8.1"
 tauri-plugin-os = "2.4.0"
 tauri-plugin-fontgres = "=0.1.0"

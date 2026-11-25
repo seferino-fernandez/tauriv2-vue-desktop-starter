@@ -260,9 +260,6 @@ importers:
       happy-dom:
         specifier: ^21.0.4
         version: 21.0.4
-      jiti:
-        specifier: ^2.7.0
-        version: 2.7.0
       shadcn-vue:
         specifier: ^2.9.0
         version: 2.9.0(@volar/typescript@2.4.30(typescript@6.0.3))(@vue/language-core@3.3.14)(eslint@10.15.0(jiti@2.7.0))

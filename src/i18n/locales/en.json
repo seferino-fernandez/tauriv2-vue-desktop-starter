@@ -1,23 +1,4 @@
 {
-  "home": {
-    "label": "Home",
-    "panel": {
-      "groups": {
-        "projects": "Projects",
-        "recent": "Recent",
-        "archive": "Archive"
-      },
-      "items": {
-        "alpha": "Alpha",
-        "beta": "Beta",
-        "gamma": "Gamma",
-        "notes": "Notes",
-        "drafts": "Drafts",
-        "oldNotes": "Old notes",
-        "retired": "Retired"
-      }
-    }
-  },
   "languages": {
     "label": "Languages"
   },

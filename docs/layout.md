@@ -44,6 +44,8 @@ The ⌘/Ctrl+B listener in shadcn-vue's `SidebarProvider.vue` is deleted on purp
 
 ## Adding a page
 
+The starter has no pages at the top of the activity bar: Settings is pinned to the bottom, and `/` redirects to it. Your pages go at the top. Point the `/` redirect at your first one.
+
 Add a route in [`src/router/index.ts`](../src/router/index.ts). Its `meta` puts it in the activity bar:
 
 - `titleKey`: the i18n key of the page's name. It's the activity bar tooltip and the panel's label.
@@ -66,10 +68,7 @@ Give the route a `sidebar` named view next to its `default` one:
 }
 ```
 
-The panel component renders only what goes below the label, so each page can lay out its own:
-
-- [`pages/home/panel.vue`](../src/pages/home/panel.vue) is an explorer-style tree.
-- [`pages/settings/panel.vue`](../src/pages/settings/panel.vue) is quick navigation. It jumps to a section of the page and highlights the one in view, using [`useScrollSpy`](../src/composables/useScrollSpy.ts). The page and the panel both read their sections from [`sections.ts`](../src/pages/settings/sections.ts).
+The panel component renders only what goes below the label, so each page lays out its own. [`pages/settings/panel.vue`](../src/pages/settings/panel.vue) is quick navigation: it jumps to a section of the page and highlights the one in view, using [`useScrollSpy`](../src/composables/useScrollSpy.ts). The page and the panel both read their sections from [`sections.ts`](../src/pages/settings/sections.ts).
 
 Build panels from the `Sidebar*` components in `@/components/ui/sidebar` (`SidebarGroup`, `SidebarMenu`, `SidebarMenuButton`, …) so they match.
 

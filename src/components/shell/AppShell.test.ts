@@ -32,6 +32,21 @@ vi.mock('@/lib/platform', () => ({
   isMacOS: () => true,
 }))
 
+// A page with its own nested panel, at the top of the activity bar
+const panelRoute: RouteRecordRaw = {
+  path: '/notes',
+  name: 'notes',
+  components: {
+    default: {
+      render: () => h('p', 'Notes page'),
+    },
+    sidebar: {
+      render: () => h('p', 'Notes panel'),
+    },
+  },
+  meta: { titleKey: 'test.notes', nav: 'main' },
+}
+
 // A page with no nested panel: just a default view
 const plainRoute: RouteRecordRaw = {
   path: '/plain',
@@ -45,15 +60,20 @@ const plainRoute: RouteRecordRaw = {
 // Unmount between tests, or earlier apps keep handling shortcuts on window
 enableAutoUnmount(afterEach)
 
-async function mountApp(path = '/home') {
+async function mountApp(path = '/notes') {
   const router = createRouter({
     history: createMemoryHistory(),
-    routes: [...routes, plainRoute],
+    routes: [...routes, panelRoute, plainRoute],
   })
   const i18n = createI18n({
     locale: 'en',
     legacy: false,
-    messages: { en },
+    messages: {
+      en: {
+        ...en,
+        test: { notes: 'Notes' },
+      },
+    },
   })
   await useSettingsStore().loadSidebar()
   await useSettingsStore().loadKeybindings()
@@ -99,6 +119,12 @@ describe('appShell', () => {
     document.body.innerHTML = ''
   })
 
+  it('opens on the settings page', async () => {
+    const { router } = await mountApp('/')
+    expect(router.currentRoute.value.name).toBe('settings')
+    expect(icon('Settings').getAttribute('data-active')).toBe('true')
+  })
+
   it('lists pages in the activity bar from route meta, as icons only', async () => {
     await mountApp()
     const bar = document.querySelector('[data-slot="activity-bar"]')!
@@ -106,7 +132,7 @@ describe('appShell', () => {
     const footer = bar.querySelector('[data-sidebar="footer"]')!
     expect([
       ...content.querySelectorAll('a'),
-    ].map(a => a.getAttribute('aria-label'))).toEqual(['Home', 'Languages'])
+    ].map(a => a.getAttribute('aria-label'))).toEqual(['Notes', 'Languages'])
     expect([
       ...footer.querySelectorAll('a'),
     ].map(a => a.getAttribute('aria-label'))).toEqual(['Settings'])
@@ -123,42 +149,42 @@ describe('appShell', () => {
 
   it('highlights the current page and labels the panel with it', async () => {
     const { router } = await mountApp()
-    expect(icon('Home').getAttribute('data-active')).toBe('true')
+    expect(icon('Notes').getAttribute('data-active')).toBe('true')
     expect(document.querySelector('header h1')).toBeNull()
-    expect(panel()?.querySelector('[data-sidebar="header"]')?.textContent?.trim()).toBe('Home')
+    expect(panel()?.querySelector('[data-sidebar="header"]')?.textContent?.trim()).toBe('Notes')
 
     await router.push('/settings')
     await flushPromises()
-    expect(icon('Home').getAttribute('data-active')).toBe('false')
+    expect(icon('Notes').getAttribute('data-active')).toBe('false')
     expect(icon('Settings').getAttribute('data-active')).toBe('true')
     expect(panel()?.querySelector('[data-sidebar="header"]')?.textContent?.trim()).toBe('Settings')
   })
 
   it('renders each page\'s own panel', async () => {
     const { router } = await mountApp()
-    expect(panel()?.textContent).toContain('Projects')
+    expect(panel()?.textContent).toContain('Notes panel')
 
     await router.push('/settings')
     await flushPromises()
     expect(panel()?.textContent).toContain('Appearance')
-    expect(panel()?.textContent).not.toContain('Projects')
+    expect(panel()?.textContent).not.toContain('Notes panel')
   })
 
   it('toggles the panel from the current page\'s icon and saves the state', async () => {
     await mountApp()
-    await click(icon('Home'))
+    await click(icon('Notes'))
     expect(panelState()).toBe('collapsed')
     expect(panel()?.hasAttribute('inert')).toBe(true)
     expect(store.set).toHaveBeenCalledWith('sidebarOpen', false)
 
-    await click(icon('Home'))
+    await click(icon('Notes'))
     expect(panelState()).toBe('expanded')
     expect(store.set).toHaveBeenLastCalledWith('sidebarOpen', true)
   })
 
   it('opens the panel when going to another page that has one', async () => {
     const { router } = await mountApp()
-    await click(icon('Home'))
+    await click(icon('Notes'))
     expect(panelState()).toBe('collapsed')
 
     await click(icon('Settings'))
@@ -224,8 +250,8 @@ describe('appShell', () => {
   it('opens the panel when coming from a page without one', async () => {
     store.saved = { sidebarOpen: false }
     const { router } = await mountApp('/plain')
-    await click(icon('Home'))
-    expect(router.currentRoute.value.name).toBe('home')
+    await click(icon('Notes'))
+    expect(router.currentRoute.value.name).toBe('notes')
     expect(panelState()).toBe('expanded')
     expect(store.set).toHaveBeenCalledWith('sidebarOpen', true)
   })
@@ -247,7 +273,7 @@ describe('appShell', () => {
     expect(panelState()).toBe('collapsed')
     expect(panel()?.style.width).toBe('0px')
 
-    await click(icon('Home'))
+    await click(icon('Notes'))
     expect(panel()?.style.width).toBe('300px')
   })
 

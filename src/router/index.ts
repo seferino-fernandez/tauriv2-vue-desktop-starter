@@ -2,7 +2,6 @@ import type { Component } from 'vue'
 import type { RouteLocationNormalizedLoaded, RouteLocationResolved, RouteRecordRaw } from 'vue-router'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import IconGear from '~icons/ph/gear-duotone'
-import IconHouse from '~icons/ph/house-duotone'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -30,17 +29,8 @@ export interface NavItem {
 export const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    redirect: '/home',
+    redirect: '/settings',
     children: [
-      {
-        path: 'home',
-        name: 'home',
-        components: {
-          default: () => import('@/pages/home/index.vue'),
-          sidebar: () => import('@/pages/home/panel.vue'),
-        },
-        meta: { titleKey: 'home.label', icon: IconHouse, nav: 'main' },
-      },
       {
         path: 'settings',
         name: 'settings',

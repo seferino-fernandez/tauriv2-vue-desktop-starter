@@ -22,7 +22,7 @@
         "minWidth": 800,
         "center": true,
         "focus": true,
-        "decorations": false,
+        "decorations": true,
         "titleBarStyle": "Overlay",
         "hiddenTitle": true
       }

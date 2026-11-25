@@ -10,8 +10,8 @@ On Windows and macOS the starter draws its own titlebar with
 [`tauri-plugin-decorum`](https://github.com/clearlysid/tauri-plugin-decorum). On
 Linux it keeps the system's native decorations instead:
 
-- [`tauri.linux.conf.json`](../src-tauri/tauri.linux.conf.json) sets
-  `"decorations": true`.
+- The window in [`tauri.conf.json`](../src-tauri/tauri.conf.json) has
+  `"decorations": true`, the native frame, on every platform.
 - [`lib.rs`](../src-tauri/src/lib.rs) only calls `create_overlay_titlebar()` on
   non-Linux platforms.
 - [`main.ts`](../src/main.ts) sets `data-platform` on `<html>` (via
@@ -29,8 +29,11 @@ That includes resizing from the window edges, which a custom undecorated window
 has to emulate. decorum's Linux controls also don't match this app's header or
 light theme.
 
-To use custom chrome on Linux anyway, set `"decorations": false` in
-`tauri.linux.conf.json` and build your own controls with
+To use custom chrome on Linux anyway, give
+[`tauri.linux.conf.json`](../src-tauri/tauri.linux.conf.json) an `app.windows`
+entry with `"decorations": false`. Tauri replaces the whole `windows` array
+rather than merging it, so copy the full entry from `tauri.conf.json`, not
+only the key you change. Then build your own controls with
 `getCurrentWindow().minimize()`, `toggleMaximize()`, `close()`,
 `startDragging()` and `startResizeDragging()`. Grant the matching
 `core:window:allow-*` permissions in

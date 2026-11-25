@@ -78,7 +78,7 @@ pub fn run() {
         builder = builder.plugin(logging::tauri_plugin_logging());
     }
 
-    // Linux keeps native decorations instead (see tauri.linux.conf.json and docs/linux.md),
+    // Linux keeps native decorations instead (see docs/linux.md),
     // so there is nothing to set up there
     #[cfg(not(target_os = "linux"))]
     {

@@ -11,7 +11,7 @@ defineProps<{
     A miniature of this window drawn with the theme's own tokens: .light and .dark scope the
     palette, so it shows true colors whatever the app's theme. System shows both, split.
   -->
-  <div class="relative aspect-[16/10] overflow-hidden" aria-hidden="true">
+  <div class="relative aspect-16/10 overflow-hidden" aria-hidden="true">
     <div
       v-for="palette in theme === 'auto' ? ['light', 'dark'] : [theme]"
       :key="palette"

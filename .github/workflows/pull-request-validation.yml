@@ -22,12 +22,51 @@ concurrency:
     group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
     cancel-in-progress: true
 
-# This workflow will build your tauri app without uploading it anywhere.
+# Runs the `just verify` gate once, and builds the tauri app on every platform without uploading it anywhere.
 
 jobs:
+  verify:
+    permissions:
+      contents: read
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install pnpm, Node.js and Frontend Dependencies
+        uses: pnpm/setup@v3
+        with:
+          runtime: node@26.13.1
+          cache: true
+          require-lockfile: true
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust Cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: ./src-tauri -> target
+
+      - name: Install just, cargo-nextest and cargo-deny
+        uses: taiki-e/install-action@v2
+        with:
+          tool: just,cargo-nextest,cargo-deny
+
+      # Not in install-action's list; rust-cache keeps ~/.cargo/bin, so this compiles only on a cache miss
+      - name: Install sqlx-cli
+        run: command -v cargo-sqlx || cargo install sqlx-cli --no-default-features --features sqlite --locked
+
+      - name: Verify
+        run: just verify
+
   test-tauri:
     permissions:
-      contents: write
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -65,6 +104,11 @@ jobs:
         with:
           # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Rust Cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: ./src-tauri -> target
 
       # If tagName and releaseId are omitted tauri-action will only build the app and won't try to upload any assets.
       - name: Build Artifacts

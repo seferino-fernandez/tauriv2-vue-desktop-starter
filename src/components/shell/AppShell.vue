@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CommandId } from '@/lib/keybindings'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { useKeybindings } from '@/composables/useKeybindings'
@@ -8,6 +8,7 @@ import { CONTENT_ID } from '@/lib/layout'
 import { hasPanel } from '@/router'
 import { useSettingsStore } from '@/stores/settings'
 import ActivityBar from './ActivityBar.vue'
+import CommandPalette from './CommandPalette.vue'
 import NestedPanel from './NestedPanel.vue'
 import TitleBar from './TitleBar.vue'
 
@@ -42,10 +43,14 @@ for (const { name, meta } of router.getRoutes()) {
     pageCommands[meta.command] = () => openPage(name)
 }
 
-useKeybindings({
+const paletteOpen = ref(false)
+
+const handlers: Partial<Record<CommandId, () => void>> = {
   ...pageCommands,
   togglePanel: () => updateOpen(!(settingsStore.sidebarOpen ?? true)),
-})
+  openCommandPalette: () => paletteOpen.value = true,
+}
+useKeybindings(handlers)
 </script>
 
 <template>
@@ -68,5 +73,6 @@ useKeybindings({
         <router-view />
       </main>
     </div>
+    <CommandPalette v-model:open="paletteOpen" :handlers="handlers" />
   </SidebarProvider>
 </template>

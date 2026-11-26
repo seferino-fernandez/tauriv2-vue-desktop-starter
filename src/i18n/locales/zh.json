@@ -51,7 +51,8 @@
   },
   "commands": {
     "togglePanel": "显示或隐藏面板",
-    "openSettings": "打开设置"
+    "openSettings": "打开设置",
+    "openCommandPalette": "显示所有命令"
   },
   "errors": {
     "saveTheme": "无法保存主题。请重试。",
@@ -80,5 +81,9 @@
     "installFailed": "无法安装更新",
     "failedDescription": "请稍后再试。",
     "close": "关闭"
+  },
+  "commandPalette": {
+    "placeholder": "输入命令",
+    "empty": "没有匹配的命令"
   }
 }

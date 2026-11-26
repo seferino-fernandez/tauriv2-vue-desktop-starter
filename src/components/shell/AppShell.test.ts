@@ -285,6 +285,19 @@ describe('appShell', () => {
     expect(router.currentRoute.value.name).toBe('settings')
   })
 
+  it('opens the command palette with ⇧⌘P and runs the command picked there', async () => {
+    const { router } = await mountApp()
+    await press('KeyP', { metaKey: true, shiftKey: true })
+    const items = () => [
+      ...document.querySelectorAll<HTMLElement>('[data-slot="command-item"]'),
+    ]
+    expect(items().map(item => item.textContent)).toEqual(['Toggle panel ⌘B', 'Open settings ⌘,'])
+
+    await click(items()[1]!)
+    expect(router.currentRoute.value.name).toBe('settings')
+    expect(document.querySelector('[data-slot="command-item"]')).toBeNull()
+  })
+
   it('opens the panel when coming from a page without one', async () => {
     ipc = mockSettingsIpc({ sidebarOpen: false })
     const { router } = await mountApp('/plain')

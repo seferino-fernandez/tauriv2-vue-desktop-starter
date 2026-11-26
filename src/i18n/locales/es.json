@@ -51,7 +51,8 @@
   },
   "commands": {
     "togglePanel": "Mostrar u ocultar el panel",
-    "openSettings": "Abrir configuraciones"
+    "openSettings": "Abrir configuraciones",
+    "openCommandPalette": "Mostrar todos los comandos"
   },
   "errors": {
     "saveTheme": "No se pudo guardar el tema. Inténtalo de nuevo.",
@@ -80,5 +81,9 @@
     "installFailed": "No se pudo instalar la actualización",
     "failedDescription": "Inténtalo de nuevo más tarde.",
     "close": "Cerrar"
+  },
+  "commandPalette": {
+    "placeholder": "Escribe un comando",
+    "empty": "Ningún comando coincide"
   }
 }

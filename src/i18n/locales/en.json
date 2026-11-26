@@ -51,7 +51,8 @@
   },
   "commands": {
     "togglePanel": "Toggle panel",
-    "openSettings": "Open settings"
+    "openSettings": "Open settings",
+    "openCommandPalette": "Show all commands"
   },
   "errors": {
     "saveTheme": "Couldn’t save the theme. Try again.",
@@ -80,5 +81,9 @@
     "installFailed": "Couldn’t install the update",
     "failedDescription": "Try again later.",
     "close": "Close"
+  },
+  "commandPalette": {
+    "placeholder": "Type a command",
+    "empty": "No matching commands"
   }
 }

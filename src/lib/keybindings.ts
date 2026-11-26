@@ -23,6 +23,7 @@ export const commands = {
   togglePanel: { titleKey: 'commands.togglePanel', defaultBinding: 'Mod+KeyB' },
   // The macOS app menu's Settings… item runs it too (src-tauri/src/menu.rs mirrors its id and default)
   openSettings: { titleKey: 'commands.openSettings', defaultBinding: 'Mod+Comma' },
+  openCommandPalette: { titleKey: 'commands.openCommandPalette', defaultBinding: 'Mod+Shift+KeyP' },
 } as const satisfies Record<string, Command>
 
 export type CommandId = keyof typeof commands

@@ -28,6 +28,8 @@ allow = [
   "Apache-2.0",
   "Apache-2.0 WITH LLVM-exception",
   "BSD-3-Clause",
+  # Permissive like MIT; rustls and ring use it, through the updater's HTTP client
+  "ISC",
   "MIT",
   "MPL-2.0",
   "Unicode-3.0",

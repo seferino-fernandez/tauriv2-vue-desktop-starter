@@ -3,6 +3,7 @@ import { ConfigProvider } from 'reka-ui'
 import { computed } from 'vue'
 import AppShell from '@/components/shell/AppShell.vue'
 import { Toaster } from '@/components/ui/sonner'
+import UpdateDialog from '@/components/UpdateDialog.vue'
 import { useSettingsStore } from '@/stores/settings'
 import 'vue-sonner/style.css'
 
@@ -17,5 +18,6 @@ const toastTheme = computed(() => settingsStore.theme === 'auto'
   <ConfigProvider>
     <AppShell />
     <Toaster :theme="toastTheme" />
+    <UpdateDialog />
   </ConfigProvider>
 </template>

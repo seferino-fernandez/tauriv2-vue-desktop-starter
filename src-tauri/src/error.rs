@@ -5,7 +5,7 @@ use serde::ser::{Serialize, SerializeStruct as _, Serializer};
 /// Everything that can go wrong in a command or while the app starts.
 ///
 /// A command that fails rejects its `invoke` promise with `{ kind, message }`, where `kind` is
-/// one of `"database"`, `"migrate"`, `"io"` or `"tauri"`.
+/// one of `"database"`, `"migrate"`, `"io"`, `"tauri"` or, with the `updater` feature, `"updater"`.
 #[derive(Debug, thiserror::Error)]
 pub(crate) enum Error {
     /// A query failed, or the database could not be opened.
@@ -20,6 +20,10 @@ pub(crate) enum Error {
     /// Tauri could not answer, e.g. it does not know the app data directory.
     #[error(transparent)]
     Tauri(#[from] tauri::Error),
+    /// An update could not be checked for, downloaded or installed.
+    #[cfg(feature = "updater")]
+    #[error(transparent)]
+    Updater(#[from] tauri_plugin_updater::Error),
 }
 
 impl Error {
@@ -30,6 +34,8 @@ impl Error {
             Self::Migrate(_) => "migrate",
             Self::Io(_) => "io",
             Self::Tauri(_) => "tauri",
+            #[cfg(feature = "updater")]
+            Self::Updater(_) => "updater",
         }
     }
 }

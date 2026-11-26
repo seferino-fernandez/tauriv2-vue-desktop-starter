@@ -32,16 +32,22 @@ tauri-plugin-os = "2.4.0"
 tauri-plugin-fontgres = "=0.1.0"
 log = "0.4.35"
 serde = { version = "1.0.229", features = ["derive"] }
+# `generate_context!` embeds plugin config (e.g. tauri.updater.conf.json's) as `serde_json` values
+serde_json = "1.0.154"
 # `sqlite-bundled` compiles SQLite in; the `sqlite` feature would also enable loading extensions.
 sqlx = { version = "0.9.1", default-features = false, features = ["runtime-tokio", "sqlite-bundled", "macros", "migrate"] }
 thiserror = "2.0.21"
+tauri-plugin-updater = { version = "2.14.1", optional = true }
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-single-instance = "2.5.5"
 fix-path-env = { git = "https://github.com/tauri-apps/fix-path-env-rs", rev = "c4c45d503ea115a839aae718d02f79e7c7f0f673" }
 
+[features]
+# In-app updates, off by default: the app then never goes online. See docs/updater.md.
+updater = ["dep:tauri-plugin-updater"]
+
 [dev-dependencies]
-serde_json = "1.0.154"
 tempfile = "3.27.0"
 tokio = { version = "1.54.1", features = ["macros", "rt"] }
 

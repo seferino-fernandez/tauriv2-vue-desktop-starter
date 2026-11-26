@@ -87,6 +87,7 @@ Settings are saved in a SQLite database, `app.db` (`app-dev.db` in debug builds)
 - [App font](./docs/fonts.md): choosing an installed font, how it is applied, and the fontgres plugin
 - [Database](./docs/database.md): where the SQLite file lives, migrations, the query cache, and how to add a setting
 - [Rust commands](./docs/rust-commands.md): where commands run and how to avoid freezing or crashing the app
+- [Updater](./docs/updater.md): opt-in in-app updates that only check when the user asks, and how to sign and publish them
 
 #### App Icon
 

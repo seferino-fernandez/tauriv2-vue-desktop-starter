@@ -54,6 +54,10 @@ The release workflow builds an AppImage, a `.deb` and an `.rpm`
   `libwayland`/`xkbcommon` libraries that caused `EGL_BAD_PARAMETER` crashes
   on newer Mesa. Don't downgrade the CLI below 2.12 if you ship AppImages.
 
+Builds for distro repositories (AUR, Nix, Flathub) should leave out the `updater` feature: the
+package manager updates them, and a self-update would overwrite its files (see
+[Updater](./updater.md#linux)).
+
 ## Why WebKitGTK isn't pinned in CI
 
 Some Tauri apps pin `libwebkit2gtk-4.1` to an old version (e.g. 2.44.3) on the

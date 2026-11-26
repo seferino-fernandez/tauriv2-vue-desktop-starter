@@ -1,7 +1,9 @@
 # Offline by default
 
 The shipped app makes no network calls to third parties. Everything the UI needs is
-bundled at build time, and a Content Security Policy blocks anything that slips in.
+bundled at build time, and a Content Security Policy blocks anything that slips in. The one
+exception is opt-in: a build with the `updater` feature asks your update endpoint for a new
+version, and only when the user clicks Check for updates (see [Updater](./updater.md)).
 
 ## Icons
 
@@ -58,5 +60,6 @@ Gotchas:
 - **`tauri-pilot eval` fails in built apps** ("Refused to evaluate a string as JavaScript"):
   the policy has no `'unsafe-eval'`. Snapshots, clicks and screenshots still work; for `eval`,
   use `just dev`, which runs without the CSP.
-- If the app genuinely needs a remote origin (an API, an update server), add that origin
-  to the one directive that needs it rather than loosening `default-src`.
+- If the webview genuinely needs a remote origin (an API), add that origin to the one
+  directive that needs it rather than loosening `default-src`. The updater needs no change:
+  it makes its requests from Rust.

@@ -57,5 +57,26 @@
     "saveLanguage": "Couldn’t save the language. Try again.",
     "saveShortcut": "Couldn’t save the shortcut. Try again.",
     "loadSettings": "Couldn’t load your saved settings. Using the defaults."
+  },
+  "updates": {
+    "check": "Check for updates…",
+    "checking": "Checking for updates…",
+    "checkingDescription": "Asking for the latest version.",
+    "upToDate": "You’re up to date",
+    "upToDateDescription": "There is no newer version.",
+    "available": "Version {version} is available",
+    "availableDescription": "You have version {current}.",
+    "install": "Install",
+    "later": "Later",
+    "downloading": "Downloading the update…",
+    "downloadingDescription": "This can take a few minutes.",
+    "percent": "{percent}% downloaded",
+    "installed": "Update installed",
+    "installedDescription": "Restart to start using version {version}.",
+    "restart": "Restart",
+    "checkFailed": "Couldn’t check for updates",
+    "installFailed": "Couldn’t install the update",
+    "failedDescription": "Try again later.",
+    "close": "Close"
   }
 }

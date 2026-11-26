@@ -57,5 +57,26 @@
     "saveLanguage": "无法保存语言。请重试。",
     "saveShortcut": "无法保存快捷键。请重试。",
     "loadSettings": "无法加载已保存的设置，将使用默认设置。"
+  },
+  "updates": {
+    "check": "检查更新…",
+    "checking": "正在检查更新…",
+    "checkingDescription": "正在获取最新版本。",
+    "upToDate": "已是最新版本",
+    "upToDateDescription": "没有更新的版本。",
+    "available": "版本 {version} 可用",
+    "availableDescription": "当前版本为 {current}。",
+    "install": "安装",
+    "later": "稍后",
+    "downloading": "正在下载更新…",
+    "downloadingDescription": "这可能需要几分钟。",
+    "percent": "已下载 {percent}%",
+    "installed": "更新已安装",
+    "installedDescription": "重启以开始使用版本 {version}。",
+    "restart": "重启",
+    "checkFailed": "无法检查更新",
+    "installFailed": "无法安装更新",
+    "failedDescription": "请稍后再试。",
+    "close": "关闭"
   }
 }

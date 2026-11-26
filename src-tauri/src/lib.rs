@@ -14,6 +14,7 @@
 //! - **App menu:** on macOS, Tauri's default menu plus a "Settings…" item that follows the
 //!   user's shortcut for it (`src/menu.rs`).
 //! - **Plugins:** window state, OS info and installed fonts.
+//! - **Updates:** only with the `updater` feature, and only when the user asks (`src/updater.rs`).
 //! - **Logging:** debug builds register `tauri-plugin-devtools` and `tauri-plugin-pilot`;
 //!   release builds write logs through [`plugins::logging`]. Panics are logged too, with a
 //!   backtrace.
@@ -43,6 +44,8 @@ mod menu;
 mod panic_hook;
 pub mod plugins;
 mod settings;
+#[cfg(feature = "updater")]
+mod updater;
 
 /// Builds the app, opens the main window and runs Tauri's event loop.
 ///
@@ -97,6 +100,14 @@ pub fn run() {
         builder = builder.plugin(logging::tauri_plugin_logging());
     }
 
+    // In-app updates only exist in builds with the `updater` feature (docs/updater.md)
+    #[cfg(feature = "updater")]
+    {
+        builder = builder
+            .plugin(tauri_plugin_updater::Builder::new().build())
+            .manage(updater::PendingUpdate::default());
+    }
+
     builder
         .plugin(tauri_plugin_decorum::init())
         .plugin(tauri_plugin_os::init())
@@ -111,6 +122,13 @@ pub fn run() {
             settings::commands::set_sidebar_width,
             settings::commands::set_keybinding,
             settings::commands::reset_keybinding,
+            updater_available,
+            #[cfg(feature = "updater")]
+            updater::check_for_update,
+            #[cfg(feature = "updater")]
+            updater::install_update,
+            #[cfg(feature = "updater")]
+            updater::restart_app,
         ])
         // Tauri keeps only the last `setup`, so everything that runs at startup goes here
         .setup(|app| {
@@ -136,6 +154,12 @@ pub fn run() {
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+/// Whether this build can update itself (the `updater` feature), so the frontend knows to offer it.
+#[tauri::command]
+fn updater_available() -> bool {
+    cfg!(feature = "updater")
 }
 
 /// Brings the main window to the front, e.g. when the app is launched a second time.

@@ -3,6 +3,7 @@ import type { Language } from '@/lib/config'
 import { watchImmediate } from '@vueuse/core'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { Button } from '@/components/ui/button'
 import { Field, FieldContent, FieldDescription, FieldLabel } from '@/components/ui/field'
 import {
   Select,
@@ -15,6 +16,7 @@ import {
 import { getLanguageLabel, supportedLanguages } from '@/lib/config'
 import { commandIds } from '@/lib/keybindings'
 import { useSettingsStore } from '@/stores/settings'
+import { useUpdaterStore } from '@/stores/updater'
 import FontSetting from './FontSetting.vue'
 import KeybindingSetting from './KeybindingSetting.vue'
 import SettingsSection from './SettingsSection.vue'
@@ -23,6 +25,7 @@ import ThemeSetting from './ThemeSetting.vue'
 const { t, locale } = useI18n()
 const availableLanguages = ref<Language[]>(supportedLanguages())
 const settingsStore = useSettingsStore()
+const updater = useUpdaterStore()
 
 watchImmediate(locale, newLocale => handleLanguageSelect(newLocale))
 
@@ -35,13 +38,19 @@ function handleLanguageSelect(newLocale: string) {
 
 <template>
   <div class="mx-auto flex w-full max-w-2xl flex-col gap-10 pt-2">
-    <header class="flex flex-col gap-1 px-1">
-      <h1 class="text-xl font-semibold tracking-tight">
-        {{ t('settings.label') }}
-      </h1>
-      <p class="text-sm text-muted-foreground">
-        {{ t('settings.description') }}
-      </p>
+    <header class="flex items-start justify-between gap-4 px-1">
+      <div class="flex flex-col gap-1">
+        <h1 class="text-xl font-semibold tracking-tight">
+          {{ t('settings.label') }}
+        </h1>
+        <p class="text-sm text-muted-foreground">
+          {{ t('settings.description') }}
+        </p>
+      </div>
+      <!-- Only builds with the updater cargo feature can update themselves -->
+      <Button v-if="updater.available" variant="outline" size="sm" @click="updater.check()">
+        {{ t('updates.check') }}
+      </Button>
     </header>
 
     <!-- One SettingsSection per entry in sections.ts, in the same order -->

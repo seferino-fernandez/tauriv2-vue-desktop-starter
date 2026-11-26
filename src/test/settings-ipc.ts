@@ -16,7 +16,8 @@ export function nothingSaved(): SavedSettings {
 
 /**
  * Stands in for the Rust settings commands. `get_settings` returns `saved` (unset fields are
- * `null`), and every other command is recorded in `sent` as `[command, args]`. Undo it with
+ * `null`), `updater_available` says no, and every other command is recorded in `sent` as
+ * `[command, args]`. Undo it with
  * `unmockSettingsIpc`.
  */
 export function mockSettingsIpc(saved: Partial<SavedSettings> = {}) {
@@ -33,6 +34,8 @@ export function mockSettingsIpc(saved: Partial<SavedSettings> = {}) {
   mockIPC((command, args) => {
     if (command === 'get_settings')
       return structuredClone(ipc.saved)
+    if (command === 'updater_available')
+      return false
     ipc.sent.push([command, args])
     return null
   }, { shouldMockEvents: true })

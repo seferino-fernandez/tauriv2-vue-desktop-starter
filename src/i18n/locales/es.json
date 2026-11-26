@@ -57,5 +57,26 @@
     "saveLanguage": "No se pudo guardar el idioma. Inténtalo de nuevo.",
     "saveShortcut": "No se pudo guardar el atajo. Inténtalo de nuevo.",
     "loadSettings": "No se pudo cargar tu configuración guardada. Se usan los valores predeterminados."
+  },
+  "updates": {
+    "check": "Buscar actualizaciones…",
+    "checking": "Buscando actualizaciones…",
+    "checkingDescription": "Consultando la última versión.",
+    "upToDate": "Tienes la última versión",
+    "upToDateDescription": "No hay ninguna versión más reciente.",
+    "available": "La versión {version} está disponible",
+    "availableDescription": "Tienes la versión {current}.",
+    "install": "Instalar",
+    "later": "Más tarde",
+    "downloading": "Descargando la actualización…",
+    "downloadingDescription": "Puede tardar unos minutos.",
+    "percent": "{percent} % descargado",
+    "installed": "Actualización instalada",
+    "installedDescription": "Reinicia para empezar a usar la versión {version}.",
+    "restart": "Reiniciar",
+    "checkFailed": "No se pudo buscar actualizaciones",
+    "installFailed": "No se pudo instalar la actualización",
+    "failedDescription": "Inténtalo de nuevo más tarde.",
+    "close": "Cerrar"
   }
 }

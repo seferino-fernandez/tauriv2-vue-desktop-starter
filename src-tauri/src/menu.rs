@@ -1,4 +1,5 @@
-//! The macOS app menu: Tauri's default menu with a "Settings…" item in the app's own menu.
+//! The macOS app menu: Tauri's default menu with a "Settings…" item in the app's own menu, and a
+//! "Check for Updates…" item in builds with the `updater` feature.
 //!
 //! Choosing the item asks the frontend to run its `openSettings` command, the one ⌘, runs. The
 //! item shows that command's shortcut and follows it when the user changes it: the keybinding
@@ -24,6 +25,11 @@ const OPEN_SETTINGS_DEFAULT: &str = "Mod+Comma";
 #[cfg(target_os = "macos")]
 const COMMAND_EVENT: &str = "command";
 
+/// The Check for Updates… item's id, and the event it sends the frontend
+/// (`src/components/UpdateDialog.vue` listens for it).
+#[cfg(all(target_os = "macos", feature = "updater"))]
+const CHECK_FOR_UPDATES: &str = "check-for-updates";
+
 /// The Settings… item, kept so its shortcut can change. Only managed on macOS.
 struct SettingsItem(MenuItem<Wry>);
 
@@ -38,6 +44,18 @@ pub(crate) fn install(app: &tauri::App, saved: Option<&str>) -> tauri::Result<()
     // The app's own menu comes first; Settings… goes under About, as in other Mac apps
     if let Some(MenuItemKind::Submenu(app_menu)) = menu.items()?.first() {
         app_menu.insert_items(&[&item, &PredefinedMenuItem::separator(handle)?], 2)?;
+        // Check for Updates… goes right under About
+        #[cfg(feature = "updater")]
+        app_menu.insert(
+            &MenuItem::with_id(
+                handle,
+                CHECK_FOR_UPDATES,
+                "Check for Updates…",
+                true,
+                None::<&str>,
+            )?,
+            1,
+        )?;
     }
     app.set_menu(menu)?;
     app.on_menu_event(|app, event| {
@@ -45,6 +63,12 @@ pub(crate) fn install(app: &tauri::App, saved: Option<&str>) -> tauri::Result<()
             && let Err(err) = app.emit(COMMAND_EVENT, OPEN_SETTINGS)
         {
             log::error!("could not ask the frontend to open the settings: {err}");
+        }
+        #[cfg(feature = "updater")]
+        if event.id() == CHECK_FOR_UPDATES
+            && let Err(err) = app.emit(CHECK_FOR_UPDATES, ())
+        {
+            log::error!("could not ask the frontend to check for updates: {err}");
         }
     });
     app.manage(SettingsItem(item));

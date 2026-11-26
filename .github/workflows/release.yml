@@ -53,6 +53,26 @@ jobs:
         with:
           workspaces: ./src-tauri -> target
 
+      # Signs and notarizes the macOS app when the Apple secrets exist (docs/signing.md); without
+      # them it is ad-hoc signed as before. Tauri treats an empty APPLE_* variable as set, so only
+      # the secrets that exist are passed on.
+      - name: Use the Apple signing secrets (macOS only)
+        if: matrix.platform == 'macos-latest'
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          for name in APPLE_CERTIFICATE APPLE_CERTIFICATE_PASSWORD APPLE_SIGNING_IDENTITY APPLE_ID APPLE_PASSWORD APPLE_TEAM_ID; do
+            value="${!name}"
+            if [ -n "$value" ]; then
+              { echo "$name<<APPLE_SECRET_EOF"; echo "$value"; echo "APPLE_SECRET_EOF"; } >> "$GITHUB_ENV"
+            fi
+          done
+
       - name: Build & Upload Artifacts
         uses: tauri-apps/tauri-action@v1
         env:

@@ -88,6 +88,7 @@ Settings are saved in a SQLite database, `app.db` (`app-dev.db` in debug builds)
 - [Database](./docs/database.md): where the SQLite file lives, migrations, the query cache, and how to add a setting
 - [Rust commands](./docs/rust-commands.md): where commands run and how to avoid freezing or crashing the app
 - [Updater](./docs/updater.md): opt-in in-app updates that only check when the user asks, and how to sign and publish them
+- [Signing releases](./docs/signing.md): the secrets that sign and notarize the macOS app, and where Windows signing plugs in
 
 #### App Icon
 

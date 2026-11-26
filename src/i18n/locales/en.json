@@ -49,6 +49,7 @@
     "resizePanel": "Resize panel"
   },
   "commands": {
-    "togglePanel": "Toggle panel"
+    "togglePanel": "Toggle panel",
+    "openSettings": "Open settings"
   }
 }

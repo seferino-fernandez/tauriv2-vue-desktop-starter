@@ -15,9 +15,14 @@ export interface Command {
   defaultBinding: string
 }
 
-/** Every command a shortcut can run. Add one here, then handle it with `useKeybindings`. */
+/**
+ * Every command a shortcut can run. Add one here, then handle it with `useKeybindings`, or give a
+ * route `meta.command` to make it a command that opens that page.
+ */
 export const commands = {
   togglePanel: { titleKey: 'commands.togglePanel', defaultBinding: 'Mod+KeyB' },
+  // The macOS app menu's Settings… item runs it too (src-tauri/src/menu.rs mirrors its id and default)
+  openSettings: { titleKey: 'commands.openSettings', defaultBinding: 'Mod+Comma' },
 } as const satisfies Record<string, Command>
 
 export type CommandId = keyof typeof commands
@@ -43,7 +48,6 @@ export const RESERVED_KEYBINDINGS: readonly string[] = [
   'Mod+KeyA', // select all
   'Mod+KeyZ', // undo
   'Mod+Shift+KeyZ', // redo
-  'Mod+Comma', // settings, by convention
   'Mod+KeyR', // reload (dev builds)
 ]
 

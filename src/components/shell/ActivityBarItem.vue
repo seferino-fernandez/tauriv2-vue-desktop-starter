@@ -3,6 +3,7 @@ import type { NavItem } from '@/router'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
+import Keybinding from '@/components/Keybinding.vue'
 import { SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { hasPanel } from '@/router'
@@ -56,6 +57,7 @@ async function select(event: MouseEvent, navigate: (event?: MouseEvent) => Promi
         </TooltipTrigger>
         <TooltipContent side="right" align="center">
           {{ label }}
+          <Keybinding v-if="item.command" :command="item.command" class="ml-1.5" />
         </TooltipContent>
       </Tooltip>
     </RouterLink>

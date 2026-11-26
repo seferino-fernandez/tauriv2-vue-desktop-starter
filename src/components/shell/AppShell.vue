@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import type { CommandId } from '@/lib/keybindings'
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { useKeybindings } from '@/composables/useKeybindings'
 import { CONTENT_ID } from '@/lib/layout'
@@ -11,6 +12,7 @@ import NestedPanel from './NestedPanel.vue'
 import TitleBar from './TitleBar.vue'
 
 const route = useRoute()
+const router = useRouter()
 const settingsStore = useSettingsStore()
 
 const pageHasPanel = computed(() => hasPanel(route))
@@ -23,7 +25,25 @@ function updateOpen(open: boolean) {
     settingsStore.setSidebarOpen(open)
 }
 
+// Like clicking another page's icon: go there and open its panel. On that page already, nothing.
+async function openPage(name: string) {
+  if (route.matched.some(record => record.name === name))
+    return
+  const openPanel = !settingsStore.sidebarOpen && hasPanel(router.resolve({ name }))
+  await router.push({ name })
+  if (openPanel)
+    await settingsStore.setSidebarOpen(true)
+}
+
+// A route's `meta.command` opens that page
+const pageCommands: Partial<Record<CommandId, () => void>> = {}
+for (const { name, meta } of router.getRoutes()) {
+  if (typeof name === 'string' && meta.command)
+    pageCommands[meta.command] = () => openPage(name)
+}
+
 useKeybindings({
+  ...pageCommands,
   togglePanel: () => updateOpen(!(settingsStore.sidebarOpen ?? true)),
 })
 </script>

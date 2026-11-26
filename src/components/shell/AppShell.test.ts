@@ -1,4 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router'
+import { emit } from '@tauri-apps/api/event'
 import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -40,9 +41,6 @@ const plainRoute: RouteRecordRaw = {
   },
   meta: { titleKey: 'languages.label', nav: 'main' },
 }
-
-// Unmount between tests, or earlier apps keep handling shortcuts on window
-enableAutoUnmount(afterEach)
 
 async function mountApp(path = '/notes') {
   const router = createRouter({
@@ -104,6 +102,9 @@ describe('appShell', () => {
   })
 
   afterEach(unmockSettingsIpc)
+  // Unmount between tests, or earlier apps keep handling shortcuts on window. After hooks run
+  // last-registered first, so this unmounts while the mocked IPC can still remove its listeners.
+  enableAutoUnmount(afterEach)
 
   it('opens on the settings page', async () => {
     const { router } = await mountApp('/')
@@ -130,7 +131,7 @@ describe('appShell', () => {
     expect(panelState()).toBe('expanded')
     icon('Settings').dispatchEvent(new FocusEvent('focus'))
     await flushPromises()
-    expect(document.querySelector('[role="tooltip"]')?.textContent).toContain('Settings')
+    expect(document.querySelector('[role="tooltip"]')?.textContent).toContain('Settings ⌘,')
   })
 
   it('highlights the current page and labels the panel with it', async () => {
@@ -243,6 +244,45 @@ describe('appShell', () => {
 
     await press('KeyJ', { metaKey: true })
     expect(panelState()).toBe('collapsed')
+  })
+
+  it('goes to settings with ⌘, and opens its panel', async () => {
+    const { router } = await mountApp()
+    await click(icon('Notes'))
+    expect(panelState()).toBe('collapsed')
+
+    await press('Comma', { metaKey: true })
+    expect(router.currentRoute.value.name).toBe('settings')
+    expect(panelState()).toBe('expanded')
+  })
+
+  it('does nothing with ⌘, on settings', async () => {
+    await mountApp('/settings')
+    await click(toggle()!)
+    const sent = ipc.sent.length
+
+    await press('Comma', { metaKey: true })
+    expect(panelState()).toBe('collapsed')
+    expect(ipc.sent).toHaveLength(sent)
+  })
+
+  it('uses a changed shortcut instead of ⌘, for settings', async () => {
+    ipc = mockSettingsIpc({
+      keybindings: { openSettings: 'Mod+Shift+KeyS' },
+    })
+    const { router } = await mountApp()
+    await press('Comma', { metaKey: true })
+    expect(router.currentRoute.value.name).toBe('notes')
+
+    await press('KeyS', { metaKey: true, shiftKey: true })
+    expect(router.currentRoute.value.name).toBe('settings')
+  })
+
+  it('goes to settings when the app menu asks', async () => {
+    const { router } = await mountApp()
+    await emit('command', 'openSettings')
+    await flushPromises()
+    expect(router.currentRoute.value.name).toBe('settings')
   })
 
   it('opens the panel when coming from a page without one', async () => {

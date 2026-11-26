@@ -10,6 +10,8 @@
 //! - **Settings:** saved in a SQLite database in the app data directory. It is opened and
 //!   migrated before the window shows, and the frontend reads and writes it through the settings
 //!   commands.
+//! - **App menu:** on macOS, Tauri's default menu plus a "Settings…" item that follows the
+//!   user's shortcut for it (`src/menu.rs`).
 //! - **Plugins:** window state, OS info and installed fonts.
 //! - **Logging:** debug builds register `tauri-plugin-devtools` and `tauri-plugin-pilot`;
 //!   release builds write logs through [`plugins::logging`].
@@ -35,6 +37,7 @@ use tauri_plugin_decorum::WebviewWindowExt;
 
 mod db;
 mod error;
+mod menu;
 pub mod plugins;
 mod settings;
 
@@ -111,6 +114,16 @@ pub fn run() {
             // Settings load as soon as the frontend starts, so the database is ready before it is
             let pool = tauri::async_runtime::block_on(db::open(app.handle()))
                 .inspect_err(|err| log::error!("could not open the database: {err}"))?;
+
+            #[cfg(target_os = "macos")]
+            {
+                // A missing shortcut is no reason not to start: the menu shows the default
+                let mut saved = tauri::async_runtime::block_on(settings::load(&pool))
+                    .inspect_err(|err| log::error!("could not read the saved shortcuts: {err}"))
+                    .map_or_default(|settings| settings.keybindings);
+                menu::install(app, saved.remove(menu::OPEN_SETTINGS).as_deref())?;
+            }
+
             app.manage(pool);
             Ok(())
         })

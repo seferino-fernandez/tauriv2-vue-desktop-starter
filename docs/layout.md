@@ -39,6 +39,8 @@ Shortcuts can be changed in Settings → Keyboard shortcuts. The commands, their
 - **Stored form:** `Mod+Shift+KeyB`. `Mod` is ⌘ on macOS and Ctrl elsewhere, and the key is a physical position (`KeyboardEvent.code`), so ⌥ combos and non-Latin layouts work. Only changed shortcuts are saved, in the [database](./database.md)'s `keybinding_overrides` table.
 - **Refused:** shortcuts without `Mod`, the ones in `RESERVED_KEYBINDINGS` (quit, close, copy, paste, undo, ...), and one another command already uses.
 - **Adding a command:** add it to `commands`, give its `titleKey` a translation, and handle it with [`useKeybindings`](../src/composables/useKeybindings.ts). It shows up in settings by itself.
+- **Commands that open a page:** give the route `meta.command`. The shortcut then goes to that page (opening its panel, like clicking its icon) and the icon's tooltip shows it. Settings has `openSettings`, ⌘/Ctrl+, by default.
+- **macOS app menu:** [`src-tauri/src/menu.rs`](../src-tauri/src/menu.rs) adds "Settings…" to Tauri's default menu. It sends the `command` event that `useKeybindings` listens for, and its shortcut follows `openSettings`'s: the keybinding commands update it. Windows and Linux have no native menu.
 
 The ⌘/Ctrl+B listener in shadcn-vue's `SidebarProvider.vue` is deleted on purpose. If a CLI update brings it back, delete it again, or the panel toggles twice.
 

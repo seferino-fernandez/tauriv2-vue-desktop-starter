@@ -49,6 +49,7 @@
     "resizePanel": "调整面板大小"
   },
   "commands": {
-    "togglePanel": "显示或隐藏面板"
+    "togglePanel": "显示或隐藏面板",
+    "openSettings": "打开设置"
   }
 }

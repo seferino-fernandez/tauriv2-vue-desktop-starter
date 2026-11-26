@@ -1,5 +1,6 @@
 import type { Component } from 'vue'
 import type { RouteLocationNormalizedLoaded, RouteLocationResolved, RouteRecordRaw } from 'vue-router'
+import type { CommandId } from '@/lib/keybindings'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import IconGear from '~icons/ph/gear-duotone'
 
@@ -11,6 +12,8 @@ declare module 'vue-router' {
     icon?: Component
     /** Activity bar section that lists the page; unlisted when omitted */
     nav?: NavSection
+    /** Command whose shortcut opens the page; its tooltip in the activity bar shows the shortcut */
+    command?: CommandId
   }
 }
 
@@ -21,6 +24,7 @@ export interface NavItem {
   name: string
   titleKey: string
   icon?: Component
+  command?: CommandId
 }
 
 // The routes are the single source for the activity bar: give a page `meta.nav` to list it.
@@ -38,7 +42,12 @@ export const routes: RouteRecordRaw[] = [
           default: () => import('@/pages/settings/index.vue'),
           sidebar: () => import('@/pages/settings/panel.vue'),
         },
-        meta: { titleKey: 'settings.label', icon: IconGear, nav: 'footer' },
+        meta: {
+          titleKey: 'settings.label',
+          icon: IconGear,
+          nav: 'footer',
+          command: 'openSettings',
+        },
       },
     ],
   },
@@ -50,7 +59,12 @@ export function navItems(section: NavSection, records: readonly RouteRecordRaw[]
     const { name, meta } = record
     const own = meta?.nav === section && typeof name === 'string' && meta.titleKey
       ? [
-          { name, titleKey: meta.titleKey, icon: meta.icon },
+          {
+            name,
+            titleKey: meta.titleKey,
+            icon: meta.icon,
+            command: meta.command,
+          },
         ]
       : []
     return [

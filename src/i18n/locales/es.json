@@ -49,6 +49,7 @@
     "resizePanel": "Cambiar el tamaño del panel"
   },
   "commands": {
-    "togglePanel": "Mostrar u ocultar el panel"
+    "togglePanel": "Mostrar u ocultar el panel",
+    "openSettings": "Abrir configuraciones"
   }
 }

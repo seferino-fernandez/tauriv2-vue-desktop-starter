@@ -29,12 +29,13 @@ export function mockSettingsIpc(saved: Partial<SavedSettings> = {}) {
   }
   // `isTauri()` reads this global, which the real webview sets and `mockIPC` does not
   vi.stubGlobal('isTauri', true)
+  // Events stay in the page: `emit` reaches `listen` without being recorded in `sent`
   mockIPC((command, args) => {
     if (command === 'get_settings')
       return structuredClone(ipc.saved)
     ipc.sent.push([command, args])
     return null
-  })
+  }, { shouldMockEvents: true })
   return ipc
 }
 

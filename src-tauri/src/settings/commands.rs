@@ -8,7 +8,7 @@
 )]
 
 use sqlx::SqlitePool;
-use tauri::State;
+use tauri::{AppHandle, State};
 
 use super::{Settings, Theme};
 use crate::error::Result;
@@ -52,18 +52,27 @@ pub(crate) async fn set_sidebar_width(pool: State<'_, SqlitePool>, width: u32) -
     super::save_sidebar_width(&pool, width).await
 }
 
-/// Gives `command` its own shortcut.
+/// Gives `command` its own shortcut, and shows it in the app menu if the command is there.
 #[tauri::command]
 pub(crate) async fn set_keybinding(
+    app: AppHandle,
     pool: State<'_, SqlitePool>,
     command: String,
     binding: String,
 ) -> Result<()> {
-    super::save_keybinding(&pool, &command, &binding).await
+    super::save_keybinding(&pool, &command, &binding).await?;
+    crate::menu::shortcut_changed(&app, &command, Some(&binding));
+    Ok(())
 }
 
-/// Puts `command` back on its default shortcut.
+/// Puts `command` back on its default shortcut, in the app menu too.
 #[tauri::command]
-pub(crate) async fn reset_keybinding(pool: State<'_, SqlitePool>, command: String) -> Result<()> {
-    super::delete_keybinding(&pool, &command).await
+pub(crate) async fn reset_keybinding(
+    app: AppHandle,
+    pool: State<'_, SqlitePool>,
+    command: String,
+) -> Result<()> {
+    super::delete_keybinding(&pool, &command).await?;
+    crate::menu::shortcut_changed(&app, &command, None);
+    Ok(())
 }

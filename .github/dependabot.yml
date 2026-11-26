@@ -10,6 +10,16 @@ updates:
         patterns:
           - "*"
 
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Group dependency updates into a single pull request.
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

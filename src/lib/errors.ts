@@ -7,7 +7,7 @@ import i18n from '@/i18n'
 import { logError } from '@/lib/log'
 
 /** What failed; each has a message under `errors` in the locale files */
-export type FailedAction = 'saveTheme' | 'saveLanguage' | 'saveShortcut' | 'loadSettings'
+export type FailedAction = 'saveTheme' | 'saveLanguage' | 'saveShortcut' | 'loadSettings' | 'openLogs'
 
 export function notifyError(action: FailedAction, cause: unknown) {
   logError(`${action} failed`, cause)

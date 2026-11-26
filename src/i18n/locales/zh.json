@@ -43,7 +43,8 @@
         "reserved": "{shortcut} 已被系统或应用菜单占用。",
         "taken": "{shortcut} 已被“{command}”使用。"
       }
-    }
+    },
+    "openLogs": "显示日志文件"
   },
   "shell": {
     "resizePanel": "调整面板大小"
@@ -56,7 +57,8 @@
     "saveTheme": "无法保存主题。请重试。",
     "saveLanguage": "无法保存语言。请重试。",
     "saveShortcut": "无法保存快捷键。请重试。",
-    "loadSettings": "无法加载已保存的设置，将使用默认设置。"
+    "loadSettings": "无法加载已保存的设置，将使用默认设置。",
+    "openLogs": "无法打开日志文件夹。"
   },
   "updates": {
     "check": "检查更新…",

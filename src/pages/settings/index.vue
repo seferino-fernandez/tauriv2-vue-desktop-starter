@@ -14,7 +14,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { getLanguageLabel, supportedLanguages } from '@/lib/config'
+import { notifyError } from '@/lib/errors'
 import { commandIds } from '@/lib/keybindings'
+import { openLogFolder } from '@/lib/logs-commands'
 import { useSettingsStore } from '@/stores/settings'
 import { useUpdaterStore } from '@/stores/updater'
 import FontSetting from './FontSetting.vue'
@@ -26,6 +28,12 @@ const { t, locale } = useI18n()
 const availableLanguages = ref<Language[]>(supportedLanguages())
 const settingsStore = useSettingsStore()
 const updater = useUpdaterStore()
+// Only release builds write log files; debug builds log to CrabNebula DevTools
+const writesLogFiles = import.meta.env.PROD
+
+function openLogs() {
+  openLogFolder().catch(error => notifyError('openLogs', error))
+}
 
 watchImmediate(locale, newLocale => handleLanguageSelect(newLocale))
 
@@ -47,10 +55,15 @@ function handleLanguageSelect(newLocale: string) {
           {{ t('settings.description') }}
         </p>
       </div>
-      <!-- Only builds with the updater cargo feature can update themselves -->
-      <Button v-if="updater.available" variant="outline" size="sm" @click="updater.check()">
-        {{ t('updates.check') }}
-      </Button>
+      <div class="flex shrink-0 gap-2">
+        <Button v-if="writesLogFiles" variant="outline" size="sm" @click="openLogs">
+          {{ t('settings.openLogs') }}
+        </Button>
+        <!-- Only builds with the updater cargo feature can update themselves -->
+        <Button v-if="updater.available" variant="outline" size="sm" @click="updater.check()">
+          {{ t('updates.check') }}
+        </Button>
+      </div>
     </header>
 
     <!-- One SettingsSection per entry in sections.ts, in the same order -->

@@ -43,7 +43,8 @@
         "reserved": "{shortcut} is reserved by the system or the app menu.",
         "taken": "{shortcut} is already used by {command}."
       }
-    }
+    },
+    "openLogs": "Show log files"
   },
   "shell": {
     "resizePanel": "Resize panel"
@@ -56,7 +57,8 @@
     "saveTheme": "Couldn’t save the theme. Try again.",
     "saveLanguage": "Couldn’t save the language. Try again.",
     "saveShortcut": "Couldn’t save the shortcut. Try again.",
-    "loadSettings": "Couldn’t load your saved settings. Using the defaults."
+    "loadSettings": "Couldn’t load your saved settings. Using the defaults.",
+    "openLogs": "Couldn’t open the log folder."
   },
   "updates": {
     "check": "Check for updates…",

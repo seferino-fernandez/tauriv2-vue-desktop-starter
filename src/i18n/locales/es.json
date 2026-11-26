@@ -43,7 +43,8 @@
         "reserved": "{shortcut} está reservado por el sistema o el menú de la aplicación.",
         "taken": "{shortcut} ya lo usa {command}."
       }
-    }
+    },
+    "openLogs": "Mostrar archivos de registro"
   },
   "shell": {
     "resizePanel": "Cambiar el tamaño del panel"
@@ -56,7 +57,8 @@
     "saveTheme": "No se pudo guardar el tema. Inténtalo de nuevo.",
     "saveLanguage": "No se pudo guardar el idioma. Inténtalo de nuevo.",
     "saveShortcut": "No se pudo guardar el atajo. Inténtalo de nuevo.",
-    "loadSettings": "No se pudo cargar tu configuración guardada. Se usan los valores predeterminados."
+    "loadSettings": "No se pudo cargar tu configuración guardada. Se usan los valores predeterminados.",
+    "openLogs": "No se pudo abrir la carpeta de registros."
   },
   "updates": {
     "check": "Buscar actualizaciones…",

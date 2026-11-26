@@ -19,7 +19,7 @@
 //! - **Updates:** only with the `updater` feature, and only when the user asks (`src/updater.rs`).
 //! - **Logging:** debug builds register `tauri-plugin-devtools` and `tauri-plugin-pilot`;
 //!   release builds write logs through [`plugins::logging`]. Panics are logged too, with a
-//!   backtrace.
+//!   backtrace, and Settings can open the log folder for a bug report (`src/logs.rs`).
 //! - **Titlebar:** on Windows and macOS the main window draws its own titlebar
 //!   (`tauri-plugin-decorum`). Linux keeps the native window decorations.
 //! - **`PATH`:** on macOS and Linux, apps started from the Dock or a launcher get the login
@@ -43,6 +43,7 @@ use tauri_plugin_window_state::StateFlags;
 
 mod db;
 mod error;
+mod logs;
 mod menu;
 mod navigation;
 mod panic_hook;
@@ -132,6 +133,7 @@ pub fn run() {
             settings::commands::set_sidebar_width,
             settings::commands::set_keybinding,
             settings::commands::reset_keybinding,
+            logs::open_log_folder,
             updater_available,
             #[cfg(feature = "updater")]
             updater::check_for_update,

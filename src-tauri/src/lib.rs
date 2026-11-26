@@ -6,7 +6,8 @@
 //!
 //! # What `run` sets up
 //!
-//! - **One instance:** launching the app again while it is running does not open a second copy.
+//! - **One instance:** launching the app again while it is running does not open a second copy;
+//!   it brings the running app's window to the front instead.
 //! - **Settings:** saved in a SQLite database in the app data directory. It is opened and
 //!   migrated before the window shows, and the frontend reads and writes it through the settings
 //!   commands.
@@ -74,7 +75,9 @@ pub fn run() {
         }
     }
     let mut builder =
-        tauri::Builder::default().plugin(tauri_plugin_single_instance::init(|_, _, _| {}));
+        tauri::Builder::default().plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            show_main_window(app);
+        }));
 
     // CrabNebula DevTools prevents other logging plugins from working
     // https://docs.crabnebula.dev/devtools/troubleshoot/log-plugins/
@@ -129,6 +132,20 @@ pub fn run() {
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+/// Brings the main window to the front, e.g. when the app is launched a second time.
+fn show_main_window(app: &tauri::AppHandle) {
+    let Some(window) = app.get_webview_window("main") else {
+        return;
+    };
+    let shown = window
+        .unminimize()
+        .and_then(|()| window.show())
+        .and_then(|()| window.set_focus());
+    if let Err(err) = shown {
+        log::warn!("could not bring the main window to the front: {err}");
+    }
 }
 
 /// Replaces the main window's titlebar with the app's own.

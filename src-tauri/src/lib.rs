@@ -8,6 +8,8 @@
 //!
 //! - **One instance:** launching the app again while it is running does not open a second copy;
 //!   it brings the running app's window to the front instead.
+//! - **Closing on macOS:** closing the window hides it, and the Dock icon brings it back. The app
+//!   quits with ⌘Q.
 //! - **Settings:** saved in a SQLite database in the app data directory. It is opened and
 //!   migrated before the window shows, and the frontend reads and writes it through the settings
 //!   commands.
@@ -114,7 +116,12 @@ pub fn run() {
             .manage(updater::PendingUpdate::default());
     }
 
-    builder
+    #[cfg(target_os = "macos")]
+    {
+        builder = builder.on_window_event(hide_instead_of_closing);
+    }
+
+    let app = builder
         .plugin(navigation::guard())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_decorum::init())
@@ -144,42 +151,72 @@ pub fn run() {
             #[cfg(feature = "updater")]
             updater::restart_app,
         ])
-        // Tauri keeps only the last `setup`, so everything that runs at startup goes here
-        .setup(|app| {
-            // Linux keeps native decorations instead (see docs/linux.md)
-            #[cfg(not(target_os = "linux"))]
-            decorate_main_window(app)?;
+        // Tauri keeps only the last `setup`, so everything that runs at startup goes there
+        .setup(setup)
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application");
 
-            // Settings load as soon as the frontend starts, so the database is ready before it is
-            let pool = match tauri::async_runtime::block_on(db::open(app.handle())) {
-                Ok(pool) => pool,
-                Err(err) => {
-                    log::error!("could not open the database: {err}");
-                    report_startup_failure(app.handle(), &err);
-                    return Ok(());
-                }
-            };
+    // On macOS, clicking the Dock icon brings back the window that closing hid
+    #[cfg(target_os = "macos")]
+    app.run(|app, event| {
+        if let tauri::RunEvent::Reopen {
+            has_visible_windows: false,
+            ..
+        } = event
+        {
+            show_main_window(app);
+        }
+    });
+    #[cfg(not(target_os = "macos"))]
+    app.run(|_, _| {});
+}
 
-            #[cfg(target_os = "macos")]
-            {
-                // A missing shortcut is no reason not to start: the menu shows the default
-                let mut saved = tauri::async_runtime::block_on(settings::load(&pool))
-                    .inspect_err(|err| log::error!("could not read the saved shortcuts: {err}"))
-                    .map_or_default(|settings| settings.keybindings);
-                menu::install(app, saved.remove(menu::OPEN_SETTINGS).as_deref())?;
-            }
-
-            app.manage(pool);
-            Ok(())
-        })
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+/// Hides the main window instead of closing it, as Mac apps do: the app keeps running until ⌘Q.
+#[cfg(target_os = "macos")]
+fn hide_instead_of_closing(window: &tauri::Window, event: &tauri::WindowEvent) {
+    if let tauri::WindowEvent::CloseRequested { api, .. } = event
+        && window.label() == "main"
+    {
+        api.prevent_close();
+        if let Err(err) = window.hide() {
+            log::warn!("could not hide the main window: {err}");
+        }
+    }
 }
 
 /// Whether this build can update itself (the `updater` feature), so the frontend knows to offer it.
 #[tauri::command]
 fn updater_available() -> bool {
     cfg!(feature = "updater")
+}
+
+/// Everything that runs once Tauri has started, before the window shows its page.
+fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
+    // Linux keeps native decorations instead (see docs/linux.md)
+    #[cfg(not(target_os = "linux"))]
+    decorate_main_window(app)?;
+
+    // Settings load as soon as the frontend starts, so the database is ready before it is
+    let pool = match tauri::async_runtime::block_on(db::open(app.handle())) {
+        Ok(pool) => pool,
+        Err(err) => {
+            log::error!("could not open the database: {err}");
+            report_startup_failure(app.handle(), &err);
+            return Ok(());
+        }
+    };
+
+    #[cfg(target_os = "macos")]
+    {
+        // A missing shortcut is no reason not to start: the menu shows the default
+        let mut saved = tauri::async_runtime::block_on(settings::load(&pool))
+            .inspect_err(|err| log::error!("could not read the saved shortcuts: {err}"))
+            .map_or_default(|settings| settings.keybindings);
+        menu::install(app, saved.remove(menu::OPEN_SETTINGS).as_deref())?;
+    }
+
+    app.manage(pool);
+    Ok(())
 }
 
 /// Tells the user why the app cannot start, then quits once they close the message.

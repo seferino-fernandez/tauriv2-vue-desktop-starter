@@ -41,7 +41,11 @@ A desktop application starter using the libraries and technologies:
 
 Follow [Tauri's prerequisites guide](https://v2.tauri.app/start/prerequisites/) to setup your development environment.
 
-Then rename all instances of `tauriv2-vue-desktop-starter` and `tauriv2_vue_desktop_starter` to your app name.
+Then give the app your own name and [bundle identifier](https://v2.tauri.app/reference/config/#identifier):
+
+```sh
+just rename "My App" com.example.myapp
+```
 
 If you want to replace the package manager update:
 

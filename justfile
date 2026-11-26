@@ -32,6 +32,10 @@ install-vue:
 install-rust:
     cd {{rust_dir}} && cargo fetch --locked
 
+# Rename the starter to your app, once after cloning, e.g. `just rename "My App" com.example.myapp`
+rename name identifier:
+    node scripts/rename.ts {{quote(name)}} {{quote(identifier)}}
+
 # Start Tauri dev server with hot reload
 dev:
     pnpm tauri dev

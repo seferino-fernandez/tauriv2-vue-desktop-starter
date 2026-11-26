@@ -2,8 +2,10 @@ import { mockIPC } from '@tauri-apps/api/mocks'
 import { flushPromises } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { toast } from 'vue-sonner'
+import i18n from '@/i18n'
 import { PANEL_MAX_WIDTH } from '@/lib/layout'
-import { mockSettingsIpc, unmockSettingsIpc } from '@/test/settings-ipc'
+import { mockSettingsIpc, nothingSaved, unmockSettingsIpc } from '@/test/settings-ipc'
 import { useSettingsStore } from './settings'
 
 const html = document.documentElement
@@ -161,5 +163,75 @@ describe('settings store: saving', () => {
         { command: 'togglePanel' },
       ],
     ])
+  })
+})
+
+/** Settings load, but every save fails */
+function mockFailingSaves() {
+  mockSettingsIpc()
+  mockIPC((command) => {
+    if (command === 'get_settings')
+      return nothingSaved()
+    throw new Error('disk full')
+  })
+  vi.spyOn(console, 'error').mockImplementation(() => {})
+  return vi.spyOn(toast, 'error')
+}
+
+describe('settings store: failed saves', () => {
+  it('puts the theme back and says so', async () => {
+    const toastError = mockFailingSaves()
+    const settingsStore = useSettingsStore()
+
+    await settingsStore.setTheme('dark')
+    await flushPromises()
+
+    expect(settingsStore.theme).toBe('auto')
+    expect(html.classList.contains('dark')).toBe(false)
+    expect(toastError).toHaveBeenCalledOnce()
+  })
+
+  it('puts the language back and says so', async () => {
+    const toastError = mockFailingSaves()
+    const settingsStore = useSettingsStore()
+    i18n.global.locale.value = 'zh'
+
+    await settingsStore.setLanguage('zh')
+
+    expect(settingsStore.language).toBeNull()
+    expect(i18n.global.locale.value).toBe('en')
+    expect(toastError).toHaveBeenCalledOnce()
+  })
+
+  it('keeps the shortcut that was saved before and says so', async () => {
+    const toastError = mockFailingSaves()
+    const settingsStore = useSettingsStore()
+
+    await settingsStore.setKeybinding('togglePanel', 'Mod+KeyJ')
+
+    expect(settingsStore.keybindingOverrides).toEqual({})
+    expect(toastError).toHaveBeenCalledOnce()
+  })
+
+  it('keeps a panel change without a toast', async () => {
+    const toastError = mockFailingSaves()
+    const settingsStore = useSettingsStore()
+
+    await settingsStore.setSidebarOpen(false)
+    await settingsStore.setSidebarWidth(300)
+
+    expect(settingsStore.sidebarOpen).toBe(false)
+    expect(settingsStore.sidebarWidth).toBe(300)
+    expect(toastError).not.toHaveBeenCalled()
+  })
+
+  it('rejects a font that was not saved, so the font picker can say so', async () => {
+    const toastError = mockFailingSaves()
+    const settingsStore = useSettingsStore()
+
+    await expect(settingsStore.setFontFamily('Inter')).rejects.toThrow()
+
+    expect(settingsStore.fontFamily).toBeNull()
+    expect(toastError).not.toHaveBeenCalled()
   })
 })

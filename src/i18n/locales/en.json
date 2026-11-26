@@ -51,5 +51,11 @@
   "commands": {
     "togglePanel": "Toggle panel",
     "openSettings": "Open settings"
+  },
+  "errors": {
+    "saveTheme": "Couldn’t save the theme. Try again.",
+    "saveLanguage": "Couldn’t save the language. Try again.",
+    "saveShortcut": "Couldn’t save the shortcut. Try again.",
+    "loadSettings": "Couldn’t load your saved settings. Using the defaults."
   }
 }

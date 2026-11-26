@@ -51,5 +51,11 @@
   "commands": {
     "togglePanel": "Mostrar u ocultar el panel",
     "openSettings": "Abrir configuraciones"
+  },
+  "errors": {
+    "saveTheme": "No se pudo guardar el tema. Inténtalo de nuevo.",
+    "saveLanguage": "No se pudo guardar el idioma. Inténtalo de nuevo.",
+    "saveShortcut": "No se pudo guardar el atajo. Inténtalo de nuevo.",
+    "loadSettings": "No se pudo cargar tu configuración guardada. Se usan los valores predeterminados."
   }
 }

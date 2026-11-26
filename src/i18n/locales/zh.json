@@ -51,5 +51,11 @@
   "commands": {
     "togglePanel": "显示或隐藏面板",
     "openSettings": "打开设置"
+  },
+  "errors": {
+    "saveTheme": "无法保存主题。请重试。",
+    "saveLanguage": "无法保存语言。请重试。",
+    "saveShortcut": "无法保存快捷键。请重试。",
+    "loadSettings": "无法加载已保存的设置，将使用默认设置。"
   }
 }

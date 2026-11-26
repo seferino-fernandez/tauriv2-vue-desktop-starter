@@ -17,7 +17,7 @@ const options: { value: Theme, labelKey: string }[] = [
 ]
 
 function select(value: unknown) {
-  void settingsStore.setTheme(value as Theme).catch(() => {})
+  void settingsStore.setTheme(value as Theme)
 }
 </script>
 

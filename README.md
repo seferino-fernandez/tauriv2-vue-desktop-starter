@@ -17,7 +17,7 @@ A desktop application starter using the libraries and technologies:
   - [Pinia](https://pinia.vuejs.org/introduction.html) for state management.
 
 - AI Support
-  - [Tauri Pilot](https://github.com/mpiton/tauri-pilot) lets AI agents inspect, interact with, and debug Tauri applications in real-time
+  - [Tauri Pilot](https://github.com/mpiton/tauri-pilot) lets AI agents inspect, interact with, and debug Tauri applications in real-time. `tauri-pilot mcp` serves the same tools over MCP: add `{"command": "tauri-pilot", "args": ["mcp"]}` to your agent's MCP config
 
 ## Preview
 

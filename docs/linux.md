@@ -85,10 +85,20 @@ suggests trying these in order, one at a time:
 
 For example: `WEBKIT_DISABLE_DMABUF_RENDERER=1 ./my-app`.
 
+On NVIDIA with Wayland, the usual symptom is a crash at startup with
+`Gdk-Message: Error 71 (Protocol error) dispatching to Wayland display`.
+Newer WebKitGTK releases haven't fixed it.
+
 The starter deliberately doesn't set any of these in code. They cost
 performance or features for everyone to fix specific hardware. Only set one
-unconditionally (e.g. with `std::env::set_var` at the top of `run()`) once
-you've confirmed your app is affected.
+unconditionally once you've confirmed your app is affected. `std::env::set_var`
+is `unsafe` in Rust 2024 and `Cargo.toml` forbids unsafe code, so that means
+relaxing `unsafe_code` and calling it first thing in `main()`, before any threads start.
+
+For the Error 71 crash only, [`tauri-plugin-wayland-nvidia-quirk`](https://github.com/arsalan-anwari/tauri-plugin-wayland-nvidia-quirk)
+(Apache-2.0) keeps the faster renderer: it only acts on NVIDIA with Wayland and
+does nothing elsewhere. It's young (0.1.0) and touches GTK internals, so test it
+on the affected hardware before you ship it.
 
 ## Other WebKitGTK differences
 

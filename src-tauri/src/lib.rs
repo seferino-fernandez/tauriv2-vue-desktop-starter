@@ -37,6 +37,7 @@ use plugins::logging;
 use tauri::Manager as _;
 #[cfg(not(target_os = "linux"))]
 use tauri_plugin_decorum::WebviewWindowExt;
+use tauri_plugin_window_state::StateFlags;
 
 mod db;
 mod error;
@@ -112,7 +113,12 @@ pub fn run() {
         .plugin(tauri_plugin_decorum::init())
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_fontgres::init())
-        .plugin(tauri_plugin_window_state::Builder::default().build())
+        // Restoring VISIBLE or DECORATIONS too would fight the custom titlebar and the window config
+        .plugin(
+            tauri_plugin_window_state::Builder::default()
+                .with_state_flags(StateFlags::SIZE | StateFlags::POSITION | StateFlags::MAXIMIZED)
+                .build(),
+        )
         .invoke_handler(tauri::generate_handler![
             settings::commands::get_settings,
             settings::commands::set_theme,

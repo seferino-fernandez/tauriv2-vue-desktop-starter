@@ -19,12 +19,12 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@lucide/vue": "^1.77.0",
+    "@lucide/vue": "^1.78.0",
     "@tailwindcss/vite": "^4.3.5",
     "@tauri-apps/api": "^2.12.5",
     "@tauri-apps/plugin-log": "^2.10.2",
     "@tauri-apps/plugin-os": "^2.4.0",
-    "@vueuse/core": "^15.0.0",
+    "@vueuse/core": "^15.1.0",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.5.2",
     "pinia": "^4.1.0",

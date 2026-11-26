@@ -7,7 +7,8 @@
     "beforeDevCommand": "pnpm vite:dev",
     "devUrl": "http://localhost:1420",
     "beforeBuildCommand": "pnpm vite:build",
-    "frontendDist": "../dist"
+    "frontendDist": "../dist",
+    "removeUnusedCommands": true
   },
   "app": {
     "withGlobalTauri": true,

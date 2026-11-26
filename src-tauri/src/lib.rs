@@ -39,6 +39,7 @@ use plugins::logging;
 use tauri::Manager as _;
 #[cfg(not(target_os = "linux"))]
 use tauri_plugin_decorum::WebviewWindowExt;
+use tauri_plugin_dialog::{DialogExt as _, MessageDialogKind};
 use tauri_plugin_window_state::StateFlags;
 
 mod db;
@@ -60,8 +61,8 @@ mod updater;
 /// # Panics
 ///
 /// Panics if Tauri cannot build the app: a plugin fails to initialize, the main window cannot be
-/// created, the database cannot be opened or migrated, or, on Windows and macOS, the main window
-/// is missing or its custom titlebar cannot be applied.
+/// created, or, on Windows and macOS, the main window is missing or its custom titlebar cannot be
+/// applied. If the database cannot be opened or migrated, it shows an error message and quits.
 ///
 /// # Examples
 ///
@@ -115,6 +116,7 @@ pub fn run() {
 
     builder
         .plugin(navigation::guard())
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_decorum::init())
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_fontgres::init())
@@ -149,8 +151,14 @@ pub fn run() {
             decorate_main_window(app)?;
 
             // Settings load as soon as the frontend starts, so the database is ready before it is
-            let pool = tauri::async_runtime::block_on(db::open(app.handle()))
-                .inspect_err(|err| log::error!("could not open the database: {err}"))?;
+            let pool = match tauri::async_runtime::block_on(db::open(app.handle())) {
+                Ok(pool) => pool,
+                Err(err) => {
+                    log::error!("could not open the database: {err}");
+                    report_startup_failure(app.handle(), &err);
+                    return Ok(());
+                }
+            };
 
             #[cfg(target_os = "macos")]
             {
@@ -172,6 +180,25 @@ pub fn run() {
 #[tauri::command]
 fn updater_available() -> bool {
     cfg!(feature = "updater")
+}
+
+/// Tells the user why the app cannot start, then quits once they close the message.
+///
+/// Returning the error from `setup` instead would quit without a word. The message is shown
+/// without blocking, because `setup` runs on the main thread, which the dialog needs.
+fn report_startup_failure(app: &tauri::AppHandle, err: &error::Error) {
+    let logs = app.path().app_log_dir().map_or_else(
+        |_| "the app's log folder".to_owned(),
+        |dir| dir.display().to_string(),
+    );
+    let handle = app.clone();
+    app.dialog()
+        .message(format!(
+            "The app couldn't open its database, so it has to quit.\n\n{err}\n\nThe log files in {logs} have the details."
+        ))
+        .title("The app couldn't start")
+        .kind(MessageDialogKind::Error)
+        .show(move |_| handle.exit(1));
 }
 
 /// Brings the main window to the front, e.g. when the app is launched a second time.

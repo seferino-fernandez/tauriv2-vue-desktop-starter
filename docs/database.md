@@ -17,7 +17,8 @@ migrates or overwrites the database of an installed release build:
 | Windows | `%APPDATA%\com.github.tauriv2-vue-desktop-starter`               |
 
 It is opened in WAL mode before the window shows, and pending migrations run then. If it cannot
-be opened or migrated, the error is logged and the app does not start. That includes a database
+be opened or migrated, the error is logged, the user gets a message saying so, with the log
+folder's path, and the app quits when they close it. That includes a database
 last opened by a newer version of the app: this build does not know its newest migration.
 
 WAL mode puts two more files next to it, `app.db-wal` and `app.db-shm`. Recent writes sit in

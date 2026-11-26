@@ -46,7 +46,7 @@ app's own origin plus Tauri's IPC:
 | `style-src` | `'self' 'unsafe-inline'` | Vue/reka style bindings and decorum's injected `<style>` (Windows controls) |
 | `img-src` / `font-src` | `'self' data:` | Bundled assets and data URIs |
 | `connect-src` | `'self' ipc: http://ipc.localhost` | Tauri IPC (`http://ipc.localhost` on Windows) |
-| `object-src` / `base-uri` | `'none'` / `'self'` | Hardening |
+| `object-src` / `base-uri` / `form-action` | `'none'` / `'self'` / `'none'` | Hardening |
 
 Gotchas:
 
@@ -60,6 +60,8 @@ Gotchas:
 - **`tauri-pilot eval` fails in built apps** ("Refused to evaluate a string as JavaScript"):
   the policy has no `'unsafe-eval'`. Snapshots, clicks and screenshots still work; for `eval`,
   use `just dev`, which runs without the CSP.
+- **Keep `withGlobalTauri: true`.** Nothing in `src/` uses `window.__TAURI__`, but decorum's
+  injected Windows window controls do. `script-src 'self'` limits which scripts can reach it.
 - If the webview genuinely needs a remote origin (an API), add that origin to the one
   directive that needs it rather than loosening `default-src`. The updater needs no change:
   it makes its requests from Rust.

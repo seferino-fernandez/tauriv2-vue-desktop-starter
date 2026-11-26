@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "UPDATE settings SET sidebar_width = ? WHERE id = 1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": []
+  },
+  "hash": "a9aa79ad8d71beb65b90d672147af3165ea6e43c9ed593e6309ab7c2e0d31ad5"
+}

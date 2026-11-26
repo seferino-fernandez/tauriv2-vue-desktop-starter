@@ -1,7 +1,10 @@
 # Rust commands
 
-The starter doesn't define any `#[tauri::command]`s yet. When you add them, keep
-in mind where each kind of command runs:
+The starter's commands are the settings commands in
+[`src-tauri/src/settings/commands.rs`](../src-tauri/src/settings/commands.rs): thin
+`async fn`s that take the database pool as `State<'_, SqlitePool>` and return
+`Result<T, Error>`, where `Error` reaches JS as `{ kind, message }` (see
+[Database](./database.md#errors)). When you add commands, keep in mind where each kind runs:
 
 | Command                         | Runs on                                        |
 | ------------------------------- | ---------------------------------------------- |
@@ -51,5 +54,6 @@ A plain `fn` is fine for work that is genuinely quick (reading a small config
 value, simple computation).
 
 Register commands in `invoke_handler(tauri::generate_handler![...])` in
-[`lib.rs`](../src-tauri/src/lib.rs). See also Tauri's
+[`lib.rs`](../src-tauri/src/lib.rs). Startup work goes in the one `.setup()` there: Tauri
+keeps only the last `setup` closure, so a second call silently replaces the first. See also Tauri's
 [command guide](https://v2.tauri.app/develop/calling-rust/#async-commands).

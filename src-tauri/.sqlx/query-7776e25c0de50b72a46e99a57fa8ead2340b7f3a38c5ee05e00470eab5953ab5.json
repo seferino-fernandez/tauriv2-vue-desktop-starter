@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "UPDATE settings SET font_family = ? WHERE id = 1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": []
+  },
+  "hash": "7776e25c0de50b72a46e99a57fa8ead2340b7f3a38c5ee05e00470eab5953ab5"
+}

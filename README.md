@@ -4,9 +4,10 @@ A desktop application starter using the libraries and technologies:
 
 - Rust
   - [Tauri v2](https://v2.tauri.app/start/) as the desktop application framework.
-  - [Tauri Store Plugin](https://v2.tauri.app/plugin/store/) for persistence.
+  - [SQLx](https://github.com/launchbadge/sqlx) with SQLite for persistence, with queries checked at compile time.
   - [Tauri Log Plugin](https://v2.tauri.app/plugin/logging/) for logging.
   - [Tauri OS Plugin](https://v2.tauri.app/plugin/os-info/) for platform detection.
+  - [Tauri Fontgres Plugin](https://github.com/seferino-fernandez/tauri-plugin-fontgres) lists the installed fonts, so the app font can be changed in Settings.
   - [CrabNebula DevTools](https://v2.tauri.app/develop/debug/crabnebula-devtools/) for development.
 
 - Vue.js 3
@@ -67,7 +68,7 @@ Then update the `supportedLanguages` function in [lib/config.ts](./src/lib/confi
 
 ### Helpful Tips
 
-Tauri Store Plugin stores `settings.json` at:
+Settings are saved in a SQLite database, `app.db` (`app-dev.db` in debug builds), at:
 
 **macOS**: `~/Library/Application Support/com.github.tauriv2-vue-desktop-starter`
 
@@ -79,6 +80,8 @@ Tauri Store Plugin stores `settings.json` at:
 - [Native-feel CSS](./docs/native-feel-css.md): the global CSS that makes the WebView feel native, plus cross-webview gotchas
 - [Linux](./docs/linux.md): native decorations, `.deb`/`.rpm` vs AppImage, and fixes for blank windows on some GPUs
 - [Offline by default](./docs/offline.md): bundled icons, the system font, and the Content Security Policy
+- [App font](./docs/fonts.md): choosing an installed font, how it is applied, and the fontgres plugin
+- [Database](./docs/database.md): where the SQLite file lives, migrations, the query cache, and how to add a setting
 - [Rust commands](./docs/rust-commands.md): where commands run and how to avoid freezing or crashing the app
 
 #### App Icon

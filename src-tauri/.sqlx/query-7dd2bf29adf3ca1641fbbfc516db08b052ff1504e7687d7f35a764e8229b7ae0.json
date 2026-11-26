@@ -1,0 +1,38 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT command, binding FROM keybinding_overrides",
+  "describe": {
+    "columns": [
+      {
+        "name": "command",
+        "ordinal": 0,
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "keybinding_overrides",
+            "name": "command"
+          }
+        }
+      },
+      {
+        "name": "binding",
+        "ordinal": 1,
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "keybinding_overrides",
+            "name": "binding"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "7dd2bf29adf3ca1641fbbfc516db08b052ff1504e7687d7f35a764e8229b7ae0"
+}

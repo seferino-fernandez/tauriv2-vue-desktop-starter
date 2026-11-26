@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "DELETE FROM keybinding_overrides WHERE command = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": []
+  },
+  "hash": "2b70956c10db900f54224156a957fbbcc67a74762f7a414e51389d6172383114"
+}

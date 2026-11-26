@@ -29,6 +29,9 @@ variables. Re-running `shadcn-vue init` or applying a preset asks for a font aga
 remove the import it writes. To ship a custom font, bundle it (e.g. an `@fontsource`
 package) instead of linking a CDN.
 
+Users can switch the UI to another font in Settings, but only to one already installed on
+their computer; nothing is fetched. See [App font](./fonts.md).
+
 ## Content Security Policy
 
 `app.security.csp` in [`tauri.conf.json`](../src-tauri/tauri.conf.json) only allows the

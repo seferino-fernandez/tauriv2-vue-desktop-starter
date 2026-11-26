@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO keybinding_overrides (command, binding) VALUES (?, ?)\n         ON CONFLICT (command) DO UPDATE SET binding = excluded.binding",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "1a66482f244c773da84165a2572ce6ecd77c35da05eca21864a3f4bedf675294"
+}

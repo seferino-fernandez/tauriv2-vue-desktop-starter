@@ -10,22 +10,7 @@ import en from '@/i18n/locales/en.json'
 import { PANEL_DEFAULT_WIDTH, PANEL_MAX_WIDTH } from '@/lib/layout'
 import { routes } from '@/router'
 import { useSettingsStore } from '@/stores/settings'
-
-const store = vi.hoisted(() => ({
-  saved: {} as Record<string, unknown>,
-  get: vi.fn(),
-  set: vi.fn(),
-  save: vi.fn(),
-}))
-
-vi.mock('@tauri-apps/plugin-store', () => {
-  class MockLazyStore {
-    get = store.get
-    set = store.set
-    save = store.save
-  }
-  return { LazyStore: MockLazyStore }
-})
+import { mockSettingsIpc, unmockSettingsIpc } from '@/test/settings-ipc'
 
 vi.mock('@/lib/platform', () => ({
   isMacOS: () => true,
@@ -74,8 +59,7 @@ async function mountApp(path = '/notes') {
       },
     },
   })
-  await useSettingsStore().loadSidebar()
-  await useSettingsStore().loadKeybindings()
+  await useSettingsStore().load()
   router.push(path)
   await router.isReady()
   const wrapper = mount(App, {
@@ -109,14 +93,17 @@ async function press(code: string, modifiers: KeyboardEventInit = {}, target: Ev
 
 const toggle = () => document.querySelector<HTMLElement>('header [data-sidebar="trigger"]')
 
+let ipc: ReturnType<typeof mockSettingsIpc>
+
 describe('appShell', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.clearAllMocks()
-    store.saved = {}
-    store.get.mockImplementation(async (key: string) => store.saved[key])
+    ipc = mockSettingsIpc()
     document.body.innerHTML = ''
   })
+
+  afterEach(unmockSettingsIpc)
 
   it('opens on the settings page', async () => {
     const { router } = await mountApp('/')
@@ -174,11 +161,17 @@ describe('appShell', () => {
     await click(icon('Notes'))
     expect(panelState()).toBe('collapsed')
     expect(panel()?.hasAttribute('inert')).toBe(true)
-    expect(store.set).toHaveBeenCalledWith('sidebarOpen', false)
+    expect(ipc.sent).toContainEqual([
+      'set_sidebar_open',
+      { open: false },
+    ])
 
     await click(icon('Notes'))
     expect(panelState()).toBe('expanded')
-    expect(store.set).toHaveBeenLastCalledWith('sidebarOpen', true)
+    expect(ipc.sent.at(-1)).toEqual([
+      'set_sidebar_open',
+      { open: true },
+    ])
   })
 
   it('opens the panel when going to another page that has one', async () => {
@@ -198,7 +191,10 @@ describe('appShell', () => {
 
     await press('KeyB', { metaKey: true })
     expect(panelState()).toBe('expanded')
-    expect(store.set).toHaveBeenLastCalledWith('sidebarOpen', true)
+    expect(ipc.sent.at(-1)).toEqual([
+      'set_sidebar_open',
+      { open: true },
+    ])
 
     await press('KeyB', { metaKey: true, shiftKey: true })
     await press('KeyB', { metaKey: true, repeat: true })
@@ -213,9 +209,9 @@ describe('appShell', () => {
   })
 
   it('uses a changed shortcut instead of ⌘B, in the tooltip too', async () => {
-    store.saved = {
+    ipc = mockSettingsIpc({
       keybindings: { togglePanel: 'Mod+Alt+KeyJ' },
-    }
+    })
     await mountApp()
     await press('KeyB', { metaKey: true })
     expect(panelState()).toBe('expanded')
@@ -240,19 +236,25 @@ describe('appShell', () => {
     await click(field)
     await press('KeyJ', { metaKey: true }, field)
     expect(panelState()).toBe('expanded')
-    expect(store.set).toHaveBeenLastCalledWith('keybindings', { togglePanel: 'Mod+KeyJ' })
+    expect(ipc.sent.at(-1)).toEqual([
+      'set_keybinding',
+      { command: 'togglePanel', binding: 'Mod+KeyJ' },
+    ])
 
     await press('KeyJ', { metaKey: true })
     expect(panelState()).toBe('collapsed')
   })
 
   it('opens the panel when coming from a page without one', async () => {
-    store.saved = { sidebarOpen: false }
+    ipc = mockSettingsIpc({ sidebarOpen: false })
     const { router } = await mountApp('/plain')
     await click(icon('Notes'))
     expect(router.currentRoute.value.name).toBe('notes')
     expect(panelState()).toBe('expanded')
-    expect(store.set).toHaveBeenCalledWith('sidebarOpen', true)
+    expect(ipc.sent).toContainEqual([
+      'set_sidebar_open',
+      { open: true },
+    ])
   })
 
   it('shows no panel or toggle on a page without one, and ⌘B does nothing there', async () => {
@@ -263,11 +265,11 @@ describe('appShell', () => {
 
     await press('KeyB', { metaKey: true })
     await click(icon('Languages'))
-    expect(store.set).not.toHaveBeenCalled()
+    expect(ipc.sent).toEqual([])
   })
 
   it('restores the saved open state and width', async () => {
-    store.saved = { sidebarOpen: false, sidebarWidth: 300 }
+    ipc = mockSettingsIpc({ sidebarOpen: false, sidebarWidth: 300 })
     await mountApp()
     expect(panelState()).toBe('collapsed')
     expect(panel()?.style.width).toBe('0px')
@@ -287,16 +289,23 @@ describe('appShell', () => {
     handle.dispatchEvent(new PointerEvent('pointermove', { pointerId: 1, clientX: 900 }))
     await flushPromises()
     expect(panel()?.style.width).toBe(`${PANEL_MAX_WIDTH}px`)
-    expect(store.set).not.toHaveBeenCalled()
+    expect(ipc.sent).toEqual([])
 
     handle.dispatchEvent(new PointerEvent('pointerup', { pointerId: 1 }))
     await flushPromises()
-    expect(store.set).toHaveBeenCalledTimes(1)
-    expect(store.set).toHaveBeenCalledWith('sidebarWidth', PANEL_MAX_WIDTH)
+    expect(ipc.sent).toEqual([
+      [
+        'set_sidebar_width',
+        { width: PANEL_MAX_WIDTH },
+      ],
+    ])
 
     handle.dispatchEvent(new MouseEvent('dblclick'))
     await flushPromises()
     expect(panel()?.style.width).toBe(`${PANEL_DEFAULT_WIDTH}px`)
-    expect(store.set).toHaveBeenLastCalledWith('sidebarWidth', PANEL_DEFAULT_WIDTH)
+    expect(ipc.sent.at(-1)).toEqual([
+      'set_sidebar_width',
+      { width: PANEL_DEFAULT_WIDTH },
+    ])
   })
 })

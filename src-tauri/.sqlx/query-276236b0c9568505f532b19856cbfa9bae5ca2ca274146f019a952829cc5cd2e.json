@@ -1,0 +1,74 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT\n            theme AS \"theme: Theme\",\n            language,\n            font_family,\n            sidebar_open AS \"sidebar_open: bool\",\n            sidebar_width AS \"sidebar_width: u32\"\n        FROM settings\n        WHERE id = 1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "theme: Theme",
+        "ordinal": 0,
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "settings",
+            "name": "theme"
+          }
+        }
+      },
+      {
+        "name": "language",
+        "ordinal": 1,
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "settings",
+            "name": "language"
+          }
+        }
+      },
+      {
+        "name": "font_family",
+        "ordinal": 2,
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "settings",
+            "name": "font_family"
+          }
+        }
+      },
+      {
+        "name": "sidebar_open: bool",
+        "ordinal": 3,
+        "type_info": "Integer",
+        "origin": {
+          "Table": {
+            "table": "settings",
+            "name": "sidebar_open"
+          }
+        }
+      },
+      {
+        "name": "sidebar_width: u32",
+        "ordinal": 4,
+        "type_info": "Integer",
+        "origin": {
+          "Table": {
+            "table": "settings",
+            "name": "sidebar_width"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "276236b0c9568505f532b19856cbfa9bae5ca2ca274146f019a952829cc5cd2e"
+}

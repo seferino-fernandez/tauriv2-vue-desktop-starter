@@ -29,7 +29,7 @@ watchImmediate(locale, newLocale => handleLanguageSelect(newLocale))
 function handleLanguageSelect(newLocale: string) {
   if (!newLocale || !availableLanguages.value.some(sl => sl.value === newLocale))
     return
-  settingsStore.setSetting<string>('language', newLocale)
+  settingsStore.setLanguage(newLocale)
 }
 </script>
 

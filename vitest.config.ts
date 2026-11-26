@@ -20,7 +20,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,vue}'],
-      exclude: ['src/components/ui/**', 'src/**/*.d.ts'],
+      exclude: ['src/components/ui/**', 'src/**/*.d.ts', 'src/test/**'],
     },
   },
 })

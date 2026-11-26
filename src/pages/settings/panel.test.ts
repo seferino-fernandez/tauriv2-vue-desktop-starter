@@ -10,14 +10,6 @@ import SettingsPage from './index.vue'
 import SettingsPanel from './panel.vue'
 import { sectionElementId, settingsSections } from './sections'
 
-vi.mock('@tauri-apps/plugin-store', () => ({
-  LazyStore: class {
-    get = vi.fn()
-    set = vi.fn()
-    save = vi.fn()
-  },
-}))
-
 enableAutoUnmount(afterEach)
 
 // The settings page in the shell's scroll container, next to its panel

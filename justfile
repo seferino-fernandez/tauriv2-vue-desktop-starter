@@ -15,6 +15,7 @@ setup:
     #!/usr/bin/env bash
     set -euo pipefail
     command -v prek >/dev/null || { echo "missing: prek" >&2; exit 1; }
+    command -v sqlx >/dev/null || { echo "missing: sqlx-cli (cargo install sqlx-cli --no-default-features --features sqlite)" >&2; exit 1; }
     prek update
     prek list >/dev/null
     prek install
@@ -34,6 +35,24 @@ install-rust:
 # Start Tauri dev server with hot reload
 dev:
     pnpm tauri dev
+
+# Add a migration to src-tauri/migrations, e.g. `just db-new add_zoom_level`
+db-new name:
+    cd {{rust_dir}} && cargo sqlx migrate add {{name}}
+
+# Refresh the committed query cache (.sqlx) after changing a query or a migration.
+# `--check` fails instead when the cache is stale, without writing it.
+db-prepare *args:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd {{rust_dir}}
+    # A scratch database built from the migrations, for the query macros to check against
+    mkdir -p target/sqlx
+    rm -f target/sqlx/prepare.db target/sqlx/prepare.db-shm target/sqlx/prepare.db-wal
+    export DATABASE_URL=sqlite:target/sqlx/prepare.db
+    cargo sqlx database create
+    cargo sqlx migrate run
+    cargo sqlx prepare {{args}} -- --all-targets --all-features
 
 # Development build
 build:
@@ -108,6 +127,7 @@ verify:
     cd {{rust_dir}} && cargo test --doc --all-features
     cd {{rust_dir}} && RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --all-features
     cd {{rust_dir}} && cargo deny check licenses bans sources
+    just db-prepare --check
 
 # Scan dependencies for known vulnerabilities
 [parallel]

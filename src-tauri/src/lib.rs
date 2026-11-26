@@ -7,7 +7,10 @@
 //! # What `run` sets up
 //!
 //! - **One instance:** launching the app again while it is running does not open a second copy.
-//! - **Plugins:** store (settings), window state, OS info and installed fonts.
+//! - **Settings:** saved in a SQLite database in the app data directory. It is opened and
+//!   migrated before the window shows, and the frontend reads and writes it through the settings
+//!   commands.
+//! - **Plugins:** window state, OS info and installed fonts.
 //! - **Logging:** debug builds register `tauri-plugin-devtools` and `tauri-plugin-pilot`;
 //!   release builds write logs through [`plugins::logging`].
 //! - **Titlebar:** on Windows and macOS the main window draws its own titlebar
@@ -26,12 +29,14 @@
 #[cfg(not(debug_assertions))]
 use plugins::logging;
 
-#[cfg(not(target_os = "linux"))]
-use tauri::Manager;
+use tauri::Manager as _;
 #[cfg(not(target_os = "linux"))]
 use tauri_plugin_decorum::WebviewWindowExt;
 
+mod db;
+mod error;
 pub mod plugins;
+mod settings;
 
 /// Builds the app, opens the main window and runs Tauri's event loop.
 ///
@@ -40,9 +45,9 @@ pub mod plugins;
 ///
 /// # Panics
 ///
-/// Panics if Tauri cannot build the app (a plugin fails to initialize or the main window cannot
-/// be created), or, on Windows and macOS, if the main window is missing or its custom titlebar
-/// cannot be applied.
+/// Panics if Tauri cannot build the app: a plugin fails to initialize, the main window cannot be
+/// created, the database cannot be opened or migrated, or, on Windows and macOS, the main window
+/// is missing or its custom titlebar cannot be applied.
 ///
 /// # Examples
 ///
@@ -53,6 +58,10 @@ pub mod plugins;
 #[expect(
     clippy::expect_used,
     reason = "the app has nothing to fall back to when Tauri cannot start"
+)]
+#[expect(
+    clippy::items_after_statements,
+    reason = "`generate_handler!` expands each command's handler here, after the builder statements"
 )]
 pub fn run() {
     #[cfg(any(target_os = "macos", target_os = "linux"))]
@@ -78,23 +87,33 @@ pub fn run() {
         builder = builder.plugin(logging::tauri_plugin_logging());
     }
 
-    // Linux keeps native decorations instead (see docs/linux.md),
-    // so there is nothing to set up there
-    #[cfg(not(target_os = "linux"))]
-    {
-        builder = builder.setup(|app| {
-            decorate_main_window(app)?;
-            Ok(())
-        });
-    }
-
     builder
         .plugin(tauri_plugin_decorum::init())
-        .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_fontgres::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
-        .invoke_handler(tauri::generate_handler![])
+        .invoke_handler(tauri::generate_handler![
+            settings::commands::get_settings,
+            settings::commands::set_theme,
+            settings::commands::set_language,
+            settings::commands::set_font_family,
+            settings::commands::set_sidebar_open,
+            settings::commands::set_sidebar_width,
+            settings::commands::set_keybinding,
+            settings::commands::reset_keybinding,
+        ])
+        // Tauri keeps only the last `setup`, so everything that runs at startup goes here
+        .setup(|app| {
+            // Linux keeps native decorations instead (see docs/linux.md)
+            #[cfg(not(target_os = "linux"))]
+            decorate_main_window(app)?;
+
+            // Settings load as soon as the frontend starts, so the database is ready before it is
+            let pool = tauri::async_runtime::block_on(db::open(app.handle()))
+                .inspect_err(|err| log::error!("could not open the database: {err}"))?;
+            app.manage(pool);
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

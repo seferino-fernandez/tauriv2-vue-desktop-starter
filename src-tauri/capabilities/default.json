@@ -18,7 +18,6 @@
     "core:webview:default",
     "core:app:default",
     "core:resources:default",
-    "store:default",
     "decorum:allow-show-snap-overlay",
     "os:default",
     "fontgres:allow-get-families",

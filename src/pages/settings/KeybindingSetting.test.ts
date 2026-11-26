@@ -4,22 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createI18n } from 'vue-i18n'
 import en from '@/i18n/locales/en.json'
 import { useSettingsStore } from '@/stores/settings'
+import { mockSettingsIpc, unmockSettingsIpc } from '@/test/settings-ipc'
 import KeybindingSetting from './KeybindingSetting.vue'
-
-const store = vi.hoisted(() => ({
-  saved: {} as Record<string, unknown>,
-  get: vi.fn(),
-  set: vi.fn(),
-  save: vi.fn(),
-}))
-
-vi.mock('@tauri-apps/plugin-store', () => ({
-  LazyStore: class {
-    get = store.get
-    set = store.set
-    save = store.save
-  },
-}))
 
 vi.mock('@/lib/platform', () => ({
   isMacOS: () => true,
@@ -28,7 +14,7 @@ vi.mock('@/lib/platform', () => ({
 enableAutoUnmount(afterEach)
 
 async function mountSetting() {
-  await useSettingsStore().loadKeybindings()
+  await useSettingsStore().load()
   const i18n = createI18n({
     locale: 'en',
     legacy: false,
@@ -64,14 +50,17 @@ async function startRecording() {
   await flushPromises()
 }
 
+let ipc: ReturnType<typeof mockSettingsIpc>
+
 describe('keybinding setting', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.clearAllMocks()
-    store.saved = {}
-    store.get.mockImplementation(async (key: string) => store.saved[key])
+    ipc = mockSettingsIpc()
     document.body.innerHTML = ''
   })
+
+  afterEach(unmockSettingsIpc)
 
   it('shows the command and its current shortcut', async () => {
     await mountSetting()
@@ -87,9 +76,14 @@ describe('keybinding setting', () => {
     expect(useSettingsStore().recordingKeybinding).toBe(true)
 
     await press('MetaLeft', { metaKey: true })
-    expect(store.set).not.toHaveBeenCalled()
+    expect(ipc.sent).toEqual([])
     await press('KeyK', { metaKey: true, shiftKey: true })
-    expect(store.set).toHaveBeenCalledWith('keybindings', { togglePanel: 'Mod+Shift+KeyK' })
+    expect(ipc.sent).toEqual([
+      [
+        'set_keybinding',
+        { command: 'togglePanel', binding: 'Mod+Shift+KeyK' },
+      ],
+    ])
     expect(field().textContent?.trim()).toBe('⇧⌘K')
     expect(useSettingsStore().recordingKeybinding).toBe(false)
     expect(reset().disabled).toBe(false)
@@ -100,12 +94,17 @@ describe('keybinding setting', () => {
     await startRecording()
     await press('KeyK')
     expect(message()).toBe('Include ⌘ in the shortcut.')
-    expect(store.set).not.toHaveBeenCalled()
+    expect(ipc.sent).toEqual([])
     expect(useSettingsStore().recordingKeybinding).toBe(true)
 
     await press('KeyK', { metaKey: true })
     expect(message()).toBeUndefined()
-    expect(store.set).toHaveBeenCalledWith('keybindings', { togglePanel: 'Mod+KeyK' })
+    expect(ipc.sent).toEqual([
+      [
+        'set_keybinding',
+        { command: 'togglePanel', binding: 'Mod+KeyK' },
+      ],
+    ])
   })
 
   it('refuses a shortcut the system uses', async () => {
@@ -114,7 +113,7 @@ describe('keybinding setting', () => {
     await press('KeyQ', { metaKey: true })
     expect(message()).toBe('⌘Q is reserved by the system or the app menu.')
     expect(field().getAttribute('aria-describedby')).toBe(document.querySelector('[role="alert"]')?.id)
-    expect(store.set).not.toHaveBeenCalled()
+    expect(ipc.sent).toEqual([])
   })
 
   it('takes focus when clicked, so it gets the keys even where a click does not focus buttons', async () => {
@@ -143,30 +142,40 @@ describe('keybinding setting', () => {
     await flushPromises()
     expect(field().textContent?.trim()).toBe('⌘B')
     expect(useSettingsStore().recordingKeybinding).toBe(false)
-    expect(store.set).not.toHaveBeenCalled()
+    expect(ipc.sent).toEqual([])
   })
 
   it('resets to the default, removing the override', async () => {
-    store.saved = {
+    ipc = mockSettingsIpc({
       keybindings: { togglePanel: 'Mod+KeyJ' },
-    }
+    })
     await mountSetting()
     expect(field().textContent?.trim()).toBe('⌘J')
 
     reset().click()
     await flushPromises()
-    expect(store.set).toHaveBeenCalledWith('keybindings', {})
+    expect(ipc.sent).toEqual([
+      [
+        'reset_keybinding',
+        { command: 'togglePanel' },
+      ],
+    ])
     expect(field().textContent?.trim()).toBe('⌘B')
     expect(reset().disabled).toBe(true)
   })
 
   it('removes the override when the default is recorded again', async () => {
-    store.saved = {
+    ipc = mockSettingsIpc({
       keybindings: { togglePanel: 'Mod+KeyJ' },
-    }
+    })
     await mountSetting()
     await startRecording()
     await press('KeyB', { metaKey: true })
-    expect(store.set).toHaveBeenCalledWith('keybindings', {})
+    expect(ipc.sent).toEqual([
+      [
+        'reset_keybinding',
+        { command: 'togglePanel' },
+      ],
+    ])
   })
 })

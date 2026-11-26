@@ -30,13 +30,13 @@ All of it lives in [`src/components/shell/`](../src/components/shell/):
 - **Collapsing:** the panel toggle, its keyboard shortcut (⌘/Ctrl+B by default) and clicking the current page's icon all show or hide the panel. It collapses completely; the activity bar stays.
 - **Another page's icon** goes to that page and opens the panel if that page has one.
 - **Resizing:** drag the panel's right edge (12–24rem), or focus it and use the arrow keys. Double-click the edge to reset it to 16rem.
-- **Saved layout:** the open state (`sidebarOpen`) and width (`sidebarWidth`) are saved in `settings.json` and apply to every page.
+- **Saved layout:** the open state (`sidebarOpen`) and width (`sidebarWidth`) are saved in the [database](./database.md) and apply to every page.
 
 ## Keyboard shortcuts
 
 Shortcuts can be changed in Settings → Keyboard shortcuts. The commands, their defaults and the rules a shortcut must follow are in [`src/lib/keybindings.ts`](../src/lib/keybindings.ts):
 
-- **Stored form:** `Mod+Shift+KeyB`. `Mod` is ⌘ on macOS and Ctrl elsewhere, and the key is a physical position (`KeyboardEvent.code`), so ⌥ combos and non-Latin layouts work. Only changed shortcuts are saved, as `keybindings` in `settings.json`.
+- **Stored form:** `Mod+Shift+KeyB`. `Mod` is ⌘ on macOS and Ctrl elsewhere, and the key is a physical position (`KeyboardEvent.code`), so ⌥ combos and non-Latin layouts work. Only changed shortcuts are saved, in the [database](./database.md)'s `keybinding_overrides` table.
 - **Refused:** shortcuts without `Mod`, the ones in `RESERVED_KEYBINDINGS` (quit, close, copy, paste, undo, ...), and one another command already uses.
 - **Adding a command:** add it to `commands`, give its `titleKey` a translation, and handle it with [`useKeybindings`](../src/composables/useKeybindings.ts). It shows up in settings by itself.
 

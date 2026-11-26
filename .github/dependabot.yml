@@ -14,6 +14,11 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    # TypeScript 7 ships no JS compiler API, which @vue/compiler-sfc and vue-tsc load. Hold it back
+    # until they support it.
+    ignore:
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     # Group dependency updates into a single pull request.
     groups:
       dependencies:

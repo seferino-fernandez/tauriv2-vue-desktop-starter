@@ -3,9 +3,9 @@ import type { CommandId, KeybindingProblem } from '@/lib/keybindings'
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import IconReset from '~icons/ph/arrow-counter-clockwise'
+import Keybinding from '@/components/Keybinding.vue'
 import { Button } from '@/components/ui/button'
 import { Field, FieldLabel } from '@/components/ui/field'
-import { useKeybindingLabel } from '@/composables/useKeybindings'
 import { commands, formatKeybinding, isModifierCode, keybindingFromEvent } from '@/lib/keybindings'
 import { isMacOS } from '@/lib/platform'
 import { useSettingsStore } from '@/stores/settings'
@@ -17,7 +17,6 @@ const props = defineProps<{
 const { t } = useI18n()
 const settingsStore = useSettingsStore()
 const mac = isMacOS()
-const current = useKeybindingLabel(props.command)
 
 const fieldId = computed(() => `keybinding-${props.command}`)
 const messageId = computed(() => `${fieldId.value}-message`)
@@ -118,7 +117,7 @@ async function reset() {
         @blur="stop"
       >
         <span v-if="recording" class="text-muted-foreground">{{ t('settings.shortcuts.recording') }}</span>
-        <kbd v-else class="font-ui tracking-wide tabular-nums">{{ current }}</kbd>
+        <Keybinding v-else :command="command" />
       </Button>
       <Button
         variant="ghost"

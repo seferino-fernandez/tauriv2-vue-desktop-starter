@@ -209,18 +209,24 @@ function keyLabel(code: string): string {
     : KEY_LABELS[code] ?? code
 }
 
-/** A shortcut the way the platform shows it: `⌥⇧⌘B` on macOS, `Ctrl+Alt+Shift+B` elsewhere */
-export function formatKeybinding(binding: string, mac: boolean): string {
+/**
+ * A shortcut's keys in the order the platform shows them: `['⌥', '⇧', '⌘', 'B']` on macOS,
+ * `['Ctrl', 'Alt', 'Shift', 'B']` elsewhere
+ */
+export function keybindingKeys(binding: string, mac: boolean): string[] {
   const combo = parse(binding)
   if (!combo)
-    return binding
-  const key = keyLabel(combo.code)
-  if (mac)
-    return `${combo.alt ? '⌥' : ''}${combo.shift ? '⇧' : ''}${combo.mod ? '⌘' : ''}${key}`
+    return [binding]
+  const modifiers = mac
+    ? [combo.alt && '⌥', combo.shift && '⇧', combo.mod && '⌘']
+    : [combo.mod && 'Ctrl', combo.alt && 'Alt', combo.shift && 'Shift']
   return [
-    combo.mod && 'Ctrl',
-    combo.alt && 'Alt',
-    combo.shift && 'Shift',
-    key,
-  ].filter(Boolean).join('+')
+    ...modifiers.filter(modifier => modifier !== false),
+    keyLabel(combo.code),
+  ]
+}
+
+/** A shortcut the way the platform shows it: `⌥⇧⌘B` on macOS, `Ctrl+Alt+Shift+B` elsewhere */
+export function formatKeybinding(binding: string, mac: boolean): string {
+  return keybindingKeys(binding, mac).join(mac ? '' : '+')
 }

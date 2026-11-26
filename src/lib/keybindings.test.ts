@@ -4,6 +4,7 @@ import {
   defaultKeybindings,
   formatKeybinding,
   keybindingFromEvent,
+  keybindingKeys,
   keybindingProblem,
   matchesKeybinding,
   normalizeKeybinding,
@@ -125,6 +126,22 @@ describe('sanitizeKeybindings', () => {
       ['Mod+KeyK'],
     ])
       expect(sanitizeKeybindings(saved)).toEqual({})
+  })
+})
+
+describe('keybindingKeys', () => {
+  it('lists macOS symbols in Apple\'s order', () => {
+    expect(keybindingKeys('Mod+KeyB', true)).toEqual(['⌘', 'B'])
+    expect(keybindingKeys('Mod+Alt+Shift+KeyB', true)).toEqual(['⌥', '⇧', '⌘', 'B'])
+  })
+
+  it('spells modifiers out elsewhere', () => {
+    expect(keybindingKeys('Mod+KeyB', false)).toEqual(['Ctrl', 'B'])
+    expect(keybindingKeys('Mod+Alt+Shift+KeyB', false)).toEqual(['Ctrl', 'Alt', 'Shift', 'B'])
+  })
+
+  it('keeps a string it cannot read as one key', () => {
+    expect(keybindingKeys('Hyper+KeyB', true)).toEqual(['Hyper+KeyB'])
   })
 })
 

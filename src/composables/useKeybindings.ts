@@ -1,7 +1,7 @@
 import type { CommandId } from '@/lib/keybindings'
 import { useEventListener } from '@vueuse/core'
 import { computed } from 'vue'
-import { formatKeybinding, matchesKeybinding } from '@/lib/keybindings'
+import { keybindingKeys, matchesKeybinding } from '@/lib/keybindings'
 import { isMacOS } from '@/lib/platform'
 import { useSettingsStore } from '@/stores/settings'
 
@@ -26,9 +26,9 @@ export function useKeybindings(handlers: Partial<Record<CommandId, () => void>>)
   })
 }
 
-/** A command's current shortcut, the way the platform shows it (⌘B, Ctrl+B) */
-export function useKeybindingLabel(command: CommandId) {
+/** A command's current shortcut as its keys, the way the platform shows them (⌘ B, Ctrl B) */
+export function useKeybindingKeys(command: CommandId) {
   const settingsStore = useSettingsStore()
   const mac = isMacOS()
-  return computed(() => formatKeybinding(settingsStore.keybindings[command], mac))
+  return computed(() => keybindingKeys(settingsStore.keybindings[command], mac))
 }

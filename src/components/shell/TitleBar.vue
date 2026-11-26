@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import Keybinding from '@/components/Keybinding.vue'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { useKeybindingLabel } from '@/composables/useKeybindings'
 
 defineProps<{
   /** Whether the current page has a nested panel to toggle */
@@ -10,7 +10,6 @@ defineProps<{
 }>()
 
 const { t } = useI18n()
-const toggleShortcut = useKeybindingLabel('togglePanel')
 </script>
 
 <template>
@@ -36,7 +35,7 @@ const toggleShortcut = useKeybindingLabel('togglePanel')
       </TooltipTrigger>
       <TooltipContent side="bottom" align="start">
         {{ t('commands.togglePanel') }}
-        <kbd class="ml-1.5 font-ui opacity-70">{{ toggleShortcut }}</kbd>
+        <Keybinding command="togglePanel" class="ml-1.5" />
       </TooltipContent>
     </Tooltip>
     <div data-tauri-drag-region class="flex-1 self-stretch" />

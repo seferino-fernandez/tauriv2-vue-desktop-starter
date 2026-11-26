@@ -15,7 +15,8 @@
 //!   user's shortcut for it (`src/menu.rs`).
 //! - **Plugins:** window state, OS info and installed fonts.
 //! - **Logging:** debug builds register `tauri-plugin-devtools` and `tauri-plugin-pilot`;
-//!   release builds write logs through [`plugins::logging`].
+//!   release builds write logs through [`plugins::logging`]. Panics are logged too, with a
+//!   backtrace.
 //! - **Titlebar:** on Windows and macOS the main window draws its own titlebar
 //!   (`tauri-plugin-decorum`). Linux keeps the native window decorations.
 //! - **`PATH`:** on macOS and Linux, apps started from the Dock or a launcher get the login
@@ -39,6 +40,7 @@ use tauri_plugin_decorum::WebviewWindowExt;
 mod db;
 mod error;
 mod menu;
+mod panic_hook;
 pub mod plugins;
 mod settings;
 
@@ -68,6 +70,8 @@ mod settings;
     reason = "`generate_handler!` expands each command's handler here, after the builder statements"
 )]
 pub fn run() {
+    panic_hook::install();
+
     #[cfg(any(target_os = "macos", target_os = "linux"))]
     {
         if let Err(err) = fix_path_env::fix() {

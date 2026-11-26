@@ -4,7 +4,8 @@ use tauri::plugin::TauriPlugin;
 
 /// Creates the logging plugin: `Info` and above, to rotating files in the app's log directory.
 ///
-/// Debug builds of this function log to stdout instead. The rotated files are all kept.
+/// Debug builds of this function log to stdout instead. A file is rotated at 5 MB, and the newest
+/// five are kept.
 ///
 /// # Examples
 ///
@@ -19,7 +20,8 @@ use tauri::plugin::TauriPlugin;
 pub fn tauri_plugin_logging() -> TauriPlugin<tauri::Wry> {
     tauri_plugin_log::Builder::new()
         .clear_targets()
-        .rotation_strategy(tauri_plugin_log::RotationStrategy::KeepAll)
+        .rotation_strategy(tauri_plugin_log::RotationStrategy::KeepSome(5))
+        .max_file_size(5_000_000)
         .level(log::LevelFilter::Info)
         .target(
             #[cfg(debug_assertions)]

@@ -1,5 +1,6 @@
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
+import { logError } from '@/lib/log'
 import { applyPlatformAttribute } from '@/lib/platform'
 import { useSettingsStore } from '@/stores/settings'
 import App from './App.vue'
@@ -12,6 +13,10 @@ applyPlatformAttribute()
 
 const pinia = createPinia()
 const app = createApp(App)
+
+// Errors nothing else caught go to the log file, so a bug report can include them
+app.config.errorHandler = (error, _instance, info) => logError(`Vue error (${info})`, error)
+window.addEventListener('unhandledrejection', event => logError('Unhandled promise rejection', event.reason))
 
 app.use(pinia)
 app.use(router)

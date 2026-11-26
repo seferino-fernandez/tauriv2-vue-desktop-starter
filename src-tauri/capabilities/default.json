@@ -20,6 +20,7 @@
     "core:resources:default",
     "decorum:allow-show-snap-overlay",
     "os:default",
+    "log:default",
     "fontgres:allow-get-families",
     "pilot:default"
   ]

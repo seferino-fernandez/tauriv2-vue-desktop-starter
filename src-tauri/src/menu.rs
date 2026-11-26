@@ -25,10 +25,6 @@ const OPEN_SETTINGS_DEFAULT: &str = "Mod+Comma";
 const COMMAND_EVENT: &str = "command";
 
 /// The Settings… item, kept so its shortcut can change. Only managed on macOS.
-#[cfg_attr(
-    not(target_os = "macos"),
-    expect(dead_code, reason = "only macOS has the menu that creates it")
-)]
 struct SettingsItem(MenuItem<Wry>);
 
 /// Replaces the default app menu with one that has a Settings… item, showing `saved` (the user's

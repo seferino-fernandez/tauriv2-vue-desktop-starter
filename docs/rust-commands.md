@@ -57,3 +57,7 @@ Register commands in `invoke_handler(tauri::generate_handler![...])` in
 [`lib.rs`](../src-tauri/src/lib.rs). Startup work goes in the one `.setup()` there: Tauri
 keeps only the last `setup` closure, so a second call silently replaces the first. See also Tauri's
 [command guide](https://v2.tauri.app/develop/calling-rust/#async-commands).
+
+Call a command from the frontend through a typed wrapper in a `src/lib/*-commands.ts` file, like
+[`settings-commands.ts`](../src/lib/settings-commands.ts). ESLint refuses an `invoke` import
+anywhere else, so the wrappers stay the one place that has to match the Rust side.

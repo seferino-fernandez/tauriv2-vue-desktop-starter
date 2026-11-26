@@ -191,6 +191,13 @@ fn updater_available() -> bool {
 }
 
 /// Everything that runs once Tauri has started, before the window shows its page.
+#[cfg_attr(
+    target_os = "linux",
+    expect(
+        clippy::unnecessary_wraps,
+        reason = "only the Windows and macOS steps can fail, and Tauri's setup hook takes a Result"
+    )
+)]
 fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     // Linux keeps native decorations instead (see docs/linux.md)
     #[cfg(not(target_os = "linux"))]

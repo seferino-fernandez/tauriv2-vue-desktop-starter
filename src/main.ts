@@ -1,5 +1,6 @@
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
+import { blockBrowserDefaults } from '@/lib/browser-defaults'
 import { logError } from '@/lib/log'
 import { applyPlatformAttribute } from '@/lib/platform'
 import { useSettingsStore } from '@/stores/settings'
@@ -10,6 +11,7 @@ import './assets/css/base.css'
 
 // Expose the OS to CSS before the first paint (e.g. the titlebar's traffic-light gap is macOS-only)
 applyPlatformAttribute()
+blockBrowserDefaults()
 
 const pinia = createPinia()
 const app = createApp(App)

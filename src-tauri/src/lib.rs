@@ -13,6 +13,8 @@
 //!   commands.
 //! - **App menu:** on macOS, Tauri's default menu plus a "Settings…" item that follows the
 //!   user's shortcut for it (`src/menu.rs`).
+//! - **Links:** the window only shows the app's own pages; web links open in the browser
+//!   (`src/navigation.rs`).
 //! - **Plugins:** window state, OS info and installed fonts.
 //! - **Updates:** only with the `updater` feature, and only when the user asks (`src/updater.rs`).
 //! - **Logging:** debug builds register `tauri-plugin-devtools` and `tauri-plugin-pilot`;
@@ -42,6 +44,7 @@ use tauri_plugin_window_state::StateFlags;
 mod db;
 mod error;
 mod menu;
+mod navigation;
 mod panic_hook;
 pub mod plugins;
 mod settings;
@@ -110,6 +113,7 @@ pub fn run() {
     }
 
     builder
+        .plugin(navigation::guard())
         .plugin(tauri_plugin_decorum::init())
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_fontgres::init())

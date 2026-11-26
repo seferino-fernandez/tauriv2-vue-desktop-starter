@@ -3,6 +3,9 @@
  * downloads always, and in production builds reload and the right-click menu too (both stay in
  * development, where they help). Text fields keep their right-click menu for copy and paste.
  *
+ * Links that open a new window would get a webview popup on Windows, so they navigate this window
+ * instead, where the navigation guard (src-tauri/src/navigation.rs) opens them in the browser.
+ *
  * A shortcut a command uses still runs that command: `useKeybindings` handles it as well.
  */
 import { keybindingFromEvent } from '@/lib/keybindings'
@@ -39,6 +42,13 @@ export function blockBrowserDefaults() {
     const binding = keybindingFromEvent(event, mac)
     if (binding && isBrowserKeybinding(binding, production))
       event.preventDefault()
+  }, { capture: true })
+  window.addEventListener('click', (event) => {
+    const link = event.target instanceof Element && event.target.closest('a[target="_blank"]')
+    if (link instanceof HTMLAnchorElement && new URL(link.href).origin !== window.location.origin) {
+      event.preventDefault()
+      window.location.assign(link.href)
+    }
   }, { capture: true })
   if (production) {
     window.addEventListener('contextmenu', (event) => {

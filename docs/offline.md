@@ -34,6 +34,14 @@ package) instead of linking a CDN.
 Users can switch the UI to another font in Settings, but only to one already installed on
 their computer; nothing is fetched. See [App font](./fonts.md).
 
+## Links
+
+The window only ever shows the app's own pages. A navigation guard
+([`navigation.rs`](../src-tauri/src/navigation.rs)) refuses every other URL, and opens
+`http(s)` and `mailto` links in the user's browser or mail app instead. Links with
+`target="_blank"` take the same route (`src/lib/browser-defaults.ts`), so a plain
+`<a href="https://…" target="_blank">` in a template just works.
+
 ## Content Security Policy
 
 `app.security.csp` in [`tauri.conf.json`](../src-tauri/tauri.conf.json) only allows the

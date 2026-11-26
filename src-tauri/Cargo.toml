@@ -38,6 +38,7 @@ serde_json = "1.0.154"
 sqlx = { version = "0.9.1", default-features = false, features = ["runtime-tokio", "sqlite-bundled", "macros", "migrate"] }
 thiserror = "2.0.21"
 tauri-plugin-updater = { version = "2.14.1", optional = true }
+tauri-plugin-opener = "2.7.3"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-single-instance = "2.5.5"

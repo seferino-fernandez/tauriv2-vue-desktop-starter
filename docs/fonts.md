@@ -10,14 +10,14 @@ that are already installed, so it stays [offline](./offline.md).
 
 ## How it fits together
 
-| Piece | Where | What it does |
-| --- | --- | --- |
-| Plugin | `.plugin(tauri_plugin_fontgres::init())` in [`lib.rs`](../src-tauri/src/lib.rs) | Lists the installed font families |
+| Piece      | Where                                                                                                  | What it does                                            |
+| ---------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| Plugin     | `.plugin(tauri_plugin_fontgres::init())` in [`lib.rs`](../src-tauri/src/lib.rs)                        | Lists the installed font families                       |
 | Permission | `fontgres:allow-get-families` in [`capabilities/default.json`](../src-tauri/capabilities/default.json) | Lets the frontend call `getFamilies()` and nothing else |
-| Picker | [`FontSetting.vue`](../src/pages/settings/FontSetting.vue) | A searchable list of families, each with a sample |
-| Store | `fontFamily` and `setFontFamily` in [`stores/settings.ts`](../src/stores/settings.ts) | Applies the choice and saves it |
-| CSS | `--app-font-family` in [`tailwind.css`](../src/assets/css/tailwind.css) | Puts the chosen family in front of the system stack |
-| Storage | The `font_family` column (see [Database](./database.md)) | `NULL` means the system font |
+| Picker     | [`FontSetting.vue`](../src/pages/settings/FontSetting.vue)                                             | A searchable list of families, each with a sample       |
+| Store      | `fontFamily` and `setFontFamily` in [`stores/settings.ts`](../src/stores/settings.ts)                  | Applies the choice and saves it                         |
+| CSS        | `--app-font-family` in [`tailwind.css`](../src/assets/css/tailwind.css)                                | Puts the chosen family in front of the system stack     |
+| Storage    | The `font_family` column (see [Database](./database.md))                                               | `NULL` means the system font                            |
 
 ## Applying the font
 

@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import type { Theme } from '@/stores/settings'
-import { useI18n } from 'vue-i18n'
-import { Field, FieldContent, FieldDescription, FieldTitle } from '@/components/ui/field'
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { useSettingsStore } from '@/stores/settings'
-import ThemePreview from './ThemePreview.vue'
+import type { Theme } from "@/stores/settings";
+import { useI18n } from "vue-i18n";
+import { Field, FieldContent, FieldDescription, FieldTitle } from "@/components/ui/field";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useSettingsStore } from "@/stores/settings";
+import ThemePreview from "./ThemePreview.vue";
 
-const { t } = useI18n()
-const settingsStore = useSettingsStore()
+const { t } = useI18n();
+const settingsStore = useSettingsStore();
 
-const options: { value: Theme, labelKey: string }[] = [
-  { value: 'auto', labelKey: 'settings.theme.system' },
-  { value: 'light', labelKey: 'settings.theme.light' },
-  { value: 'dark', labelKey: 'settings.theme.dark' },
-]
+const options: Array<{ value: Theme; labelKey: string }> = [
+  { value: "auto", labelKey: "settings.theme.system" },
+  { value: "light", labelKey: "settings.theme.light" },
+  { value: "dark", labelKey: "settings.theme.dark" },
+];
 
 function select(value: unknown) {
-  void settingsStore.setTheme(value as Theme)
+  void settingsStore.setTheme(value as Theme);
 }
 </script>
 
@@ -25,10 +25,10 @@ function select(value: unknown) {
   <Field class="gap-4 px-4 py-4">
     <FieldContent>
       <FieldTitle id="theme-label">
-        {{ t('settings.theme.label') }}
+        {{ t("settings.theme.label") }}
       </FieldTitle>
       <FieldDescription id="theme-description">
-        {{ t('settings.theme.description') }}
+        {{ t("settings.theme.description") }}
       </FieldDescription>
     </FieldContent>
     <RadioGroup

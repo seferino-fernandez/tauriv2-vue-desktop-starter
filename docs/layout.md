@@ -18,12 +18,12 @@ The window is laid out like VS Code or Obsidian:
 
 All of it lives in [`src/components/shell/`](../src/components/shell/):
 
-| Part | File | What it does |
-| --- | --- | --- |
-| Titlebar | `TitleBar.vue` | Full width. It holds the macOS traffic lights (or the Windows controls, on the right), and the panel toggle. The rest of it drags the window. |
-| Activity bar | `ActivityBar.vue`, `ActivityBarItem.vue` | Icons only, with tooltips; it never expands. Lists the pages from route meta. |
-| Nested panel | `NestedPanel.vue` | The frame every page's panel shares: the location label, collapsing and resizing. The page supplies what goes inside. |
-| Shell | `AppShell.vue` | Puts the parts together and owns the open state. |
+| Part         | File                                     | What it does                                                                                                                                  |
+| ------------ | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Titlebar     | `TitleBar.vue`                           | Full width. It holds the macOS traffic lights (or the Windows controls, on the right), and the panel toggle. The rest of it drags the window. |
+| Activity bar | `ActivityBar.vue`, `ActivityBarItem.vue` | Icons only, with tooltips; it never expands. Lists the pages from route meta.                                                                 |
+| Nested panel | `NestedPanel.vue`                        | The frame every page's panel shares: the location label, collapsing and resizing. The page supplies what goes inside.                         |
+| Shell        | `AppShell.vue`                           | Puts the parts together and owns the open state.                                                                                              |
 
 ## Behaviour
 

@@ -6,10 +6,10 @@ The starter's commands are the settings commands in
 `Result<T, Error>`, where `Error` reaches JS as `{ kind, message }` (see
 [Database](./database.md#errors)). When you add commands, keep in mind where each kind runs:
 
-| Command                         | Runs on                                        |
-| ------------------------------- | ---------------------------------------------- |
-| `fn` (not `async`)              | The main thread, inline. It blocks the UI while it runs |
-| `async fn` / `#[tauri::command(async)]` | A worker thread of Tauri's async (Tokio) runtime |
+| Command                                 | Runs on                                                 |
+| --------------------------------------- | ------------------------------------------------------- |
+| `fn` (not `async`)                      | The main thread, inline. It blocks the UI while it runs |
+| `async fn` / `#[tauri::command(async)]` | A worker thread of Tauri's async (Tokio) runtime        |
 
 Two mistakes follow from that.
 
@@ -59,5 +59,5 @@ keeps only the last `setup` closure, so a second call silently replaces the firs
 [command guide](https://v2.tauri.app/develop/calling-rust/#async-commands).
 
 Call a command from the frontend through a typed wrapper in a `src/lib/*-commands.ts` file, like
-[`settings-commands.ts`](../src/lib/settings-commands.ts). ESLint refuses an `invoke` import
+[`settings-commands.ts`](../src/lib/settings-commands.ts). Oxlint refuses an `invoke` import
 anywhere else, so the wrappers stay the one place that has to match the Rust side.

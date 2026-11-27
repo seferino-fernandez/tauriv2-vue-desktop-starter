@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Check, ChevronDown, Search } from '@lucide/vue'
+import { Check, ChevronDown, Search } from "@lucide/vue";
 import {
   ComboboxAnchor,
   ComboboxContent,
@@ -12,82 +12,88 @@ import {
   ComboboxRoot,
   ComboboxTrigger,
   ComboboxViewport,
-} from 'reka-ui'
-import { getFamilies } from 'tauri-plugin-fontgres-api'
-import { computed, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { Button } from '@/components/ui/button'
-import { Field, FieldContent, FieldDescription, FieldLabel } from '@/components/ui/field'
-import { fontStack } from '@/lib/fonts'
-import { useSettingsStore } from '@/stores/settings'
+} from "reka-ui";
+import { getFamilies } from "tauri-plugin-fontgres-api";
+import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { Button } from "@/components/ui/button";
+import { Field, FieldContent, FieldDescription, FieldLabel } from "@/components/ui/field";
+import { fontStack } from "@/lib/fonts";
+import { useSettingsStore } from "@/stores/settings";
 
 interface FontOption {
-  family: string | null
-  label: string
+  family: string | null;
+  label: string;
 }
 
-const { t } = useI18n()
-const settings = useSettingsStore()
-const open = ref(false)
-const installedFonts = ref<string[]>()
-const loading = ref(false)
-const loadError = ref(false)
-const saving = ref(false)
-const saveError = ref(false)
+const { t } = useI18n();
+const settings = useSettingsStore();
+const open = ref(false);
+const installedFonts = ref<Array<string>>();
+const loading = ref(false);
+const loadError = ref(false);
+const saving = ref(false);
+const saveError = ref(false);
 
 const systemFont = computed<FontOption>(() => ({
   family: null,
-  label: t('settings.font.default'),
-}))
-const options = computed<FontOption[]>(() => [
+  label: t("settings.font.default"),
+}));
+const options = computed<Array<FontOption>>(() => [
   systemFont.value,
-  ...(installedFonts.value ?? []).map(family => ({ family, label: family })),
-])
-const missingFont = computed(() =>
-  !!settings.fontFamily && installedFonts.value !== undefined && !installedFonts.value.includes(settings.fontFamily),
-)
+  ...(installedFonts.value ?? []).map((family) => ({ family, label: family })),
+]);
+const missingFont = computed(
+  () =>
+    !!settings.fontFamily &&
+    installedFonts.value !== undefined &&
+    !installedFonts.value.includes(settings.fontFamily),
+);
 const currentFont = computed<FontOption>(() =>
   settings.fontFamily && !missingFont.value
     ? { family: settings.fontFamily, label: settings.fontFamily }
     : systemFont.value,
-)
+);
 
 async function loadFonts() {
-  if (installedFonts.value || loading.value)
-    return
+  if (installedFonts.value || loading.value) {
+    return;
+  }
 
-  loadError.value = false
-  loading.value = true
+  loadError.value = false;
+  loading.value = true;
   try {
-    installedFonts.value = await getFamilies()
-  }
-  catch {
-    loadError.value = true
-  }
-  finally {
-    loading.value = false
+    installedFonts.value = await getFamilies();
+  } catch {
+    loadError.value = true;
+  } finally {
+    loading.value = false;
   }
 }
 
-watch(() => settings.fontFamily, (family) => {
-  if (family)
-    void loadFonts()
-}, { immediate: true })
+watch(
+  () => settings.fontFamily,
+  (family) => {
+    if (family) {
+      void loadFonts();
+    }
+  },
+  { immediate: true },
+);
 
 async function selectFont(option: FontOption) {
-  if (saving.value || option.family === settings.fontFamily)
-    return
+  if (saving.value || option.family === settings.fontFamily) {
+    return;
+  }
 
-  saving.value = true
-  saveError.value = false
+  saving.value = true;
+  saveError.value = false;
   try {
-    await settings.setFontFamily(option.family)
-  }
-  catch {
-    saveError.value = true
-  }
-  finally {
-    saving.value = false
+    await settings.setFontFamily(option.family);
+  } catch {
+    saveError.value = true;
+  } finally {
+    saving.value = false;
   }
 }
 </script>
@@ -96,24 +102,24 @@ async function selectFont(option: FontOption) {
   <Field orientation="responsive" class="gap-x-6 px-4 py-4 font-sans">
     <FieldContent>
       <FieldLabel id="app-font-label" for="app-font">
-        {{ t('settings.font.label') }}
+        {{ t("settings.font.label") }}
       </FieldLabel>
       <FieldDescription>
-        {{ t('settings.font.description') }}
+        {{ t("settings.font.description") }}
       </FieldDescription>
       <div v-if="loadError && !open" class="flex flex-wrap items-center gap-x-2 gap-y-1">
         <p role="status" class="text-sm text-muted-foreground">
-          {{ t('settings.font.loadError') }}
+          {{ t("settings.font.loadError") }}
         </p>
         <Button variant="link" size="sm" class="h-auto p-0" @click="loadFonts">
-          {{ t('settings.font.retry') }}
+          {{ t("settings.font.retry") }}
         </Button>
       </div>
       <p v-if="saveError" role="alert" class="text-sm text-destructive">
-        {{ t('settings.font.saveError') }}
+        {{ t("settings.font.saveError") }}
       </p>
       <p v-if="missingFont" role="status" class="text-sm text-muted-foreground">
-        {{ t('settings.font.missing', { family: settings.fontFamily }) }}
+        {{ t("settings.font.missing", { family: settings.fontFamily }) }}
       </p>
     </FieldContent>
     <ComboboxRoot
@@ -122,7 +128,7 @@ async function selectFont(option: FontOption) {
       :model-value="currentFont"
       :disabled="!settings.fontReady"
       by="family"
-      @update:open="value => value && loadFonts()"
+      @update:open="(value) => value && loadFonts()"
       @update:model-value="selectFont"
     >
       <ComboboxAnchor as-child>
@@ -132,8 +138,15 @@ async function selectFont(option: FontOption) {
           :aria-label="t('settings.font.label')"
           aria-labelledby="app-font-label app-font-value"
         >
-          <Button id="app-font" variant="outline" class="w-full justify-between" :aria-busy="saving">
-            <span id="app-font-value" class="truncate" :title="currentFont.label">{{ currentFont.label }}</span>
+          <Button
+            id="app-font"
+            variant="outline"
+            class="w-full justify-between"
+            :aria-busy="saving"
+          >
+            <span id="app-font-value" class="truncate" :title="currentFont.label">{{
+              currentFont.label
+            }}</span>
             <ChevronDown class="text-muted-foreground" aria-hidden="true" />
           </Button>
         </ComboboxTrigger>
@@ -156,7 +169,9 @@ async function selectFont(option: FontOption) {
               :placeholder="t('settings.font.search')"
             />
           </div>
-          <ComboboxViewport class="min-h-0 max-h-64 overflow-y-auto overscroll-contain p-1 [@media(max-height:640px)]:max-h-44">
+          <ComboboxViewport
+            class="min-h-0 max-h-64 overflow-y-auto overscroll-contain p-1 [@media(max-height:640px)]:max-h-44"
+          >
             <ComboboxGroup>
               <ComboboxItem
                 v-for="option in options"
@@ -172,23 +187,32 @@ async function selectFont(option: FontOption) {
                   class="w-8 shrink-0 overflow-hidden text-center text-base leading-none text-muted-foreground"
                   :style="{ fontFamily: fontStack(option.family) }"
                   aria-hidden="true"
-                >{{ t('settings.font.sample') }}</span>
+                  >{{ t("settings.font.sample") }}</span
+                >
                 <ComboboxItemIndicator class="absolute right-2">
                   <Check class="size-4" aria-hidden="true" />
                 </ComboboxItemIndicator>
               </ComboboxItem>
             </ComboboxGroup>
             <p v-if="loading" role="status" class="px-2 py-2 text-sm text-muted-foreground">
-              {{ t('settings.font.loading') }}
+              {{ t("settings.font.loading") }}
             </p>
             <p v-else-if="loadError" role="status" class="px-2 py-2 text-sm text-muted-foreground">
-              {{ t('settings.font.loadError') }}
+              {{ t("settings.font.loadError") }}
             </p>
-            <p v-else-if="installedFonts?.length === 0" role="status" class="px-2 py-2 text-sm text-muted-foreground">
-              {{ t('settings.font.empty') }}
+            <p
+              v-else-if="installedFonts?.length === 0"
+              role="status"
+              class="px-2 py-2 text-sm text-muted-foreground"
+            >
+              {{ t("settings.font.empty") }}
             </p>
-            <ComboboxEmpty v-else-if="installedFonts?.length" role="status" class="px-2 py-2 text-sm text-muted-foreground">
-              {{ t('settings.font.noResults') }}
+            <ComboboxEmpty
+              v-else-if="installedFonts?.length"
+              role="status"
+              class="px-2 py-2 text-sm text-muted-foreground"
+            >
+              {{ t("settings.font.noResults") }}
             </ComboboxEmpty>
           </ComboboxViewport>
         </ComboboxContent>

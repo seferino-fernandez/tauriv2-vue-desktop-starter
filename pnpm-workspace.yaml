@@ -4,17 +4,16 @@ minimumReleaseAgeExclude:
 
 trustPolicy: no-downgrade
 trustPolicyExclude:
-  - chokidar@4.0.3
-  - semver@6.3.1
+  # Oxlint's type-aware backend. Its prereleases trip the trust check, and a new one ships every
+  # few days, so it is excluded by name rather than by version.
+  - tsrs
 
 shellEmulator: true
 
 # Security fixes pending compatible releases of the parent tooling packages.
 overrides:
-  # Vue I18n linting and js-beautify still request vulnerable glob releases.
+  # js-beautify and vue-metamorph still request vulnerable glob releases.
   glob@>=9.0.0 <14.0.2: ^14.0.6
-  # micromark-extension-math still requests the vulnerable 0.16 line.
-  katex@>=0.11.0 <0.18.2: ^0.19.1
   # Older tooling ranges exclude the fixed minimatch major.
   minimatch@>=7.0.0 <11.0.1: ^11.0.8
   # oxfmt 0.35 pins a vulnerable worker pool.
@@ -24,6 +23,6 @@ allowBuilds:
   vue-demi: true
 
 onlyBuiltDependencies:
-  - '@tailwindcss/oxide'
+  - "@tailwindcss/oxide"
   - unrs-resolver
   - vue-demi

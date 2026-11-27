@@ -11,7 +11,7 @@ priority = 0
 
 [[repos.hooks]]
 id = "check-added-large-files"
-args = [ "--maxkb=1024" ]
+args = ["--maxkb=1024"]
 priority = 0
 
 [[repos.hooks]]
@@ -20,7 +20,7 @@ priority = 0
 
 [[repos.hooks]]
 id = "trailing-whitespace"
-args = [ "--markdown-linebreak-ext=md" ]
+args = ["--markdown-linebreak-ext=md"]
 priority = 0
 
 [[repos.hooks]]
@@ -29,12 +29,12 @@ priority = 0
 
 [[repos.hooks]]
 id = "mixed-line-ending"
-args = [ "--fix=lf" ]
+args = ["--fix=lf"]
 priority = 0
 
 [[repos.hooks]]
 id = "check-yaml"
-args = [ "--allow-multiple-documents" ]
+args = ["--allow-multiple-documents"]
 priority = 0
 
 [[repos.hooks]]
@@ -53,7 +53,7 @@ priority = 0
 [[repos]]
 repo = "https://github.com/betterleaks/betterleaks"
 rev = "v1.10.1"
-hooks = [ { id = "betterleaks", priority = 10 } ]
+hooks = [{ id = "betterleaks", priority = 10 }]
 
 # Priority 10 — yamllint (deeper YAML validation)
 [[repos]]
@@ -66,8 +66,8 @@ rev = "v1.38.0"
 hooks = [
   { id = "yamllint", args = [
     "-c",
-    ".yamllint.yml"
-  ], exclude = "^\\.github/workflows/", priority = 10 }
+    ".yamllint.yml",
+  ], exclude = "^\\.github/workflows/", priority = 10 },
 ]
 
 # Priority 20 — the project's own gate, through just

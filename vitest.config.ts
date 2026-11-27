@@ -1,26 +1,23 @@
-import path from 'node:path'
-import vue from '@vitejs/plugin-vue'
-import Icons from 'unplugin-icons/vite'
-import { defineConfig } from 'vitest/config'
+import path from "node:path";
+import vue from "@vitejs/plugin-vue";
+import Icons from "unplugin-icons/vite";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  plugins: [
-    vue(),
-    Icons({ compiler: 'vue3' }),
-  ],
+  plugins: [vue(), Icons({ compiler: "vue3" })],
   resolve: {
     alias: {
-      '@': path.resolve(import.meta.dirname, './src'),
+      "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
   test: {
     globals: true,
-    environment: 'happy-dom',
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    environment: "happy-dom",
+    include: ["src/**/*.{test,spec}.{ts,tsx}"],
     coverage: {
-      provider: 'v8',
-      include: ['src/**/*.{ts,vue}'],
-      exclude: ['src/components/ui/**', 'src/**/*.d.ts', 'src/test/**'],
+      provider: "v8",
+      include: ["src/**/*.{ts,vue}"],
+      exclude: ["src/components/ui/**", "src/**/*.d.ts", "src/test/**"],
     },
   },
-})
+});

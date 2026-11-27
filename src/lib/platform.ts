@@ -1,5 +1,5 @@
-import type { Platform } from '@tauri-apps/plugin-os'
-import { platform } from '@tauri-apps/plugin-os'
+import type { Platform } from "@tauri-apps/plugin-os";
+import { platform } from "@tauri-apps/plugin-os";
 
 /**
  * Returns the OS the app is running on, or `undefined` outside the Tauri
@@ -10,10 +10,9 @@ import { platform } from '@tauri-apps/plugin-os'
  */
 export function currentPlatform(): Platform | undefined {
   try {
-    return platform()
-  }
-  catch {
-    return undefined
+    return platform();
+  } catch {
+    return undefined;
   }
 }
 
@@ -22,10 +21,8 @@ export function currentPlatform(): Platform | undefined {
  * Vite dev server in a browser on a Mac shows ⌘ too.
  */
 export function isMacOS(): boolean {
-  const current = currentPlatform()
-  return current
-    ? current === 'macos'
-    : /Mac/i.test(globalThis.navigator?.platform ?? '')
+  const current = currentPlatform();
+  return current ? current === "macos" : /Mac/i.test(globalThis.navigator?.platform ?? "");
 }
 
 /**
@@ -33,7 +30,8 @@ export function isMacOS(): boolean {
  * e.g. Tailwind's `in-data-[platform=linux]:hidden`.
  */
 export function applyPlatformAttribute(root: HTMLElement = document.documentElement): void {
-  const current = currentPlatform()
-  if (current)
-    root.dataset.platform = current
+  const current = currentPlatform();
+  if (current) {
+    root.dataset.platform = current;
+  }
 }

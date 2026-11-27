@@ -1,19 +1,25 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { FieldGroup } from '@/components/ui/field'
-import { sectionElementId, settingsSections } from './sections'
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { FieldGroup } from "@/components/ui/field";
+import { sectionElementId, settingsSections } from "./sections";
 
 const props = defineProps<{
   /** An id from sections.ts; the heading and icon come from there, as in the panel */
-  id: string
+  id: string;
   /** i18n key of a line under the heading */
-  descriptionKey?: string
-}>()
+  descriptionKey?: string;
+}>();
 
-const { t } = useI18n()
-const section = computed(() => settingsSections.find(s => s.id === props.id)!)
-const headingId = computed(() => `${sectionElementId(props.id)}-heading`)
+const { t } = useI18n();
+const section = computed(() => {
+  const found = settingsSections.find((s) => s.id === props.id);
+  if (!found) {
+    throw new Error(`No settings section has the id "${props.id}"`);
+  }
+  return found;
+});
+const headingId = computed(() => `${sectionElementId(props.id)}-heading`);
 </script>
 
 <template>
@@ -25,7 +31,11 @@ const headingId = computed(() => `${sectionElementId(props.id)}-heading`)
   >
     <div class="flex flex-col gap-1 px-1">
       <h2 :id="headingId" class="flex items-center gap-2 text-base font-semibold">
-        <component :is="section.icon" class="size-4.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+        <component
+          :is="section.icon"
+          class="size-4.5 shrink-0 text-muted-foreground"
+          aria-hidden="true"
+        />
         {{ t(section.titleKey) }}
       </h2>
       <p v-if="descriptionKey" class="text-sm text-muted-foreground">
@@ -33,7 +43,9 @@ const headingId = computed(() => `${sectionElementId(props.id)}-heading`)
       </p>
     </div>
     <!-- One rounded group per section, a hairline between its rows -->
-    <FieldGroup class="gap-0 divide-y overflow-hidden rounded-lg border bg-card text-card-foreground">
+    <FieldGroup
+      class="gap-0 divide-y overflow-hidden rounded-lg border bg-card text-card-foreground"
+    >
       <slot />
     </FieldGroup>
   </section>

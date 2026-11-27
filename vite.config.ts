@@ -1,21 +1,21 @@
-import path from 'node:path'
-import tailwindcss from '@tailwindcss/vite'
-import vue from '@vitejs/plugin-vue'
-import Icons from 'unplugin-icons/vite'
-import type { UserConfig } from 'vite'
+import path from "node:path";
+import tailwindcss from "@tailwindcss/vite";
+import vue from "@vitejs/plugin-vue";
+import Icons from "unplugin-icons/vite";
+import type { UserConfig } from "vite";
 
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vitejs.dev/config/
 export default {
   // Icons are compiled into the bundle at build time, so the app never fetches them at runtime
-  plugins: [vue(), tailwindcss(), Icons({ compiler: 'vue3' })],
+  plugins: [vue(), tailwindcss(), Icons({ compiler: "vue3" })],
   resolve: {
     alias: {
-      '@': path.resolve(import.meta.dirname, './src'),
+      "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
-  envPrefix: ['VITE_', 'TAURI_ENV_*'],
+  envPrefix: ["VITE_", "TAURI_ENV_*"],
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent vite from obscuring rust errors
@@ -27,8 +27,8 @@ export default {
     strictPort: true,
     hmr: host
       ? {
-          protocol: 'ws',
-          host: host,
+          protocol: "ws",
+          host,
           port: 1421,
         }
       : undefined,
@@ -39,14 +39,10 @@ export default {
   },
   build: {
     // Tauri uses Chromium on Windows and WebKit on macOS and Linux
-    target:
-      process.env.TAURI_ENV_PLATFORM == 'windows'
-        ? 'chrome105'
-        : 'safari13',
+    target: process.env.TAURI_ENV_PLATFORM === "windows" ? "chrome105" : "safari13",
     // don't minify for debug builds
-    minify: !process.env.TAURI_ENV_DEBUG ? 'oxc' : false,
+    minify: !process.env.TAURI_ENV_DEBUG ? "oxc" : false,
     // produce sourcemaps for debug builds
     sourcemap: !!process.env.TAURI_ENV_DEBUG,
-  }
-
+  },
 } satisfies UserConfig;

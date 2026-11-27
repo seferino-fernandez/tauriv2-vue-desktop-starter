@@ -70,11 +70,11 @@ release:
 clean:
     pnpm run clean
 
-# Lint Vue (ESLint) and Rust (clippy)
+# Lint Vue (Oxlint) and Rust (clippy)
 [parallel]
 lint: lint-vue lint-rust
 
-# Lint Vue/TS source with ESLint, fixing what can be fixed
+# Lint Vue/TS source with Oxlint, fixing what can be fixed
 lint-vue:
     pnpm lint:fix
 
@@ -84,13 +84,13 @@ lint-rust:
     cd {{rust_dir}} && cargo clippy --all-targets --all-features -- -D warnings
 
 
-# Format Vue (ESLint fix) and Rust (fmt + clippy fix)
+# Format Vue (Oxfmt) and Rust (fmt + clippy fix)
 [parallel]
 format: format-vue format-rust
 
-# Format Vue/TS source via ESLint auto-fix
+# Format Vue/TS source, docs and config with Oxfmt
 format-vue:
-    pnpm lint:fix
+    pnpm format
 
 # Format Rust source (rustfmt + clippy auto-fix)
 format-rust:
@@ -122,6 +122,7 @@ typecheck:
 # The gate: check-mode only, mutates nothing, non-zero on any failure
 verify:
     pnpm lint
+    pnpm format:check
     pnpm typecheck
     pnpm test
     cd {{rust_dir}} && cargo fmt --all --check

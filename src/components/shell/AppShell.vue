@@ -1,56 +1,60 @@
 <script setup lang="ts">
-import type { CommandId } from '@/lib/keybindings'
-import { computed, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { SidebarProvider } from '@/components/ui/sidebar'
-import { useKeybindings } from '@/composables/useKeybindings'
-import { CONTENT_ID } from '@/lib/layout'
-import { hasPanel } from '@/router'
-import { useSettingsStore } from '@/stores/settings'
-import ActivityBar from './ActivityBar.vue'
-import CommandPalette from './CommandPalette.vue'
-import NestedPanel from './NestedPanel.vue'
-import TitleBar from './TitleBar.vue'
+import type { CommandId } from "@/lib/keybindings";
+import { computed, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { useKeybindings } from "@/composables/useKeybindings";
+import { CONTENT_ID } from "@/lib/layout";
+import { hasPanel } from "@/router";
+import { useSettingsStore } from "@/stores/settings";
+import ActivityBar from "./ActivityBar.vue";
+import CommandPalette from "./CommandPalette.vue";
+import NestedPanel from "./NestedPanel.vue";
+import TitleBar from "./TitleBar.vue";
 
-const route = useRoute()
-const router = useRouter()
-const settingsStore = useSettingsStore()
+const route = useRoute();
+const router = useRouter();
+const settingsStore = useSettingsStore();
 
-const pageHasPanel = computed(() => hasPanel(route))
+const pageHasPanel = computed(() => hasPanel(route));
 // The panel mounts once its saved state is known, so it never animates open or closed on launch
-const ready = computed(() => settingsStore.sidebarOpen !== undefined)
+const ready = computed(() => settingsStore.sidebarOpen !== undefined);
 
 // A page without a panel has nothing to open or close
 function updateOpen(open: boolean) {
-  if (pageHasPanel.value)
-    settingsStore.setSidebarOpen(open)
+  if (pageHasPanel.value) {
+    settingsStore.setSidebarOpen(open);
+  }
 }
 
 // Like clicking another page's icon: go there and open its panel. On that page already, nothing.
 async function openPage(name: string) {
-  if (route.matched.some(record => record.name === name))
-    return
-  const openPanel = !settingsStore.sidebarOpen && hasPanel(router.resolve({ name }))
-  await router.push({ name })
-  if (openPanel)
-    await settingsStore.setSidebarOpen(true)
+  if (route.matched.some((record) => record.name === name)) {
+    return;
+  }
+  const openPanel = !settingsStore.sidebarOpen && hasPanel(router.resolve({ name }));
+  await router.push({ name });
+  if (openPanel) {
+    await settingsStore.setSidebarOpen(true);
+  }
 }
 
 // A route's `meta.command` opens that page
-const pageCommands: Partial<Record<CommandId, () => void>> = {}
+const pageCommands: Partial<Record<CommandId, () => void>> = {};
 for (const { name, meta } of router.getRoutes()) {
-  if (typeof name === 'string' && meta.command)
-    pageCommands[meta.command] = () => openPage(name)
+  if (typeof name === "string" && meta.command) {
+    pageCommands[meta.command] = () => openPage(name);
+  }
 }
 
-const paletteOpen = ref(false)
+const paletteOpen = ref(false);
 
 const handlers: Partial<Record<CommandId, () => void>> = {
   ...pageCommands,
   togglePanel: () => updateOpen(!(settingsStore.sidebarOpen ?? true)),
-  openCommandPalette: () => paletteOpen.value = true,
-}
-useKeybindings(handlers)
+  openCommandPalette: () => (paletteOpen.value = true),
+};
+useKeybindings(handlers);
 </script>
 
 <template>

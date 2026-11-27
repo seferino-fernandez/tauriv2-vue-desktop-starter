@@ -2,11 +2,7 @@
   "mcpServers": {
     "shadcnVue": {
       "command": "pnpm",
-      "args": [
-        "exec",
-        "shadcn-vue",
-        "mcp"
-      ]
+      "args": ["exec", "shadcn-vue", "mcp"]
     }
   }
 }

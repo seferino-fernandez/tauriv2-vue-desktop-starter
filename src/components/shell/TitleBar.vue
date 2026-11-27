@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-import Keybinding from '@/components/Keybinding.vue'
-import { SidebarTrigger } from '@/components/ui/sidebar'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { useI18n } from "vue-i18n";
+import Keybinding from "@/components/Keybinding.vue";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 defineProps<{
   /** Whether the current page has a nested panel to toggle */
-  hasPanel: boolean
-}>()
+  hasPanel: boolean;
+}>();
 
-const { t } = useI18n()
+const { t } = useI18n();
 </script>
 
 <template>
@@ -28,13 +28,16 @@ const { t } = useI18n()
       macOS: room for the traffic lights. decorum pins them at (12, 16), which puts their centre
       18.75px from the top; 38px (37 + the 1px border) is the height that centres them.
     -->
-    <div data-tauri-drag-region class="hidden w-16 shrink-0 self-stretch in-data-[platform=macos]:block" />
+    <div
+      data-tauri-drag-region
+      class="hidden w-16 shrink-0 self-stretch in-data-[platform=macos]:block"
+    />
     <Tooltip v-if="hasPanel">
       <TooltipTrigger as-child>
         <SidebarTrigger />
       </TooltipTrigger>
       <TooltipContent side="bottom" align="start">
-        {{ t('commands.togglePanel') }}
+        {{ t("commands.togglePanel") }}
         <Keybinding command="togglePanel" class="ml-1.5" />
       </TooltipContent>
     </Tooltip>

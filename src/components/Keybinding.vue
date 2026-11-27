@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { CommandId } from '@/lib/keybindings'
-import { Kbd, KbdGroup } from '@/components/ui/kbd'
-import { useKeybindingKeys } from '@/composables/useKeybindings'
-import { isMacOS } from '@/lib/platform'
+import type { CommandId } from "@/lib/keybindings";
+import { Kbd, KbdGroup } from "@/components/ui/kbd";
+import { useKeybindingKeys } from "@/composables/useKeybindings";
+import { isMacOS } from "@/lib/platform";
 
 const props = defineProps<{
-  command: CommandId
-}>()
+  command: CommandId;
+}>();
 
-const mac = isMacOS()
-const keys = useKeybindingKeys(props.command)
+const mac = isMacOS();
+const keys = useKeybindingKeys(props.command);
 </script>
 
 <template>

@@ -1,26 +1,26 @@
 name: Pull Request Validation
 
 on:
-    push:
-        branches:
-            - main
-        paths-ignore:
-            - "**.md"
-    pull_request:
-        paths-ignore:
-            - "**.md"
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+  pull_request:
+    paths-ignore:
+      - "**.md"
 
 permissions: {}
 
 env:
-    CARGO_TERM_COLOR: always
-    CARGO_INCREMENTAL: 0
-    RUSTFLAGS: -D warnings
-    CARGO_PROFILE_TEST_DEBUG: 0
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+  RUSTFLAGS: -D warnings
+  CARGO_PROFILE_TEST_DEBUG: 0
 
 concurrency:
-    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-    cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 # Runs the `just verify` gate once, and builds the tauri app on every platform without uploading it anywhere.
 
@@ -76,11 +76,11 @@ jobs:
           - platform: macos-latest # for Intel based macs.
             args: --target x86_64-apple-darwin
           - platform: ubuntu-22.04
-            args: ''
+            args: ""
           - platform: ubuntu-22.04-arm # Only available in public repos.
-            args: ''
+            args: ""
           - platform: windows-latest
-            args: ''
+            args: ""
 
     runs-on: ${{ matrix.platform }}
     steps:

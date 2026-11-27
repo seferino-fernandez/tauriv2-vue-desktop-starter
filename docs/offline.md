@@ -13,7 +13,7 @@ icons you import ship, and nothing is fetched at runtime (`@iconify/vue`'s `<Ico
 downloads from `api.iconify.design` by default, which is why it isn't used here).
 
 ```ts
-import IconHouse from '~icons/ph/house-duotone'
+import IconHouse from "~icons/ph/house-duotone";
 ```
 
 To use another set, install its data package (e.g. `pnpm add -D @iconify-json/lucide`)
@@ -47,14 +47,14 @@ The window only ever shows the app's own pages. A navigation guard
 `app.security.csp` in [`tauri.conf.json`](../src-tauri/tauri.conf.json) only allows the
 app's own origin plus Tauri's IPC:
 
-| Directive | Value | Why |
-| --- | --- | --- |
-| `default-src` | `'self'` | Nothing from other origins |
-| `script-src` | `'self'` | No inline or injected scripts |
-| `style-src` | `'self' 'unsafe-inline'` | Vue/reka style bindings and decorum's injected `<style>` (Windows controls) |
-| `img-src` / `font-src` | `'self' data:` | Bundled assets and data URIs |
-| `connect-src` | `'self' ipc: http://ipc.localhost` | Tauri IPC (`http://ipc.localhost` on Windows) |
-| `object-src` / `base-uri` / `form-action` | `'none'` / `'self'` / `'none'` | Hardening |
+| Directive                                 | Value                              | Why                                                                         |
+| ----------------------------------------- | ---------------------------------- | --------------------------------------------------------------------------- |
+| `default-src`                             | `'self'`                           | Nothing from other origins                                                  |
+| `script-src`                              | `'self'`                           | No inline or injected scripts                                               |
+| `style-src`                               | `'self' 'unsafe-inline'`           | Vue/reka style bindings and decorum's injected `<style>` (Windows controls) |
+| `img-src` / `font-src`                    | `'self' data:`                     | Bundled assets and data URIs                                                |
+| `connect-src`                             | `'self' ipc: http://ipc.localhost` | Tauri IPC (`http://ipc.localhost` on Windows)                               |
+| `object-src` / `base-uri` / `form-action` | `'none'` / `'self'` / `'none'`     | Hardening                                                                   |
 
 Gotchas:
 

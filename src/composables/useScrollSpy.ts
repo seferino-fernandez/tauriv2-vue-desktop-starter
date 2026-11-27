@@ -1,6 +1,6 @@
-import type { MaybeRefOrGetter } from 'vue'
-import { useScroll } from '@vueuse/core'
-import { onMounted, ref, shallowRef, toValue } from 'vue'
+import type { MaybeRefOrGetter } from "vue";
+import { useScroll } from "@vueuse/core";
+import { onMounted, ref, shallowRef, toValue } from "vue";
 
 /**
  * Tracks which of the elements with the given ids the reader is at in a scroll container:
@@ -10,65 +10,73 @@ import { onMounted, ref, shallowRef, toValue } from 'vue'
  * the smooth scroll passes the sections in between.
  */
 export function useScrollSpy(
-  ids: readonly string[],
+  ids: ReadonlyArray<string>,
   container: MaybeRefOrGetter<HTMLElement | null | undefined>,
   offset = 24,
 ) {
-  const active = ref<string | undefined>(ids[0])
+  const active = ref<string | undefined>(ids[0]);
   // Resolved once mounted, so a container rendered after the caller (e.g. a sibling) is found
-  const root = shallowRef<HTMLElement | null>()
+  const root = shallowRef<HTMLElement | null>();
   onMounted(() => {
-    root.value = toValue(container)
-  })
+    root.value = toValue(container);
+  });
 
   /** True while a jump's smooth scroll runs; its stop re-reads the position */
-  let jumping = false
+  let jumping = false;
   const { arrivedState } = useScroll(root, {
     onScroll: update,
     onStop: () => {
-      if (!jumping)
-        return
-      jumping = false
-      update()
+      if (!jumping) {
+        return;
+      }
+      jumping = false;
+      update();
     },
-  })
+  });
 
   function update() {
-    const element = root.value
-    if (!element || jumping)
-      return
+    const element = root.value;
+    if (!element || jumping) {
+      return;
+    }
     // useScroll updates arrivedState before it calls onScroll. A container that can't scroll
     // also counts as at the bottom, so it must be able to scroll first.
-    const scrollable = element.scrollHeight > element.clientHeight
+    const scrollable = element.scrollHeight > element.clientHeight;
     if (scrollable && arrivedState.bottom) {
-      active.value = ids[ids.length - 1]
-      return
+      active.value = ids.at(-1);
+      return;
     }
-    const top = element.getBoundingClientRect().top + offset
-    let current = ids[0]
+    const top = element.getBoundingClientRect().top + offset;
+    let current = ids[0];
     for (const id of ids) {
-      const section = document.getElementById(id)
-      if (section && section.getBoundingClientRect().top <= top)
-        current = id
+      const section = document.getElementById(id);
+      if (section && section.getBoundingClientRect().top <= top) {
+        current = id;
+      }
     }
-    active.value = current
+    active.value = current;
   }
 
   function scrollTo(id: string) {
-    active.value = id
-    const section = document.getElementById(id)
-    if (!section)
-      return
-    // Hold the highlight only if the container will actually scroll: with no scroll there is no stop
-    const element = root.value
-    if (element) {
-      const margin = Number.parseFloat(getComputedStyle(section).scrollMarginTop) || 0
-      const offsetTop = section.getBoundingClientRect().top - element.getBoundingClientRect().top - margin
-      const target = Math.min(Math.max(element.scrollTop + offsetTop, 0), element.scrollHeight - element.clientHeight)
-      jumping = Math.abs(target - element.scrollTop) >= 1
+    active.value = id;
+    const section = document.getElementById(id);
+    if (!section) {
+      return;
     }
-    section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    // Hold the highlight only if the container will actually scroll: with no scroll there is no stop
+    const element = root.value;
+    if (element) {
+      const margin = Number.parseFloat(getComputedStyle(section).scrollMarginTop) || 0;
+      const offsetTop =
+        section.getBoundingClientRect().top - element.getBoundingClientRect().top - margin;
+      const target = Math.min(
+        Math.max(element.scrollTop + offsetTop, 0),
+        element.scrollHeight - element.clientHeight,
+      );
+      jumping = Math.abs(target - element.scrollTop) >= 1;
+    }
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  return { active, scrollTo }
+  return { active, scrollTo };
 }

@@ -10,14 +10,14 @@ With these repository secrets, `release.yml` signs the app with your Developer I
 notarize it. Without them it is ad-hoc signed (`signingIdentity: "-"` in
 [`tauri.macos.conf.json`](../src-tauri/tauri.macos.conf.json)).
 
-| Secret | What it is |
-| --- | --- |
-| `APPLE_CERTIFICATE` | Your *Developer ID Application* certificate exported as `.p12`, base64-encoded: `openssl base64 -in cert.p12` |
-| `APPLE_CERTIFICATE_PASSWORD` | The password you exported the `.p12` with |
-| `APPLE_SIGNING_IDENTITY` | The certificate's name, e.g. `Developer ID Application: Your Name (TEAMID)` |
-| `APPLE_ID` | The Apple ID that notarizes |
-| `APPLE_PASSWORD` | An [app-specific password](https://support.apple.com/102654) for that Apple ID |
-| `APPLE_TEAM_ID` | Your team ID, from your Apple Developer account |
+| Secret                       | What it is                                                                                                    |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `APPLE_CERTIFICATE`          | Your _Developer ID Application_ certificate exported as `.p12`, base64-encoded: `openssl base64 -in cert.p12` |
+| `APPLE_CERTIFICATE_PASSWORD` | The password you exported the `.p12` with                                                                     |
+| `APPLE_SIGNING_IDENTITY`     | The certificate's name, e.g. `Developer ID Application: Your Name (TEAMID)`                                   |
+| `APPLE_ID`                   | The Apple ID that notarizes                                                                                   |
+| `APPLE_PASSWORD`             | An [app-specific password](https://support.apple.com/102654) for that Apple ID                                |
+| `APPLE_TEAM_ID`              | Your team ID, from your Apple Developer account                                                               |
 
 The first three sign; the last three notarize. A Developer ID certificate needs a paid Apple
 Developer account. See Tauri's [macOS signing guide](https://v2.tauri.app/distribute/sign/macos/)

@@ -10,11 +10,11 @@ Today that is the user's settings. The Rust side lives in
 `app.db` in the app data directory, or `app-dev.db` in debug builds, so `just dev` never
 migrates or overwrites the database of an installed release build:
 
-| OS      | Directory                                                         |
-| ------- | ----------------------------------------------------------------- |
+| OS      | Directory                                                              |
+| ------- | ---------------------------------------------------------------------- |
 | macOS   | `~/Library/Application Support/com.github.tauriv2-vue-desktop-starter` |
-| Linux   | `~/.local/share/com.github.tauriv2-vue-desktop-starter`          |
-| Windows | `%APPDATA%\com.github.tauriv2-vue-desktop-starter`               |
+| Linux   | `~/.local/share/com.github.tauriv2-vue-desktop-starter`                |
+| Windows | `%APPDATA%\com.github.tauriv2-vue-desktop-starter`                     |
 
 It is opened in WAL mode before the window shows, and pending migrations run then. If it cannot
 be opened or migrated, the error is logged, the user gets a message saying so, with the log
@@ -38,9 +38,9 @@ needs no database and no `DATABASE_URL`. Changing the schema or a query needs
 cargo install sqlx-cli --no-default-features --features sqlite
 ```
 
-| Recipe               | What it does                                                                 |
-| -------------------- | ---------------------------------------------------------------------------- |
-| `just db-new <name>` | Adds `src-tauri/migrations/<timestamp>_<name>.sql`                           |
+| Recipe               | What it does                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------- |
+| `just db-new <name>` | Adds `src-tauri/migrations/<timestamp>_<name>.sql`                                    |
 | `just db-prepare`    | Builds a scratch database in `target/sqlx/` from the migrations and rewrites `.sqlx/` |
 
 Run `just db-prepare` after changing a query or a migration, and commit `.sqlx/` with the change.

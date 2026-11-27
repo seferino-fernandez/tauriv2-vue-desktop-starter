@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { CommandId } from '@/lib/keybindings'
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import Keybinding from '@/components/Keybinding.vue'
+import type { CommandId } from "@/lib/keybindings";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import Keybinding from "@/components/Keybinding.vue";
 import {
   CommandDialog,
   CommandEmpty,
@@ -11,24 +11,25 @@ import {
   CommandItem,
   CommandList,
   CommandShortcut,
-} from '@/components/ui/command'
-import { commandIds, commands } from '@/lib/keybindings'
+} from "@/components/ui/command";
+import { commandIds, commands } from "@/lib/keybindings";
 
 const props = defineProps<{
   /** What each command does; commands without one are left out */
-  handlers: Partial<Record<CommandId, () => void>>
-}>()
+  handlers: Partial<Record<CommandId, () => void>>;
+}>();
 
-const open = defineModel<boolean>('open', { required: true })
-const { t } = useI18n()
+const open = defineModel<boolean>("open", { required: true });
+const { t } = useI18n();
 
 // Every command the app can run, except opening the palette itself
 const available = computed(() =>
-  commandIds.filter(id => id !== 'openCommandPalette' && props.handlers[id]))
+  commandIds.filter((id) => id !== "openCommandPalette" && props.handlers[id]),
+);
 
 function run(command: CommandId) {
-  open.value = false
-  props.handlers[command]?.()
+  open.value = false;
+  props.handlers[command]?.();
 }
 </script>
 
@@ -41,7 +42,7 @@ function run(command: CommandId) {
   >
     <CommandInput :placeholder="t('commandPalette.placeholder')" />
     <CommandList>
-      <CommandEmpty>{{ t('commandPalette.empty') }}</CommandEmpty>
+      <CommandEmpty>{{ t("commandPalette.empty") }}</CommandEmpty>
       <CommandGroup>
         <CommandItem
           v-for="command in available"

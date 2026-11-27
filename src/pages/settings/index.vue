@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Language } from '@/lib/config'
-import { watchImmediate } from '@vueuse/core'
-import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { Button } from '@/components/ui/button'
-import { Field, FieldContent, FieldDescription, FieldLabel } from '@/components/ui/field'
+import type { Language } from "@/lib/config";
+import { watchImmediate } from "@vueuse/core";
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { Button } from "@/components/ui/button";
+import { Field, FieldContent, FieldDescription, FieldLabel } from "@/components/ui/field";
 import {
   Select,
   SelectContent,
@@ -12,35 +12,36 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { getLanguageLabel, supportedLanguages } from '@/lib/config'
-import { notifyError } from '@/lib/errors'
-import { commandIds } from '@/lib/keybindings'
-import { openLogFolder } from '@/lib/logs-commands'
-import { useSettingsStore } from '@/stores/settings'
-import { useUpdaterStore } from '@/stores/updater'
-import FontSetting from './FontSetting.vue'
-import KeybindingSetting from './KeybindingSetting.vue'
-import SettingsSection from './SettingsSection.vue'
-import ThemeSetting from './ThemeSetting.vue'
+} from "@/components/ui/select";
+import { getLanguageLabel, supportedLanguages } from "@/lib/config";
+import { notifyError } from "@/lib/errors";
+import { commandIds } from "@/lib/keybindings";
+import { openLogFolder } from "@/lib/logs-commands";
+import { useSettingsStore } from "@/stores/settings";
+import { useUpdaterStore } from "@/stores/updater";
+import FontSetting from "./FontSetting.vue";
+import KeybindingSetting from "./KeybindingSetting.vue";
+import SettingsSection from "./SettingsSection.vue";
+import ThemeSetting from "./ThemeSetting.vue";
 
-const { t, locale } = useI18n()
-const availableLanguages = ref<Language[]>(supportedLanguages())
-const settingsStore = useSettingsStore()
-const updater = useUpdaterStore()
+const { t, locale } = useI18n();
+const availableLanguages = ref<Array<Language>>(supportedLanguages());
+const settingsStore = useSettingsStore();
+const updater = useUpdaterStore();
 // Only release builds write log files; debug builds log to CrabNebula DevTools
-const writesLogFiles = import.meta.env.PROD
+const writesLogFiles = import.meta.env.PROD;
 
 function openLogs() {
-  openLogFolder().catch(error => notifyError('openLogs', error))
+  openLogFolder().catch((error) => notifyError("openLogs", error));
 }
 
-watchImmediate(locale, newLocale => handleLanguageSelect(newLocale))
+watchImmediate(locale, (newLocale) => handleLanguageSelect(newLocale));
 
 function handleLanguageSelect(newLocale: string) {
-  if (!newLocale || !availableLanguages.value.some(sl => sl.value === newLocale))
-    return
-  settingsStore.setLanguage(newLocale)
+  if (!newLocale || !availableLanguages.value.some((sl) => sl.value === newLocale)) {
+    return;
+  }
+  settingsStore.setLanguage(newLocale);
 }
 </script>
 
@@ -49,19 +50,19 @@ function handleLanguageSelect(newLocale: string) {
     <header class="flex items-start justify-between gap-4 px-1">
       <div class="flex flex-col gap-1">
         <h1 class="text-xl font-semibold tracking-tight">
-          {{ t('settings.label') }}
+          {{ t("settings.label") }}
         </h1>
         <p class="text-sm text-muted-foreground">
-          {{ t('settings.description') }}
+          {{ t("settings.description") }}
         </p>
       </div>
       <div class="flex shrink-0 gap-2">
         <Button v-if="writesLogFiles" variant="outline" size="sm" @click="openLogs">
-          {{ t('settings.openLogs') }}
+          {{ t("settings.openLogs") }}
         </Button>
         <!-- Only builds with the updater cargo feature can update themselves -->
         <Button v-if="updater.available" variant="outline" size="sm" @click="updater.check()">
-          {{ t('updates.check') }}
+          {{ t("updates.check") }}
         </Button>
       </div>
     </header>
@@ -76,10 +77,10 @@ function handleLanguageSelect(newLocale: string) {
       <Field orientation="responsive" class="gap-x-6 px-4 py-4">
         <FieldContent>
           <FieldLabel for="language-select">
-            {{ t('settings.language.label') }}
+            {{ t("settings.language.label") }}
           </FieldLabel>
           <FieldDescription>
-            {{ t('settings.language.description') }}
+            {{ t("settings.language.description") }}
           </FieldDescription>
         </FieldContent>
         <Select v-model="locale">

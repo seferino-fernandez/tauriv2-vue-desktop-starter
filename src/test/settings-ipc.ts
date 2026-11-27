@@ -1,6 +1,6 @@
-import type { SavedSettings } from '@/lib/settings-commands'
-import { clearMocks, mockIPC } from '@tauri-apps/api/mocks'
-import { vi } from 'vitest'
+import type { SavedSettings } from "@/lib/settings-commands";
+import { clearMocks, mockIPC } from "@tauri-apps/api/mocks";
+import { vi } from "vitest";
 
 /** What `get_settings` returns for a new database: nothing chosen yet */
 export function nothingSaved(): SavedSettings {
@@ -11,7 +11,7 @@ export function nothingSaved(): SavedSettings {
     sidebarOpen: null,
     sidebarWidth: null,
     keybindings: {},
-  }
+  };
 }
 
 /**
@@ -26,23 +26,28 @@ export function mockSettingsIpc(saved: Partial<SavedSettings> = {}) {
       ...nothingSaved(),
       ...saved,
     },
-    sent: [] as [command: string, args: unknown][],
-  }
+    sent: [] as Array<[command: string, args: unknown]>,
+  };
   // `isTauri()` reads this global, which the real webview sets and `mockIPC` does not
-  vi.stubGlobal('isTauri', true)
+  vi.stubGlobal("isTauri", true);
   // Events stay in the page: `emit` reaches `listen` without being recorded in `sent`
-  mockIPC((command, args) => {
-    if (command === 'get_settings')
-      return structuredClone(ipc.saved)
-    if (command === 'updater_available')
-      return false
-    ipc.sent.push([command, args])
-    return null
-  }, { shouldMockEvents: true })
-  return ipc
+  mockIPC(
+    (command, args) => {
+      if (command === "get_settings") {
+        return structuredClone(ipc.saved);
+      }
+      if (command === "updater_available") {
+        return false;
+      }
+      ipc.sent.push([command, args]);
+      return null;
+    },
+    { shouldMockEvents: true },
+  );
+  return ipc;
 }
 
 export function unmockSettingsIpc() {
-  clearMocks()
-  vi.unstubAllGlobals()
+  clearMocks();
+  vi.unstubAllGlobals();
 }

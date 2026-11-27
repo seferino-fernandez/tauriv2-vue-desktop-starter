@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Theme } from '@/stores/settings'
+import type { Theme } from "@/stores/settings";
 
 defineProps<{
-  theme: Theme
-}>()
+  theme: Theme;
+}>();
 </script>
 
 <template>

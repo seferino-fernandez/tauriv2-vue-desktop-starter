@@ -1,99 +1,105 @@
 <script setup lang="ts">
-import type { CommandId, KeybindingProblem } from '@/lib/keybindings'
-import { computed, onBeforeUnmount, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import IconReset from '~icons/ph/arrow-counter-clockwise'
-import Keybinding from '@/components/Keybinding.vue'
-import { Button } from '@/components/ui/button'
-import { Field, FieldLabel } from '@/components/ui/field'
-import { commands, formatKeybinding, isModifierCode, keybindingFromEvent } from '@/lib/keybindings'
-import { isMacOS } from '@/lib/platform'
-import { useSettingsStore } from '@/stores/settings'
+import type { CommandId, KeybindingProblem } from "@/lib/keybindings";
+import { computed, onBeforeUnmount, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import IconReset from "~icons/ph/arrow-counter-clockwise";
+import Keybinding from "@/components/Keybinding.vue";
+import { Button } from "@/components/ui/button";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { commands, formatKeybinding, isModifierCode, keybindingFromEvent } from "@/lib/keybindings";
+import { isMacOS } from "@/lib/platform";
+import { useSettingsStore } from "@/stores/settings";
 
 const props = defineProps<{
-  command: CommandId
-}>()
+  command: CommandId;
+}>();
 
-const { t } = useI18n()
-const settingsStore = useSettingsStore()
-const mac = isMacOS()
+const { t } = useI18n();
+const settingsStore = useSettingsStore();
+const mac = isMacOS();
 
-const fieldId = computed(() => `keybinding-${props.command}`)
-const messageId = computed(() => `${fieldId.value}-message`)
-const customized = computed(() => props.command in settingsStore.keybindingOverrides)
+const fieldId = computed(() => `keybinding-${props.command}`);
+const messageId = computed(() => `${fieldId.value}-message`);
+const customized = computed(() => props.command in settingsStore.keybindingOverrides);
 
-const recording = ref(false)
+const recording = ref(false);
 /** Why the last shortcut pressed was refused, with that shortcut */
-const refusal = ref<{ problem: KeybindingProblem, binding: string }>()
+const refusal = ref<{ problem: KeybindingProblem; binding: string }>();
 
 const message = computed(() => {
-  if (!refusal.value)
-    return ''
-  const { problem, binding } = refusal.value
-  const shortcut = formatKeybinding(binding, mac)
+  if (!refusal.value) {
+    return "";
+  }
+  const { problem, binding } = refusal.value;
+  const shortcut = formatKeybinding(binding, mac);
   switch (problem.kind) {
-    case 'reserved':
-      return t('settings.shortcuts.problems.reserved', { shortcut })
-    case 'taken':
-      return t('settings.shortcuts.problems.taken', {
+    case "reserved":
+      return t("settings.shortcuts.problems.reserved", { shortcut });
+    case "taken":
+      return t("settings.shortcuts.problems.taken", {
         shortcut,
         command: t(commands[problem.command as CommandId].titleKey),
-      })
+      });
     default:
-      return t('settings.shortcuts.problems.needsModifier', {
-        modifier: mac ? '⌘' : 'Ctrl',
-      })
+      return t("settings.shortcuts.problems.needsModifier", {
+        modifier: mac ? "⌘" : "Ctrl",
+      });
   }
-})
+});
 
 function setRecording(value: boolean) {
-  recording.value = value
-  settingsStore.recordingKeybinding = value
+  recording.value = value;
+  settingsStore.recordingKeybinding = value;
 }
 
 // WebKit does not focus a button on click; without focus the field gets no keys and no blur
 function start(event: MouseEvent) {
-  ;(event.currentTarget as HTMLElement).focus()
-  refusal.value = undefined
-  setRecording(true)
+  (event.currentTarget as HTMLElement).focus();
+  refusal.value = undefined;
+  setRecording(true);
 }
 
 function stop() {
-  setRecording(false)
+  setRecording(false);
 }
 
 // Saves on keydown: macOS sends no keyup for keys pressed while ⌘ is held
 async function record(event: KeyboardEvent) {
-  if (!recording.value)
-    return
-  event.preventDefault()
-  event.stopPropagation()
-  const plain = !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey
-  if (event.code === 'Escape' && plain) {
-    refusal.value = undefined
-    stop()
-    return
+  if (!recording.value) {
+    return;
   }
-  if (isModifierCode(event.code))
-    return
-  const binding = keybindingFromEvent(event, mac)
-  if (!binding)
-    return
-  const problem = await settingsStore.setKeybinding(props.command, binding)
-  refusal.value = problem && { problem, binding }
-  if (!problem)
-    stop()
+  event.preventDefault();
+  event.stopPropagation();
+  const plain = !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey;
+  if (event.code === "Escape" && plain) {
+    refusal.value = undefined;
+    stop();
+    return;
+  }
+  if (isModifierCode(event.code)) {
+    return;
+  }
+  const binding = keybindingFromEvent(event, mac);
+  if (!binding) {
+    return;
+  }
+  const problem = await settingsStore.setKeybinding(props.command, binding);
+  refusal.value = problem && { problem, binding };
+  if (!problem) {
+    stop();
+  }
 }
 
 // Leaving the page mid-recording must not leave every shortcut switched off
 onBeforeUnmount(() => {
-  if (recording.value)
-    stop()
-})
+  if (recording.value) {
+    stop();
+  }
+});
 
 async function reset() {
-  refusal.value = undefined
-  await settingsStore.resetKeybinding(props.command)
+  refusal.value = undefined;
+  await settingsStore.resetKeybinding(props.command);
 }
 </script>
 
@@ -116,7 +122,9 @@ async function reset() {
         @keydown="record"
         @blur="stop"
       >
-        <span v-if="recording" class="text-muted-foreground">{{ t('settings.shortcuts.recording') }}</span>
+        <span v-if="recording" class="text-muted-foreground">{{
+          t("settings.shortcuts.recording")
+        }}</span>
         <Keybinding v-else :command="command" />
       </Button>
       <Button

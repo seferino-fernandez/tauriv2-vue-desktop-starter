@@ -29,6 +29,7 @@ Security Policy stays as it is. The dialog is
    ```
 
    Keep the private key safe. If you lose it, apps already installed can't update any more.
+
 2. In [`src-tauri/tauri.updater.conf.json`](../src-tauri/tauri.updater.conf.json), set `pubkey`
    to the contents of `my-app.key.pub`, and replace `OWNER/REPO` in the endpoint with your
    repository.

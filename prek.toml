@@ -59,16 +59,7 @@ hooks = [{ id = "betterleaks", priority = 10 }]
 [[repos]]
 repo = "https://github.com/adrienverge/yamllint"
 rev = "v1.38.0"
-# .github/workflows/ is excluded because those files mix 4-space indentation
-# (the `on:` block) with 2-space (the `jobs:` block) — a real inconsistency,
-# but CI is out of onboard's scope to reformat. Filed as a backlog row instead
-# of silently disabling the indentation rule for every YAML file in the repo.
-hooks = [
-  { id = "yamllint", args = [
-    "-c",
-    ".yamllint.yml",
-  ], exclude = "^\\.github/workflows/", priority = 10 },
-]
+hooks = [{ id = "yamllint", args = ["-c", ".yamllint.yml"], priority = 10 }]
 
 # Priority 20 — the project's own gate, through just
 [[repos]]

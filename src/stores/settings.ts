@@ -9,7 +9,7 @@ import { isTauri } from "@tauri-apps/api/core";
 import { useColorMode } from "@vueuse/core";
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
-import i18n from "@/i18n";
+import i18n, { isSupportedLanguage } from "@/i18n";
 import { notifyError } from "@/lib/errors";
 import { fontStack } from "@/lib/fonts";
 import {
@@ -73,19 +73,30 @@ export const useSettingsStore = defineStore("settings", () => {
     }
   }
 
-  /** The saved interface language, `null` until the user picks one; main.ts applies it to i18n */
-  const language = ref<string | null>(null);
+  /** The language the user picked, `null` until they pick one */
+  const chosenLanguage = ref<string | null>(null);
+  /** The interface language: the one the user picked, or English */
+  const language = computed(() => chosenLanguage.value ?? "en");
 
-  /** Saves `locale`; if the save fails, the interface goes back to the previous language */
+  watch(language, (locale) => {
+    i18n.global.locale.value = locale;
+    document.documentElement.lang = locale;
+  });
+
+  /**
+   * Shows the app in `locale` and saves it; if the save fails, the previous language comes back.
+   * A language the app does not have changes nothing.
+   */
   async function setLanguage(locale: string) {
-    const previous = language.value;
-    language.value = locale;
+    if (!isSupportedLanguage(locale)) {
+      return;
+    }
+    const previous = chosenLanguage.value;
+    chosenLanguage.value = locale;
     try {
       await persist(() => settingsCommands.setLanguage(locale));
     } catch (error) {
-      language.value = previous;
-      // The app starts in English until a language is saved
-      i18n.global.locale.value = previous ?? "en";
+      chosenLanguage.value = previous;
       notifyError("saveLanguage", error);
     }
   }
@@ -169,7 +180,9 @@ export const useSettingsStore = defineStore("settings", () => {
       if (saved.theme) {
         colorMode.value = saved.theme;
       }
-      language.value = saved.language;
+      // A language the app no longer has counts as never chosen
+      chosenLanguage.value =
+        saved.language !== null && isSupportedLanguage(saved.language) ? saved.language : null;
       fontFamily.value = saved.fontFamily;
       if (saved.sidebarWidth !== null) {
         sidebarWidth.value = clampPanelWidth(saved.sidebarWidth);

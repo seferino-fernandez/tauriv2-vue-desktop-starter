@@ -28,18 +28,8 @@ app.use(i18n);
 
 // Nothing else holds the theme, so ask for the saved settings before anything else, without
 // waiting for them
-// oxlint-disable-next-line unicorn/prefer-top-level-await -- awaiting would delay the mount below
-void loadSettings();
+void useSettingsStore().load();
 
 // Mount right away: decorum adopts our titlebar only if it exists when the DOM is ready.
 // The shell stays hidden until the saved panel layout arrives (see AppShell.vue).
 app.mount("#app");
-
-async function loadSettings() {
-  const settingsStore = useSettingsStore();
-  await settingsStore.load();
-  // Set the language based on the user's settings
-  if (settingsStore.language) {
-    i18n.global.locale.value = settingsStore.language;
-  }
-}

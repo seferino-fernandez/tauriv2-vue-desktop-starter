@@ -4,6 +4,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "vue-sonner";
 import i18n from "@/i18n";
+import type { SavedSettings } from "@/lib/settings-commands";
 import { PANEL_MAX_WIDTH } from "@/lib/layout";
 import { mockSettingsIpc, nothingSaved, unmockSettingsIpc } from "@/test/settings-ipc";
 import { useSettingsStore } from "./settings";
@@ -14,6 +15,8 @@ beforeEach(() => {
   localStorage.clear();
   html.className = "";
   html.style.removeProperty("--app-font-family");
+  html.lang = "en";
+  i18n.global.locale.value = "en";
   setActivePinia(createPinia());
 });
 
@@ -196,12 +199,62 @@ describe("settings store: shortcuts", () => {
   });
 });
 
-/** Settings load, but every save fails */
-function mockFailingSaves() {
+describe("settings store: language", () => {
+  it("shows the app in the saved language", async () => {
+    mockSettingsIpc({ language: "es" });
+    const settingsStore = useSettingsStore();
+
+    await settingsStore.load();
+    await flushPromises();
+
+    expect(settingsStore.language).toBe("es");
+    expect(i18n.global.t("settings.label")).toBe("Configuraciones");
+    expect(html.lang).toBe("es");
+  });
+
+  it("shows the app in English until a language is chosen", async () => {
+    mockSettingsIpc();
+    const settingsStore = useSettingsStore();
+
+    await settingsStore.load();
+    await flushPromises();
+
+    expect(settingsStore.language).toBe("en");
+    expect(i18n.global.t("settings.label")).toBe("Settings");
+  });
+
+  it("treats a saved language the app no longer has as never chosen, deleting nothing", async () => {
+    const ipc = mockSettingsIpc({ language: "fr" });
+    const settingsStore = useSettingsStore();
+
+    await settingsStore.load();
+    await flushPromises();
+
+    expect(settingsStore.language).toBe("en");
+    expect(html.lang).toBe("en");
+    expect(ipc.sent).toEqual([]);
+  });
+
+  it("ignores a language the app does not have, saving nothing", async () => {
+    const ipc = mockSettingsIpc({ language: "es" });
+    const settingsStore = useSettingsStore();
+    await settingsStore.load();
+
+    await settingsStore.setLanguage("fr");
+    await flushPromises();
+
+    expect(settingsStore.language).toBe("es");
+    expect(html.lang).toBe("es");
+    expect(ipc.sent).toEqual([]);
+  });
+});
+
+/** Settings load (`saved`, unset fields `null`), but every save fails */
+function mockFailingSaves(saved: Partial<SavedSettings> = {}) {
   mockSettingsIpc();
   mockIPC((command) => {
     if (command === "get_settings") {
-      return nothingSaved();
+      return { ...nothingSaved(), ...saved };
     }
     throw new Error("disk full");
   });
@@ -223,15 +276,29 @@ describe("settings store: failed saves", () => {
   });
 
   it("puts the language back and says so", async () => {
-    const toastError = mockFailingSaves();
+    const toastError = mockFailingSaves({ language: "es" });
     const settingsStore = useSettingsStore();
-    i18n.global.locale.value = "zh";
+    await settingsStore.load();
 
     await settingsStore.setLanguage("zh");
+    await flushPromises();
 
-    expect(settingsStore.language).toBeNull();
-    expect(i18n.global.locale.value).toBe("en");
+    expect(settingsStore.language).toBe("es");
+    expect(i18n.global.t("settings.label")).toBe("Configuraciones");
     expect(toastError).toHaveBeenCalledOnce();
+  });
+
+  it("goes back to English when the first language picked is not saved", async () => {
+    mockFailingSaves();
+    const settingsStore = useSettingsStore();
+    await settingsStore.load();
+
+    await settingsStore.setLanguage("zh");
+    await flushPromises();
+
+    expect(settingsStore.language).toBe("en");
+    expect(i18n.global.t("settings.label")).toBe("Settings");
+    expect(html.lang).toBe("en");
   });
 
   it("keeps the shortcut that was saved before and says so", async () => {

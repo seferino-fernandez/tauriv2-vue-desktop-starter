@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import type { Language } from "@/lib/config";
-import { watchImmediate } from "@vueuse/core";
-import { ref } from "vue";
+import type { AcceptableValue } from "reka-ui";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { Button } from "@/components/ui/button";
 import { Field, FieldContent, FieldDescription, FieldLabel } from "@/components/ui/field";
@@ -13,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getLanguageLabel, supportedLanguages } from "@/lib/config";
+import { supportedLanguages } from "@/i18n";
 import { notifyError } from "@/lib/errors";
 import { commandIds } from "@/lib/keybindings";
 import { openLogFolder } from "@/lib/logs-commands";
@@ -24,8 +23,7 @@ import KeybindingSetting from "./KeybindingSetting.vue";
 import SettingsSection from "./SettingsSection.vue";
 import ThemeSetting from "./ThemeSetting.vue";
 
-const { t, locale } = useI18n();
-const availableLanguages = ref<Array<Language>>(supportedLanguages());
+const { t } = useI18n();
 const settingsStore = useSettingsStore();
 const updater = useUpdaterStore();
 // Only release builds write log files; debug builds log to CrabNebula DevTools
@@ -35,13 +33,14 @@ function openLogs() {
   openLogFolder().catch((error) => notifyError("openLogs", error));
 }
 
-watchImmediate(locale, (newLocale) => handleLanguageSelect(newLocale));
+const languageLabel = computed(
+  () => supportedLanguages.find((language) => language.value === settingsStore.language)?.label,
+);
 
-function handleLanguageSelect(newLocale: string) {
-  if (!newLocale || !availableLanguages.value.some((sl) => sl.value === newLocale)) {
-    return;
+function pickLanguage(language: AcceptableValue) {
+  if (typeof language === "string") {
+    void settingsStore.setLanguage(language);
   }
-  settingsStore.setLanguage(newLocale);
 }
 </script>
 
@@ -83,18 +82,18 @@ function handleLanguageSelect(newLocale: string) {
             {{ t("settings.language.description") }}
           </FieldDescription>
         </FieldContent>
-        <Select v-model="locale">
+        <Select :model-value="settingsStore.language" @update:model-value="pickLanguage">
           <SelectTrigger id="language-select" class="w-full! @md/field-group:w-48!">
-            <SelectValue :placeholder="getLanguageLabel(locale)" />
+            <SelectValue :placeholder="languageLabel" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <SelectItem
-                v-for="availableLanguage in availableLanguages"
-                :key="availableLanguage.value"
-                :value="availableLanguage.value"
+                v-for="language in supportedLanguages"
+                :key="language.value"
+                :value="language.value"
               >
-                {{ availableLanguage.label }}
+                {{ language.label }}
               </SelectItem>
             </SelectGroup>
           </SelectContent>

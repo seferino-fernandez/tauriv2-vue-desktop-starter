@@ -68,7 +68,7 @@ For **Desktop** development, run: `pnpm tauri dev`
 
 Create a new JSON file in the [locales](./src/i18n/locales/) directory with the appropriate translations and the locale as the filename.
 
-Then update the `supportedLanguages` function in [lib/config.ts](./src/lib/config.ts) to include the new language.
+Then add the language to `supportedLanguages` in [i18n/index.ts](./src/i18n/index.ts), named in that language. A test fails if the list and the locale files don't match.
 
 ### Helpful Tips
 

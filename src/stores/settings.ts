@@ -13,11 +13,10 @@ import i18n from "@/i18n";
 import { notifyError } from "@/lib/errors";
 import { fontStack } from "@/lib/fonts";
 import {
+  changeKeybinding,
   commands,
   defaultKeybindings,
-  keybindingProblem,
-  normalizeKeybinding,
-  sanitizeKeybindings,
+  loadKeybindingOverrides,
 } from "@/lib/keybindings";
 import { clampPanelWidth, PANEL_DEFAULT_WIDTH } from "@/lib/layout";
 import { logError } from "@/lib/log";
@@ -130,23 +129,18 @@ export const useSettingsStore = defineStore("settings", () => {
     command: CommandId,
     binding: string,
   ): Promise<KeybindingProblem | undefined> {
-    const problem = keybindingProblem(binding, command, keybindings.value);
-    if (problem) {
-      return problem;
+    const change = changeKeybinding(keybindingOverrides.value, command, binding);
+    if (change.problem) {
+      return change.problem;
     }
     const previous = keybindingOverrides.value;
-    const { [command]: _, ...others } = previous;
-    const normalized = normalizeKeybinding(binding);
-    if (!normalized) {
-      return { kind: "invalid" };
-    }
-    const isDefault = normalized === commands[command].defaultBinding;
-    keybindingOverrides.value = isDefault ? others : { ...others, [command]: normalized };
+    const { override } = change;
+    keybindingOverrides.value = change.overrides;
     try {
       await persist(() =>
-        isDefault
+        override === undefined
           ? settingsCommands.resetKeybinding(command)
-          : settingsCommands.setKeybinding(command, normalized),
+          : settingsCommands.setKeybinding(command, override),
       );
     } catch (error) {
       // The shortcut that was saved before stays
@@ -156,8 +150,9 @@ export const useSettingsStore = defineStore("settings", () => {
     return undefined;
   }
 
-  async function resetKeybinding(command: CommandId) {
-    await setKeybinding(command, commands[command].defaultBinding);
+  /** Puts `command` back on its default, unless another command has it; then says why */
+  function resetKeybinding(command: CommandId): Promise<KeybindingProblem | undefined> {
+    return setKeybinding(command, commands[command].defaultBinding);
   }
 
   /**
@@ -180,7 +175,16 @@ export const useSettingsStore = defineStore("settings", () => {
         sidebarWidth.value = clampPanelWidth(saved.sidebarWidth);
       }
       sidebarOpen.value = saved.sidebarOpen ?? true;
-      keybindingOverrides.value = sanitizeKeybindings(saved.keybindings);
+      const { overrides, deleted } = loadKeybindingOverrides(saved.keybindings);
+      keybindingOverrides.value = overrides;
+      // The shortcuts in effect are right either way; a delete that fails is tried at next launch
+      for (const command of deleted) {
+        settingsCommands
+          .resetKeybinding(command)
+          .catch((error: unknown) =>
+            logError(`Could not delete the saved shortcut of ${command}`, error),
+          );
+      }
     } catch (error) {
       notifyError("loadSettings", error);
     } finally {

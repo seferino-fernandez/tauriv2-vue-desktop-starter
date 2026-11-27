@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
+  commandIds,
   commands,
-  defaultKeybindings,
   formatKeybinding,
   keybindingFromEvent,
   keybindingKeys,
-  keybindingProblem,
+  changeKeybinding,
+  loadKeybindingOverrides,
   matchesKeybinding,
   normalizeKeybinding,
-  sanitizeKeybindings,
 } from "./keybindings";
 
 function press(code: string, modifiers: KeyboardEventInit = {}) {
@@ -68,63 +68,109 @@ describe("matchesKeybinding", () => {
   });
 });
 
-describe("keybindingProblem", () => {
-  const bindings = { first: "Mod+KeyB", second: "Mod+KeyJ" };
-
-  it("requires Mod", () => {
-    expect(keybindingProblem("KeyB", "first", bindings)).toEqual({ kind: "needsModifier" });
-    expect(keybindingProblem("Alt+F4", "first", bindings)).toEqual({ kind: "needsModifier" });
+describe("loadKeybindingOverrides", () => {
+  it("loads back a swap the settings allow", () => {
+    // Settings moved off ⌘, first, so the panel could take it
+    const saved = { openSettings: "Mod+KeyJ", togglePanel: "Mod+Comma" };
+    expect(loadKeybindingOverrides(saved)).toEqual({ overrides: saved, deleted: [] });
   });
 
-  it("refuses shortcuts the OS or the app menu use", () => {
-    expect(keybindingProblem("Mod+KeyQ", "first", bindings)).toEqual({ kind: "reserved" });
-    expect(keybindingProblem("Shift+Mod+KeyZ", "first", bindings)).toEqual({ kind: "reserved" });
+  it("keeps a usable override, normalized", () => {
+    expect(loadKeybindingOverrides({ togglePanel: "Shift+Mod+KeyK" })).toEqual({
+      overrides: { togglePanel: "Mod+Shift+KeyK" },
+      deleted: [],
+    });
+  });
+
+  it("deletes overrides of unknown commands, defaults, and shortcuts that are invalid or refused", () => {
+    for (const saved of [
+      { notACommand: "Mod+KeyK" },
+      { togglePanel: "Mod+KeyB" },
+      { togglePanel: "Mod+" },
+      { togglePanel: "KeyK" },
+      { togglePanel: "Mod+KeyQ" },
+    ]) {
+      expect(loadKeybindingOverrides(saved), JSON.stringify(saved)).toEqual({
+        overrides: {},
+        deleted: Object.keys(saved),
+      });
+    }
+  });
+
+  it("keeps a default over an override that clashes with it, e.g. a new command's", () => {
+    expect(loadKeybindingOverrides({ togglePanel: "Mod+Comma" })).toEqual({
+      overrides: {},
+      deleted: ["togglePanel"],
+    });
+  });
+
+  it("deletes clashing overrides until nothing clashes", () => {
+    // Edited by hand, both are ⇧⌘J, so both go; the panel is then back on ⌘B, which the
+    // palette's override clashes with
+    const { overrides, deleted } = loadKeybindingOverrides({
+      togglePanel: "Mod+Shift+KeyJ",
+      openSettings: "Shift+Mod+KeyJ",
+      openCommandPalette: "Mod+KeyB",
+    });
+    expect(overrides).toEqual({});
+    expect(deleted).toHaveLength(3);
+    expect(deleted).toEqual(
+      expect.arrayContaining(["openCommandPalette", "openSettings", "togglePanel"]),
+    );
+  });
+});
+
+describe("changeKeybinding", () => {
+  it("gives a command a free shortcut, normalized", () => {
+    expect(changeKeybinding({}, "togglePanel", "Shift+Mod+KeyK")).toEqual({
+      overrides: { togglePanel: "Mod+Shift+KeyK" },
+      override: "Mod+Shift+KeyK",
+    });
+  });
+
+  it("removes the override when the command gets its default back", () => {
+    const overrides = { togglePanel: "Mod+KeyJ", openSettings: "Mod+KeyK" };
+    expect(changeKeybinding(overrides, "togglePanel", "Mod+KeyB")).toEqual({
+      overrides: { openSettings: "Mod+KeyK" },
+      override: undefined,
+    });
   });
 
   it("refuses a shortcut another command uses, naming it", () => {
-    expect(keybindingProblem("Mod+KeyJ", "first", bindings)).toEqual({
-      kind: "taken",
-      command: "second",
+    expect(changeKeybinding({}, "togglePanel", "Mod+Comma")).toEqual({
+      problem: { kind: "taken", command: "openSettings" },
     });
   });
 
-  it("accepts a free shortcut, and the command's own", () => {
-    expect(keybindingProblem("Mod+Shift+KeyK", "first", bindings)).toBeUndefined();
-    expect(keybindingProblem("Mod+KeyB", "first", bindings)).toBeUndefined();
+  it("refuses a reset while another command has the default", () => {
+    const overrides = { togglePanel: "Mod+KeyJ", openSettings: "Mod+KeyB" };
+    expect(changeKeybinding(overrides, "togglePanel", commands.togglePanel.defaultBinding)).toEqual(
+      { problem: { kind: "taken", command: "openSettings" } },
+    );
   });
 
-  it("refuses what is not a shortcut", () => {
-    expect(keybindingProblem("Mod+", "first", bindings)).toEqual({ kind: "invalid" });
+  it("refuses a shortcut without Mod, one the OS or the app menu use, and what is not a shortcut", () => {
+    expect(changeKeybinding({}, "togglePanel", "KeyB")).toEqual({
+      problem: { kind: "needsModifier" },
+    });
+    expect(changeKeybinding({}, "togglePanel", "Alt+F4")).toEqual({
+      problem: { kind: "needsModifier" },
+    });
+    expect(changeKeybinding({}, "togglePanel", "Mod+KeyQ")).toEqual({
+      problem: { kind: "reserved" },
+    });
+    expect(changeKeybinding({}, "togglePanel", "Shift+Mod+KeyZ")).toEqual({
+      problem: { kind: "reserved" },
+    });
+    expect(changeKeybinding({}, "togglePanel", "Mod+")).toEqual({ problem: { kind: "invalid" } });
   });
-});
 
-describe("defaults", () => {
   it("gives every command a usable default that no other command shares", () => {
-    const bindings = defaultKeybindings();
-    for (const [id, command] of Object.entries(commands)) {
-      expect(keybindingProblem(command.defaultBinding, id, bindings)).toBeUndefined();
-    }
-  });
-});
-
-describe("sanitizeKeybindings", () => {
-  it("keeps a usable override, normalized", () => {
-    expect(sanitizeKeybindings({ togglePanel: "Shift+Mod+KeyK" })).toEqual({
-      togglePanel: "Mod+Shift+KeyK",
-    });
-  });
-
-  it("drops unknown commands, defaults, and shortcuts that are invalid or refused", () => {
-    expect(sanitizeKeybindings({ unknown: "Mod+KeyK" })).toEqual({});
-    expect(sanitizeKeybindings({ togglePanel: "Mod+KeyB" })).toEqual({});
-    expect(sanitizeKeybindings({ togglePanel: "KeyK" })).toEqual({});
-    expect(sanitizeKeybindings({ togglePanel: "Mod+KeyQ" })).toEqual({});
-    expect(sanitizeKeybindings({ togglePanel: 42 })).toEqual({});
-  });
-
-  it("treats anything but an object as no overrides", () => {
-    for (const saved of [undefined, null, "Mod+KeyK", ["Mod+KeyK"]]) {
-      expect(sanitizeKeybindings(saved)).toEqual({});
+    for (const id of commandIds) {
+      expect(changeKeybinding({}, id, commands[id].defaultBinding)).toEqual({
+        overrides: {},
+        override: undefined,
+      });
     }
   });
 });

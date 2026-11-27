@@ -155,6 +155,19 @@ describe("keybinding setting", () => {
     expect(reset().disabled).toBe(true);
   });
 
+  it("says why it cannot reset while another command has the default", async () => {
+    ipc = mockSettingsIpc({
+      keybindings: { togglePanel: "Mod+KeyJ", openSettings: "Mod+KeyB" },
+    });
+    await mountSetting();
+
+    reset().click();
+    await flushPromises();
+    expect(message()).toBe("⌘B is already used by Open settings.");
+    expect(field().textContent?.trim()).toBe("⌘J");
+    expect(ipc.sent).toEqual([]);
+  });
+
   it("removes the override when the default is recorded again", async () => {
     ipc = mockSettingsIpc({
       keybindings: { togglePanel: "Mod+KeyJ" },

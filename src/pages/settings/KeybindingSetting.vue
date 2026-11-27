@@ -98,8 +98,8 @@ onBeforeUnmount(() => {
 });
 
 async function reset() {
-  refusal.value = undefined;
-  await settingsStore.resetKeybinding(props.command);
+  const problem = await settingsStore.resetKeybinding(props.command);
+  refusal.value = problem && { problem, binding: commands[props.command].defaultBinding };
 }
 </script>
 

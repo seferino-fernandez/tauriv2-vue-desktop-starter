@@ -142,7 +142,7 @@ export type KeybindingProblem =
  * Why `command` cannot use `binding`, or `undefined` if it can. A shortcut needs `Mod`,
  * cannot be reserved, and cannot belong to another command in `bindings`.
  */
-export function keybindingProblem(
+function keybindingProblem(
   binding: string,
   command: string,
   bindings: Readonly<Record<string, string>>,
@@ -171,31 +171,75 @@ export function defaultKeybindings(): Keybindings {
   ) as Keybindings;
 }
 
+/** Saved overrides as they load: the ones that apply, and the saved ones to delete */
+export interface LoadedKeybindings {
+  overrides: KeybindingOverrides;
+  /** App commands whose saved override does not apply, so it should be deleted */
+  deleted: Array<string>;
+}
+
 /**
- * The overrides worth keeping from saved settings: known commands with a usable shortcut that
- * differs from the default. Anything else (from an older version, or edited by hand) is dropped,
- * so that command falls back to its default.
+ * The overrides that apply from what was saved. They are checked as one set, so any set the
+ * settings let the user save loads back as it was.
  */
-export function sanitizeKeybindings(saved: unknown): KeybindingOverrides {
-  if (typeof saved !== "object" || saved === null) {
-    return {};
-  }
-  const bindings = defaultKeybindings();
+export function loadKeybindingOverrides(
+  saved: Readonly<Record<string, string>>,
+): LoadedKeybindings {
   const overrides: KeybindingOverrides = {};
-  for (const id of commandIds) {
-    const value: unknown = id in saved ? saved[id] : undefined;
-    const binding = typeof value === "string" ? normalizeKeybinding(value) : undefined;
-    if (
-      !binding ||
-      binding === commands[id].defaultBinding ||
-      keybindingProblem(binding, id, bindings)
-    ) {
-      continue;
+  const deleted: Array<string> = [];
+  for (const [command, value] of Object.entries(saved)) {
+    const binding = normalizeKeybinding(value);
+    if (isCommandId(command) && binding && binding !== commands[command].defaultBinding) {
+      overrides[command] = binding;
+    } else {
+      deleted.push(command);
     }
-    bindings[id] = binding;
-    overrides[id] = binding;
   }
-  return overrides;
+  // A default never clashes with another default, so dropping overrides always ends
+  for (;;) {
+    const bindings: Keybindings = { ...defaultKeybindings(), ...overrides };
+    const clashing = Object.keys(overrides)
+      .filter(isCommandId)
+      .filter((command) => keybindingProblem(bindings[command], command, bindings));
+    if (clashing.length === 0) {
+      return { overrides, deleted };
+    }
+    for (const command of clashing) {
+      delete overrides[command];
+      deleted.push(command);
+    }
+  }
+}
+
+/**
+ * What giving a command a shortcut comes to: why it cannot have it, or else the overrides after
+ * it and the command's override to save, `undefined` when it is back on its default and its
+ * saved override should be deleted
+ */
+export type KeybindingChange =
+  | { problem: KeybindingProblem }
+  | { problem?: undefined; overrides: KeybindingOverrides; override: string | undefined };
+
+/**
+ * Gives `command` the shortcut `binding`, unless the shortcut is refused. Resetting a command
+ * is giving it its default, which is refused too while another command has it.
+ */
+export function changeKeybinding(
+  overrides: Readonly<KeybindingOverrides>,
+  command: CommandId,
+  binding: string,
+): KeybindingChange {
+  const problem = keybindingProblem(binding, command, { ...defaultKeybindings(), ...overrides });
+  const normalized = normalizeKeybinding(binding);
+  if (problem || !normalized) {
+    // A shortcut without a problem always normalizes
+    return { problem: problem ?? { kind: "invalid" } };
+  }
+  const { [command]: _, ...others } = overrides;
+  if (normalized === commands[command].defaultBinding) {
+    return { overrides: others, override: undefined };
+  }
+  return { overrides: { ...others, [command]: normalized }, override: normalized };
 }
 
 const KEY_LABELS = new Map([

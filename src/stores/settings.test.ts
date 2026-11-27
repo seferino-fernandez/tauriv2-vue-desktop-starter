@@ -80,6 +80,49 @@ describe("settings store: loading", () => {
     expect(settingsStore.keybindingOverrides).toEqual({ togglePanel: "Mod+KeyJ" });
   });
 
+  it("deletes saved shortcuts that do not apply", async () => {
+    const ipc = mockSettingsIpc({
+      keybindings: { togglePanel: "Mod+Comma", notACommand: "Mod+KeyK" },
+    });
+    const settingsStore = useSettingsStore();
+
+    await settingsStore.load();
+    await flushPromises();
+
+    expect(settingsStore.keybindingOverrides).toEqual({});
+    expect(settingsStore.keybindings.openSettings).toBe("Mod+Comma");
+    expect(ipc.sent).toHaveLength(2);
+    expect(ipc.sent).toEqual(
+      expect.arrayContaining([
+        ["reset_keybinding", { command: "togglePanel" }],
+        ["reset_keybinding", { command: "notACommand" }],
+      ]),
+    );
+  });
+
+  it("keeps the shortcuts in effect when deleting one fails, and only logs it", async () => {
+    mockSettingsIpc();
+    mockIPC((command) => {
+      if (command === "get_settings") {
+        return {
+          ...nothingSaved(),
+          keybindings: { togglePanel: "Mod+KeyJ", notACommand: "Mod+KeyK" },
+        };
+      }
+      throw new Error("disk full");
+    });
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const toastError = vi.spyOn(toast, "error");
+    const settingsStore = useSettingsStore();
+
+    await settingsStore.load();
+    await flushPromises();
+
+    expect(settingsStore.keybindingOverrides).toEqual({ togglePanel: "Mod+KeyJ" });
+    expect(consoleError).toHaveBeenCalledOnce();
+    expect(toastError).not.toHaveBeenCalled();
+  });
+
   it("keeps the defaults when the settings cannot be read", async () => {
     mockSettingsIpc();
     mockIPC(() => {
@@ -134,6 +177,22 @@ describe("settings store: saving", () => {
       ["set_keybinding", { command: "togglePanel", binding: "Mod+KeyJ" }],
       ["reset_keybinding", { command: "togglePanel" }],
     ]);
+  });
+});
+
+describe("settings store: shortcuts", () => {
+  it("refuses a reset while another command has the default, saving nothing", async () => {
+    const saved = { togglePanel: "Mod+KeyJ", openSettings: "Mod+KeyB" };
+    const ipc = mockSettingsIpc({ keybindings: saved });
+    const settingsStore = useSettingsStore();
+    await settingsStore.load();
+
+    await expect(settingsStore.resetKeybinding("togglePanel")).resolves.toEqual({
+      kind: "taken",
+      command: "openSettings",
+    });
+    expect(ipc.sent).toEqual([]);
+    expect(settingsStore.keybindingOverrides).toEqual(saved);
   });
 });
 

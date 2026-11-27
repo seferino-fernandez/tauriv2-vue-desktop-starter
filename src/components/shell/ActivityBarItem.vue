@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import type { NavigationFailure } from "vue-router";
 import type { NavItem } from "@/router";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import Keybinding from "@/components/Keybinding.vue";
-import { SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
+import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { hasPanel } from "@/router";
+import { useShellLayout } from "@/composables/useShellLayout";
 
 const props = defineProps<{
   item: NavItem;
@@ -15,37 +14,26 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const route = useRoute();
-const router = useRouter();
-const { open, setOpen, toggleSidebar } = useSidebar();
+const { togglePanel, openPage } = useShellLayout();
 
 const label = computed(() => t(props.item.titleKey));
 const active = computed(() => route.matched.some((record) => record.name === props.item.name));
 
 // Like VS Code: the current page's icon shows or hides its panel; another page's icon goes
 // there and opens the panel if that page has one
-async function select(
-  event: MouseEvent,
-  navigate: (event?: MouseEvent) => Promise<void | NavigationFailure>,
-) {
+function select(event: MouseEvent) {
+  event.preventDefault();
   if (active.value) {
-    event.preventDefault();
-    if (hasPanel(route)) {
-      toggleSidebar();
-    }
-    return;
-  }
-  const openPanel = !open.value && hasPanel(router.resolve({ name: props.item.name }));
-  await navigate(event);
-  // After navigating: the shell ignores open changes while the page has no panel
-  if (openPanel) {
-    setOpen(true);
+    togglePanel();
+  } else {
+    void openPage(props.item.name);
   }
 }
 </script>
 
 <template>
   <SidebarMenuItem>
-    <RouterLink v-slot="{ href, navigate }" :to="{ name: item.name }" custom>
+    <RouterLink v-slot="{ href }" :to="{ name: item.name }" custom>
       <!-- Not SidebarMenuButton's tooltip prop: it hides the tooltip while the panel is open -->
       <Tooltip>
         <TooltipTrigger as-child>
@@ -56,7 +44,7 @@ async function select(
             :aria-label="label"
             :aria-current="active ? 'page' : undefined"
             class="size-9 justify-center p-0 [&>svg]:size-5"
-            @click="select($event, navigate)"
+            @click="select"
           >
             <component :is="item.icon" />
           </SidebarMenuButton>

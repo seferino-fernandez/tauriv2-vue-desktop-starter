@@ -266,6 +266,16 @@ describe("appShell", () => {
     expect(panelState()).toBe("expanded");
   });
 
+  it("opens the settings panel with ⌘, when coming from a page without one", async () => {
+    ipc = mockSettingsIpc({ sidebarOpen: false });
+    const { router } = await mountApp("/plain");
+
+    await press("Comma", { metaKey: true });
+    expect(router.currentRoute.value.name).toBe("settings");
+    expect(panelState()).toBe("expanded");
+    expect(ipc.sent).toContainEqual(["set_sidebar_open", { open: true }]);
+  });
+
   it("does nothing with ⌘, on settings", async () => {
     await mountApp("/settings");
     await click(toggle()!);

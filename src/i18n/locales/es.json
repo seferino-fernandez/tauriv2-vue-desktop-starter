@@ -44,6 +44,14 @@
         "taken": "{shortcut} ya lo usa {command}."
       }
     },
+    "about": {
+      "label": "Acerca de",
+      "version": "Versión {version}",
+      "logs": {
+        "label": "Archivos de registro",
+        "description": "Adjúntalos al informar de un error."
+      }
+    },
     "openLogs": "Mostrar archivos de registro"
   },
   "shell": {

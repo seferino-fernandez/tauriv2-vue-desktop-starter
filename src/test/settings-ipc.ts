@@ -2,6 +2,10 @@ import type { SavedSettings } from "@/lib/settings-commands";
 import { clearMocks, mockIPC } from "@tauri-apps/api/mocks";
 import { vi } from "vitest";
 
+/** What `getName()` and `getVersion()` return */
+export const appName = "Test App";
+export const appVersion = "1.2.3";
+
 /** What `get_settings` returns for a new database: nothing chosen yet */
 export function nothingSaved(): SavedSettings {
   return {
@@ -16,9 +20,8 @@ export function nothingSaved(): SavedSettings {
 
 /**
  * Stands in for the Rust settings commands. `get_settings` returns `saved` (unset fields are
- * `null`), `updater_available` says no, and every other command is recorded in `sent` as
- * `[command, args]`. Undo it with
- * `unmockSettingsIpc`.
+ * `null`), `updater_available` says no, the app is `appName` at `appVersion`, and every other
+ * command is recorded in `sent` as `[command, args]`. Undo it with `unmockSettingsIpc`.
  */
 export function mockSettingsIpc(saved: Partial<SavedSettings> = {}) {
   const ipc = {
@@ -38,6 +41,12 @@ export function mockSettingsIpc(saved: Partial<SavedSettings> = {}) {
       }
       if (command === "updater_available") {
         return false;
+      }
+      if (command === "plugin:app|name") {
+        return appName;
+      }
+      if (command === "plugin:app|version") {
+        return appVersion;
       }
       ipc.sent.push([command, args]);
       return null;

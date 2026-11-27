@@ -44,6 +44,14 @@
         "taken": "{shortcut} is already used by {command}."
       }
     },
+    "about": {
+      "label": "About",
+      "version": "Version {version}",
+      "logs": {
+        "label": "Log files",
+        "description": "Attach these to a bug report."
+      }
+    },
     "openLogs": "Show log files"
   },
   "shell": {

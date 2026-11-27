@@ -3,7 +3,8 @@ import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import i18n from "@/i18n";
 import { useSettingsStore } from "@/stores/settings";
-import { mockSettingsIpc, unmockSettingsIpc } from "@/test/settings-ipc";
+import { useUpdaterStore } from "@/stores/updater";
+import { appName, appVersion, mockSettingsIpc, unmockSettingsIpc } from "@/test/settings-ipc";
 import SettingsPage from "./index.vue";
 
 enableAutoUnmount(afterEach);
@@ -50,5 +51,37 @@ describe("settings page: language", () => {
 
     expect(ipc.sent).toEqual([["set_language", { language: "es" }]]);
     expect(document.querySelector("h1")?.textContent?.trim()).toBe("Configuraciones");
+  });
+});
+
+const about = () => document.getElementById("settings-about")!;
+const checkButton = () =>
+  [...about().querySelectorAll("button")].find(
+    (button) => button.textContent?.trim() === "Check for updates…",
+  );
+
+describe("settings page: about", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    i18n.global.locale.value = "en";
+    document.body.innerHTML = "";
+  });
+
+  afterEach(unmockSettingsIpc);
+
+  it("shows the app's name and version, and no update check without the updater", async () => {
+    mockSettingsIpc();
+    await openSettings();
+    expect(about().textContent).toContain(appName);
+    expect(about().textContent).toContain(`Version ${appVersion}`);
+    expect(checkButton()).toBeUndefined();
+  });
+
+  it("checks for updates when the build has the updater", async () => {
+    mockSettingsIpc();
+    const updater = useUpdaterStore();
+    updater.available = true;
+    await openSettings();
+    expect(checkButton()).toBeDefined();
   });
 });

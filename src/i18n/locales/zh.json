@@ -44,6 +44,14 @@
         "taken": "{shortcut} 已被“{command}”使用。"
       }
     },
+    "about": {
+      "label": "关于",
+      "version": "版本 {version}",
+      "logs": {
+        "label": "日志文件",
+        "description": "报告问题时请附上这些文件。"
+      }
+    },
     "openLogs": "显示日志文件"
   },
   "shell": {

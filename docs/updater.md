@@ -7,7 +7,7 @@ it, which is the default, the updater code isn't compiled in and the app never g
 
 Nothing happens until the user asks:
 
-1. They click **Check for updates…** at the top of Settings, or **Check for Updates…** in the
+1. They click **Check for updates…** in Settings → About, or **Check for Updates…** in the
    macOS app menu. Both only exist in builds with the feature.
 2. The app downloads `latest.json` from your endpoint and says whether a newer version exists.
 3. If one does, it downloads and installs it only when they click **Install**.

@@ -2,7 +2,7 @@ import type { RouteRecordRaw } from "vue-router";
 import { emit } from "@tauri-apps/api/event";
 import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { h } from "vue";
 import { createI18n } from "vue-i18n";
 import { createMemoryHistory, createRouter } from "vue-router";
@@ -104,6 +104,12 @@ async function press(
 const toggle = () => document.querySelector<HTMLElement>('header [data-sidebar="trigger"]');
 
 let ipc: ReturnType<typeof mockSettingsIpc>;
+
+// Going to settings waits for its lazily loaded views, and the first load takes longer than a
+// test waits after a key press. Load them up front so every test passes on its own too.
+beforeAll(async () => {
+  await Promise.all([import("@/pages/settings/index.vue"), import("@/pages/settings/panel.vue")]);
+});
 
 describe("appShell", () => {
   beforeEach(() => {

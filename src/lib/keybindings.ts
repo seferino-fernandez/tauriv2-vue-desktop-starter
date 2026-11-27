@@ -16,7 +16,7 @@ export interface Command {
 }
 
 /**
- * Every command a shortcut can run. Add one here, then handle it with `useKeybindings`, or give a
+ * Every command a shortcut can run. Add one here, then handle it in AppShell's table, or give a
  * route `meta.command` to make it a command that opens that page.
  */
 export const commands = {

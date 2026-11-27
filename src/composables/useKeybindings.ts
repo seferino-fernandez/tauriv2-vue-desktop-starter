@@ -11,8 +11,9 @@ import { useSettingsStore } from "@/stores/settings";
 const COMMAND_EVENT = "command";
 
 /**
- * Runs a command when its shortcut is pressed anywhere in the window, text fields included, or
- * when the app menu sends it. Shortcuts come from the settings store, so a changed one applies at
+ * The shell's listener for app commands: AppShell passes its table of what every command does, so
+ * a new command's handler goes there. Runs a command when its shortcut is pressed anywhere in the
+ * window, text fields included, or when the app menu sends it. Shortcuts come from the settings store, so a changed one applies at
  * once. No shortcut runs while a settings field is recording one, and holding the keys down runs
  * it once.
  */

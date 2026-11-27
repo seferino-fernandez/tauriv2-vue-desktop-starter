@@ -28,6 +28,7 @@ for (const { name, meta } of router.getRoutes()) {
 
 const paletteOpen = ref(false);
 
+// What every app command does. Shortcuts, the macOS app menu and the palette all run them from here
 const handlers: Partial<Record<CommandId, () => void>> = {
   ...pageCommands,
   togglePanel,
@@ -56,6 +57,6 @@ useKeybindings(handlers);
         <router-view />
       </main>
     </div>
-    <CommandPalette v-model:open="paletteOpen" :handlers="handlers" />
+    <CommandPalette v-model:open="paletteOpen" @run="(command) => handlers[command]?.()" />
   </SidebarProvider>
 </template>

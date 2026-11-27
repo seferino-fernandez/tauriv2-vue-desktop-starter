@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { CommandId } from "@/lib/keybindings";
-import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import Keybinding from "@/components/Keybinding.vue";
 import {
@@ -14,22 +13,20 @@ import {
 } from "@/components/ui/command";
 import { commandIds, commands } from "@/lib/keybindings";
 
-const props = defineProps<{
-  /** What each command does; commands without one are left out */
-  handlers: Partial<Record<CommandId, () => void>>;
+const emit = defineEmits<{
+  /** The command picked, for the shell to run */
+  run: [command: CommandId];
 }>();
 
 const open = defineModel<boolean>("open", { required: true });
 const { t } = useI18n();
 
-// Every command the app can run, except opening the palette itself
-const available = computed(() =>
-  commandIds.filter((id) => id !== "openCommandPalette" && props.handlers[id]),
-);
+// Every app command, except opening the palette itself
+const available = commandIds.filter((id) => id !== "openCommandPalette");
 
 function run(command: CommandId) {
   open.value = false;
-  props.handlers[command]?.();
+  emit("run", command);
 }
 </script>
 
